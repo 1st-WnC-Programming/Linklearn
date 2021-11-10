@@ -36,7 +36,7 @@
   > 평가 작성 및 별점 / 신고하기 - ? </br>
   > 관리자 페이지(일정 건수 이상의 신고 받은사람 블랙리스트) - 정균 </br>
 <div align="right">
-    <b><a href="#1st-WnC-Programming/LinkLearn">⬆️ Back to Top</a></b>
+    <b><a href="#2021-1st-WnC-Programming-Contest">⬆️ Back to Top</a></b>
 </div>
 
 ## 🖼 Frontend
@@ -47,14 +47,14 @@
   > [Structure]
  
 <div align="right">
-    <b><a href="#1st-WnC-Programming/LinkLearn">⬆️ Back to Top</a></b>
+    <b><a href="#2021-1st-WnC-Programming-Contest">⬆️ Back to Top</a></b>
 </div>
 
 ## ✨ Backend
 ### 🏠 Structure
   > [backend]   
 <div align="right">
-    <b><a href="#1st-WnC-Programming/LinkLearn">⬆️ Back to Top</a></b>
+    <b><a href="#2021-1st-WnC-Programming-Contest">⬆️ Back to Top</a></b>
 </div>
 
 ## 👨‍👨‍👦‍👦 Contributors
@@ -66,11 +66,11 @@
 | Jungkyun Woo  <br /> <img src="https://avatars.githubusercontent.com/woo-jk" width="100" />  | Republic of Korea | [Github](https://github.com/woo-jk)| Frontend |
 
 <div align="right">
-    <b><a href="#1st-WnC-Programming/LinkLearn">⬆️ Back to Top</a></b>
+    <b><a href="#2021-1st-WnC-Programming-Contest">⬆️ Back to Top</a></b>
 </div>
 
 ## 📌 Prerequisites
 
 <div align="right">
-        <b><a href="#1st-WnC-Programming/LinkLearn">⬆️ Back to Top</a></b>
+    <b><a href="#2021-1st-WnC-Programming-Contest">⬆️ Back to Top</a></b>
 </div>
