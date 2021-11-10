@@ -1,8 +1,9 @@
 import React, { Children } from 'react';
 
 const CardProfile = ({ data }) => {
+  let count = 0;
   const cardList = data.map((value) => (
-    <div className='cardItem innerContainer' key={value.point}>
+    <div className='cardItem innerContainer' key={count++ + value.point}>
       <div className='innerItem'>{value.image}</div>
       <div className='innerItem'>
         <div>{value.name} 선생님</div>
