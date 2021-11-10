@@ -11267,7 +11267,7 @@
     "shallowequal" "^1.1.0"
     "supports-color" "^5.5.0"
 
-"styled-reset@^4.3.4":
+"styled-reset@4.3.4":
   "integrity" "sha512-1UmkWmRwSPfzolKleyPjbZdBqkxSXv5ImqTP5WeSjWk0Z7IvEzsrYhrqinZfCg10eM1P6BEtFly8+puQJnN/0A=="
   "resolved" "https://registry.npmjs.org/styled-reset/-/styled-reset-4.3.4.tgz"
   "version" "4.3.4"

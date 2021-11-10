@@ -6,7 +6,6 @@ const navList = [
   { path: '/Board', pathName: 'board', name: '게시판' },
   { path: '/TeacherList', pathName: 'teacherlist', name: '선생님' },
   { path: '/Profile', pathName: 'profile', name: '프로필' },
-  { path: '/Auth', pathName: 'auth', name: '로그인' },
 ];
 
 const Header = styled.header`
@@ -43,6 +42,7 @@ const Logo = styled.div`
 const Gnb = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
 `;
 
@@ -50,7 +50,6 @@ const NavGroup = styled.div`
   display: flex;
   align-items: center;
   margin-left: 40px;
-  margin-right: 300px;
 `;
 
 const NavLink = styled.div`
@@ -88,6 +87,13 @@ const MyHeader = () => {
                   </Link>
                 </NavLink>
               ))}
+            </NavGroup>
+            <NavGroup>
+              <NavLink>
+                <Link to={'/Auth'} onclick={() => {}}>
+                  로그인
+                </Link>
+              </NavLink>
             </NavGroup>
           </Gnb>
         </FlexBox>
