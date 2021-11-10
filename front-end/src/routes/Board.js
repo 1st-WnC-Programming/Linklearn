@@ -1,4 +1,4 @@
 const Board = () => {
-  return <div>Board</div>;
+  return <div></div>;
 };
 export default Board;

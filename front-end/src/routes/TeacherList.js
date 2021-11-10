@@ -1,4 +1,4 @@
 const TeacherList = () => {
-  return <div>TeacherList</div>;
+  return <div></div>;
 };
 export default TeacherList;
