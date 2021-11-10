@@ -6,6 +6,7 @@ const navList = [
   { path: '/Board', pathName: 'board', name: '게시판' },
   { path: '/TeacherList', pathName: 'teacherlist', name: '선생님' },
   { path: '/Profile', pathName: 'profile', name: '프로필' },
+  { path: '/Auth', pathName: 'auth', name: '로그인' },
 ];
 
 const Header = styled.header`
@@ -88,14 +89,6 @@ const MyHeader = () => {
                 </NavLink>
               ))}
             </NavGroup>
-
-            <LoginBox>
-              <NavLink>
-                <Link to='/Auth' onClick={() => {}}>
-                  로그인
-                </Link>
-              </NavLink>
-            </LoginBox>
           </Gnb>
         </FlexBox>
       </Header>
