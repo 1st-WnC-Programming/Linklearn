@@ -7,8 +7,9 @@
 > <b><a href="#function">Function</a></b></br>
 > <b><a href="#frontend">Frontend</a></b></br>
 > <b><a href="#backend">Backend</a></b></br>
-> <b><a href="#contributors">Contributors</a></b></br>   
-> <b><a href="#prerequisites">Prerequisites</a></b></br>  
+> <b><a href="#contributors">Contributors</a></b></br>
+> <b><a href="#prerequisites">Prerequisites</a></b></br>
+ 
 ## ⚙System Architecture
 ![System Architecture]
 
