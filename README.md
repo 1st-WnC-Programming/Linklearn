@@ -1,7 +1,7 @@
 # 💫2021 1st WnC Programming Contest💫
-> 📚 LinkLearn
+> 📚LinkLearn
 > > LinkLearn is a project that provides connection between teachers and students.
-## 📝 Index
+## 📝Index
 > <b><a href="#system-architecture">System Architecture</a></b>   
 > <b><a href="#development-stack">Development Stack</a></b> 
 > <b><a href="#function">Function</a></b>     
@@ -9,12 +9,12 @@
 > <b><a href="#backend">Backend</a></b>
 > <b><a href="#contributors">Contributors</a></b>   
 > <b><a href="#prerequisites">Prerequisites</a></b>  
-## ⚙ System Architecture
+## ⚙System Architecture
 ![System Architecture]
 
 <br>
 
-## 🛠 Development Stack
+## 🛠Development Stack
 <p align="center">
   <img src="https://img.shields.io/badge/React-v17.0.2-blue" />
   <img src="https://img.shields.io/badge/VSCode-blue" />
@@ -27,7 +27,7 @@
 
 <br>
 
-## 📱 Function
+## 📱Function
   > 회원가입/로그인 (+소셜 로그인 추가점수) - 병민 </br>
   > 회원정보 수정/탈퇴 - 병민 </br>
   > (선생) 게시물 등록/수정/삭제 - 성현 </br>
@@ -39,25 +39,31 @@
     <b><a href="#2021-1st-wnc-programming-contest">⬆️ Back to Top</a></b>
 </div>
 
-## 🖼 Frontend
-### 🎨 Design
+<br>
+
+## 🖼Frontend
+### 🎨Design
   > [Design Document]   
   
-### 🏠 Structure  
+### 🏠Structure  
   > [Structure]
  
 <div align="right">
     <b><a href="#2021-1st-wnc-programming-contest">⬆️ Back to Top</a></b>
 </div>
 
-## ✨ Backend
-### 🏠 Structure
+<br>
+
+## ✨Backend
+### 🏠Structure
   > [backend]   
 <div align="right">
     <b><a href="#2021-1st-WnC-Programming-Contest">⬆️ Back to Top</a></b>
 </div>
 
-## 👨‍👨‍👦‍👦 Contributors
+<br>
+
+## 👨‍👨‍👦‍👦Contributors
 | Name | Country | Where to find us | Role |
 | ---- | ------- | ----------------- | ---- |
 | Seonghyeon Bae <br /> <img src="https://avatars.githubusercontent.com/bae-sh" width="100" />  | Republic of Korea | [Github](https://github.com/bae-sh)| Frontend |
@@ -69,7 +75,9 @@
     <b><a href="#2021-1st-wnc-programming-contest">⬆️ Back to Top</a></b>
 </div>
 
-## 📌 Prerequisites
+<br>
+
+## 📌Prerequisites
 
 <div align="right">
     <b><a href="#2021-1st-wnc-programming-contest">⬆️ Back to Top</a></b>
