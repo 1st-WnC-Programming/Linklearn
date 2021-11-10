@@ -101,7 +101,7 @@ const MyHeader = ({ isLoggedIn }) => {
                 {isLoggedIn ? (
                   <div onClick={onLogoutClick}>로그아웃</div>
                 ) : (
-                  <Link to={'/Auth'} onclick={() => {}}>
+                  <Link to={'/Auth'} onClick={() => {}}>
                     로그인
                   </Link>
                 )}

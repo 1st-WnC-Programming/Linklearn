@@ -123,7 +123,7 @@ const Auth = () => {
       } else if (name === 'github') {
         provider = new GithubAuthProvider();
         const result = await signInWithPopup(authService, provider);
-        const credential = GithubAuthProvider.credentialFromResult(result);
+        // const credential = GithubAuthProvider.credentialFromResult(result);
       }
       navigate('/');
     } catch (error) {
