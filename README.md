@@ -3,8 +3,8 @@
 > > LinkLearn is a project that provides connection between teachers and students.
 ## 📝Index
 > <b><a href="#system-architecture">System Architecture</a></b>   
-> <b><a href="#development-stack">Development Stack</a></b> 
-> <b><a href="#function">Function</a></b>     
+> <b><a href="#development-stack">Development Stack</a></b>
+> <b><a href="#function">Function</a></b>
 > <b><a href="#frontend">Frontend</a></b>  
 > <b><a href="#backend">Backend</a></b>
 > <b><a href="#contributors">Contributors</a></b>   
