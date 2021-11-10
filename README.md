@@ -1,5 +1,5 @@
 # 💫 2021 1st WnC Programming Contest 💫
-> ** 📚 LinkLearn
+> 📚 LinkLearn
 > > LinkLearn is a project that provides connection between teachers and students.
 ## 📝 Index
 > <b><a href="#system-architecture">System Architecture</a></b>   
