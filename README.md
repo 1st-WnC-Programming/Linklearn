@@ -2,13 +2,13 @@
 > 📚LinkLearn
 > > LinkLearn is a project that provides connection between teachers and students.
 ## 📝Index
-> <b><a href="#system-architecture">System Architecture</a></b>   
-> <b><a href="#development-stack">Development Stack</a></b>
-> <b><a href="#function">Function</a></b>
-> <b><a href="#frontend">Frontend</a></b>  
-> <b><a href="#backend">Backend</a></b>
-> <b><a href="#contributors">Contributors</a></b>   
-> <b><a href="#prerequisites">Prerequisites</a></b>  
+> <b><a href="#system-architecture">System Architecture</a></b> </br>
+> <b><a href="#development-stack">Development Stack</a></b></br>
+> <b><a href="#function">Function</a></b></br>
+> <b><a href="#frontend">Frontend</a></b></br>
+> <b><a href="#backend">Backend</a></b></br>
+> <b><a href="#contributors">Contributors</a></b></br>   
+> <b><a href="#prerequisites">Prerequisites</a></b></br>  
 ## ⚙System Architecture
 ![System Architecture]
 
