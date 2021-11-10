@@ -42,7 +42,7 @@ const GlobalStyles = createGlobalStyle`
     .inner {
         width: 100%;
         max-width: 1400px;
-        padding: 40px 80px;
+        padding: 0px 80px;
         margin: 0 auto;
     }
 
