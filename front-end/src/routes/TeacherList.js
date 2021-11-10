@@ -3,9 +3,18 @@ import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../fbase';
 import styled from 'styled-components';
 import CardProfile from '../Components/CardProfile';
+import { async } from '@firebase/util';
+
+const Button = styled.button`
+  border: 1px solid black;
+  background-color: white;
+`;
 
 const TeacherList = () => {
   // const [teacherList, setTeacherList] = useState('');
+  const [keyword, setKeyword] = useState(null);
+  const selectList = { name: '이름', field: '분야', career: '경력' };
+  const [selected, setSelected] = useState('name');
 
   // const q = query(collection(db, 'users'), where('role', '==', 'teacher'));
   // const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -15,6 +24,20 @@ const TeacherList = () => {
   //   });
   //   console.log('teacher 목록 : ', teachers.join(', '));
   // });
+
+  const searchSpace = async (e) => {
+    let search = await e.target.value;
+    setKeyword(search);
+  };
+
+  const selectHandler = (e) => {
+    e.preventDefault();
+    setSelected(e.target.value);
+  };
+
+  // const searchHandler = (e) => {
+  //   e.preventDefault();
+  // };
 
   var teacherList = [
     {
@@ -35,7 +58,18 @@ const TeacherList = () => {
 
   return (
     <>
-      <CardProfile data={teacherList} />
+      <div>
+        <select onChange={selectHandler} value={selected}>
+          {Object.entries(selectList).map((item) => (
+            <option value={item[0]} key={item[0]}>
+              {item[1]}
+            </option>
+          ))}
+        </select>
+        <input type='text' placeholder='검색어를 입력하세요.' onChange={(e) => searchSpace(e)} />
+        {/* <Button onClick={searchHandler}>검색</Button> */}
+      </div>
+      <CardProfile data={teacherList} target={selected} keyword={keyword} />
     </>
   );
 };
