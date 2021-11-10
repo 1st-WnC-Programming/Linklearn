@@ -1,5 +1,12 @@
+import AppRouter from "./Router";
+
 const App = () => {
-    return <div className="App"></div>;
+  return (
+    <>
+      <AppRouter />
+      <footer>&copy; {new Date().getFullYear()} Linklearn</footer>
+    </>
+  );
 };
 
 export default App;
