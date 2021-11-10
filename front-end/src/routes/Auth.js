@@ -1,11 +1,22 @@
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from 'firebase/auth';
+import { authService } from '../fbase';
+
 const Logo = styled.div`
   font-size: 70px;
-  font-family: 'Arimo', sans-serif;
-  font-weight: 900;
-  font-style: italic;
+  font-weight: 700;
+  /* font-style: italic; */
   color: #3c78c8;
   margin-bottom: 30px;
+  /* width: 100%; */
+  border-bottom: 4px solid #3c78c8;
   @media only screen and (max-width: 800px) {
     font-size: 50px;
   }
@@ -38,7 +49,7 @@ const LoginButton = styled.button`
   font-size: 18px;
   margin: 8px 0;
   width: 100%;
-  border-radius: 10px;
+  border: none;
   @media only screen and (max-width: 800px) {
     font-size: 15px;
   }
@@ -57,20 +68,108 @@ const LoginBox = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 350px;
+  max-width: 370px;
   padding-bottom: 70px;
 `;
+
 const Auth = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [pass, setPass] = useState('');
+
+  const onSignClick = (e) => {
+    const {
+      target: { name },
+    } = e;
+    if (name === 'signin') {
+      signInWithEmailAndPassword(authService, email, password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          setPass(user.email);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setError(errorMessage);
+        });
+    } else if (name === 'signup') {
+      createUserWithEmailAndPassword(authService, email, password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          setPass(user.email);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setError(errorMessage);
+        });
+    }
+  };
+
+  const onSocialClick = async (e) => {
+    const {
+      target: { name },
+    } = e;
+    let provider;
+    try {
+      if (name === 'google') {
+        provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(authService, provider);
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        setPass('google');
+      } else if (name === 'github') {
+        provider = new GithubAuthProvider();
+        const result = await signInWithPopup(authService, provider);
+        const credential = GithubAuthProvider.credentialFromResult(result);
+        setPass('github');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onTextChange = (e) => {
+    const {
+      target: { name, value },
+    } = e;
+    if (name === 'email') setEmail(value);
+    else if (name === 'password') setPassword(value);
+  };
+
   return (
     <LoginWrap>
       <LoginBox>
-        <Logo>제목</Logo>
-        <TextField placeholder={'아이디'} id='id' name='id'></TextField>
-        <TextField type='password' placeholder={'비밀번호'} id='password' name='password'></TextField>
-        <LoginButton color='#3c78c8'>로그인</LoginButton>
-        <LoginButton color='#8E8E8E'>회원가입</LoginButton>
+        <Logo>LOGIN</Logo>
+        <TextField placeholder={'이메일'} id='email' name='email' onChange={onTextChange}></TextField>
+        <TextField
+          type='password'
+          placeholder={'비밀번호'}
+          id='password'
+          name='password'
+          onChange={onTextChange}
+        ></TextField>
+
+        {<div style={{ color: 'green' }}>{pass}</div>}
+        {<div style={{ color: 'red' }}>{error}</div>}
+
+        <LoginButton color='#3c78c8' name='signin' onClick={onSignClick}>
+          LOGIN
+        </LoginButton>
+        <LoginButton color='#8E8E8E' name='signup' onClick={onSignClick}>
+          회원가입
+        </LoginButton>
+        <LoginButton color='#8E8E8E' name='google' onClick={onSocialClick}>
+          Continue with Google
+        </LoginButton>
+        <LoginButton color='#8E8E8E' name='github' onClick={onSocialClick}>
+          Continue with Github
+        </LoginButton>
       </LoginBox>
     </LoginWrap>
   );
 };
+
 export default Auth;
