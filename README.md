@@ -1,4 +1,4 @@
-# 💫 2021 1st WnC Programming Contest 💫
+# 💫2021 1st WnC Programming Contest💫
 > 📚 LinkLearn
 > > LinkLearn is a project that provides connection between teachers and students.
 ## 📝 Index
