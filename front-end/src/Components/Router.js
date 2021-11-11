@@ -4,10 +4,10 @@ import Home from '../routes/Home';
 import Auth from '../routes/Auth';
 import TeacherList from '../routes/TeacherList';
 import Header from './Header';
-const AppRouter = () => {
+const AppRouter = ({ isLoggedIn }) => {
   return (
     <Router>
-      <Header />
+      <Header isLoggedIn={isLoggedIn} />
       <main>
         <Routes>
           <Route path='/' element={<Home />} />

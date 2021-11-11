@@ -1,7 +1,9 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { React, useState } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { authService } from '../fbase';
+
 const navList = [
   { path: '/Board', pathName: 'board', name: '게시판' },
   { path: '/TeacherList', pathName: 'teacherlist', name: '선생님' },
@@ -67,7 +69,13 @@ const LoginBox = styled.div`
   display: flex;
   align-items: center;
 `;
-const MyHeader = () => {
+
+const MyHeader = ({ isLoggedIn }) => {
+  const navigate = useNavigate();
+  const onLogoutClick = () => {
+    authService.signOut();
+    navigate('/');
+  };
   return (
     <>
       <Header>
@@ -90,9 +98,13 @@ const MyHeader = () => {
             </NavGroup>
             <NavGroup>
               <NavLink>
-                <Link to={'/Auth'} onclick={() => {}}>
-                  로그인
-                </Link>
+                {isLoggedIn ? (
+                  <div onClick={onLogoutClick}>로그아웃</div>
+                ) : (
+                  <Link to={'/Auth'} onClick={() => {}}>
+                    로그인
+                  </Link>
+                )}
               </NavLink>
             </NavGroup>
           </Gnb>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   createUserWithEmailAndPassword,
@@ -73,10 +74,10 @@ const LoginBox = styled.div`
 `;
 
 const Auth = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [pass, setPass] = useState('');
 
   const onSignClick = (e) => {
     const {
@@ -87,7 +88,7 @@ const Auth = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          setPass(user.email);
+          navigate('/');
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -99,7 +100,7 @@ const Auth = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          setPass(user.email);
+          navigate('/');
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -119,13 +120,12 @@ const Auth = () => {
         provider = new GoogleAuthProvider();
         const result = await signInWithPopup(authService, provider);
         const credential = GoogleAuthProvider.credentialFromResult(result);
-        setPass('google');
       } else if (name === 'github') {
         provider = new GithubAuthProvider();
         const result = await signInWithPopup(authService, provider);
-        const credential = GithubAuthProvider.credentialFromResult(result);
-        setPass('github');
+        // const credential = GithubAuthProvider.credentialFromResult(result);
       }
+      navigate('/');
     } catch (error) {
       console.log(error);
     }
@@ -152,7 +152,6 @@ const Auth = () => {
           onChange={onTextChange}
         ></TextField>
 
-        {<div style={{ color: 'green' }}>{pass}</div>}
         {<div style={{ color: 'red' }}>{error}</div>}
 
         <LoginButton color='#3c78c8' name='signin' onClick={onSignClick}>

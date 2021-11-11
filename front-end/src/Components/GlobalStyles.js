@@ -42,7 +42,7 @@ const GlobalStyles = createGlobalStyle`
     .inner {
         width: 100%;
         max-width: 1400px;
-        padding: 40px 80px;
+        padding: 0px 80px;
         margin: 0 auto;
     }
 
@@ -56,6 +56,54 @@ const GlobalStyles = createGlobalStyle`
 
     p, span, h1, h2, h3, h4, h5 {
         line-height: 1.5;
+    }
+
+    .cardContainer{
+        margin-top: 20px;
+        margin-right: 20px;
+        margin-left: 20px;
+        display: flex;
+        flex-flow: wrap;
+        //   justify-content: space-between;
+        justify-content: center;
+        align-content: center;
+        
+    }
+
+    .cardItem{
+        padding: 10px;
+        height: 150px;
+        background-color: white;
+        margin: 20px;
+        border: 1px solid black;
+        /* display: flex; */
+
+        flex: 1 1 45%;
+        
+        /* width: 300px; */
+        /* flex-basis: 300px; */
+        /* flex-grow: 1; */
+    }
+
+    .innerContainer{
+        display: flex;
+        flex-flow: nowrap;
+        //   justify-content: space-between;
+        justify-content: center;
+        /* align-content: center; */
+    }
+
+    .innerItem{
+        flex: 1 1 70%;
+        border: 1px solid black;
+    }
+
+    .innerItem:nth-child(1){
+        flex-basis: 130px;
+    }
+
+    .innerItem:nth-child(2){
+        /* flex-basis: 75%; */
     }
 `;
 
