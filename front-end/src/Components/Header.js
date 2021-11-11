@@ -2,12 +2,11 @@
 import { React, useState } from 'react';
 import { Link, withRouter, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { authService } from '../fbase';
+import Avata from './AvataDropdown';
 
 const navList = [
   { path: '/Board', pathName: 'board', name: '게시판' },
   { path: '/TeacherList', pathName: 'teacherlist', name: '선생님' },
-  { path: '/Profile', pathName: 'profile', name: '프로필' },
 ];
 
 const Header = styled.header`
@@ -61,7 +60,6 @@ const NavLink = styled.div`
 
   &:hover {
     padding-bottom: 2px;
-    border-bottom: 2px solid;
   }
 `;
 
@@ -70,12 +68,7 @@ const LoginBox = styled.div`
   align-items: center;
 `;
 
-const MyHeader = ({ isLoggedIn }) => {
-  const navigate = useNavigate();
-  const onLogoutClick = () => {
-    authService.signOut();
-    navigate('/');
-  };
+const MyHeader = ({ isLoggedIn, avataURL }) => {
   return (
     <>
       <Header>
@@ -99,7 +92,9 @@ const MyHeader = ({ isLoggedIn }) => {
             <NavGroup>
               <NavLink>
                 {isLoggedIn ? (
-                  <div onClick={onLogoutClick}>로그아웃</div>
+                  <>
+                    <Avata avataURL={avataURL} />
+                  </>
                 ) : (
                   <Link to={'/Auth'} onClick={() => {}}>
                     로그인
