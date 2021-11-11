@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {
-  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   GithubAuthProvider,
   GoogleAuthProvider,
   signInWithPopup,
 } from 'firebase/auth';
-import { authService } from '../fbase';
+import { authService, db } from '../fbase';
+import { addDoc, collection, doc, serverTimestamp, setDoc } from 'firebase/firestore';
 
 const Logo = styled.div`
   font-size: 70px;
@@ -79,55 +79,87 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const onSignClick = (e) => {
-    const {
-      target: { name },
-    } = e;
-    if (name === 'signin') {
-      signInWithEmailAndPassword(authService, email, password)
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          navigate('/');
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setError(errorMessage);
-        });
-    } else if (name === 'signup') {
-      createUserWithEmailAndPassword(authService, email, password)
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          navigate('/');
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setError(errorMessage);
-        });
-    }
+  const onSignClick = () => {
+    signInWithEmailAndPassword(authService, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log(user);
+        navigate('/');
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setError(errorMessage);
+      });
   };
 
-  const onSocialClick = async (e) => {
+  const onSocialClick = (e) => {
     const {
       target: { name },
     } = e;
+
     let provider;
-    try {
-      if (name === 'google') {
-        provider = new GoogleAuthProvider();
-        const result = await signInWithPopup(authService, provider);
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-      } else if (name === 'github') {
-        provider = new GithubAuthProvider();
-        const result = await signInWithPopup(authService, provider);
-        // const credential = GithubAuthProvider.credentialFromResult(result);
-      }
-      navigate('/');
-    } catch (error) {
-      console.log(error);
+
+    if (name === 'google') {
+      provider = new GoogleAuthProvider();
+      signInWithPopup(authService, provider)
+        .then(async (result) => {
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
+          // The signed-in user info.
+          const user = result.user;
+
+          await setDoc(doc(db, 'users', user.uid), {
+            id: user.uid,
+            email: user.email,
+            name: user.displayName,
+            photoURL: user.photoURL,
+            role: 'student',
+            createdAt: serverTimestamp(),
+          });
+
+          navigate('/');
+        })
+        .catch((error) => {
+          // Handle Errors here.
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // The email of the user's account used.
+          const email = error.email;
+          // The AuthCredential type that was used.
+          const credential = GoogleAuthProvider.credentialFromError(error);
+          // ...
+        });
+    } else if (name === 'github') {
+      provider = new GithubAuthProvider();
+      signInWithPopup(authService, provider)
+        .then(async (result) => {
+          const credential = GithubAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
+          // The signed-in user info.
+          const user = result.user;
+
+          await setDoc(doc(db, 'users', user.uid), {
+            id: user.uid,
+            email: user.email,
+            name: user.displayName,
+            photoURL: user.photoURL,
+            role: 'student',
+            createdAt: serverTimestamp(),
+          });
+
+          navigate('/');
+        })
+        .catch((error) => {
+          // Handle Errors here.
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // The email of the user's account used.
+          const email = error.email;
+          // The AuthCredential type that was used.
+          const credential = GoogleAuthProvider.credentialFromError(error);
+        });
     }
   };
 
@@ -157,9 +189,13 @@ const Auth = () => {
         <LoginButton color='#3c78c8' name='signin' onClick={onSignClick}>
           LOGIN
         </LoginButton>
-        <LoginButton color='#8E8E8E' name='signup' onClick={onSignClick}>
-          회원가입
-        </LoginButton>
+
+        <Link to={'/Register'} style={{ width: '100%' }}>
+          <LoginButton color='#8E8E8E' name='signup'>
+            회원가입
+          </LoginButton>
+        </Link>
+
         <LoginButton color='#8E8E8E' name='google' onClick={onSocialClick}>
           Continue with Google
         </LoginButton>
