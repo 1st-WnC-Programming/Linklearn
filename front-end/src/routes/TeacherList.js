@@ -57,7 +57,7 @@ const TeacherList = () => {
   ];
 
   return (
-    <>
+    <main>
       <div>
         <select onChange={selectHandler} value={selected}>
           {Object.entries(selectList).map((item) => (
@@ -70,7 +70,7 @@ const TeacherList = () => {
         {/* <Button onClick={searchHandler}>검색</Button> */}
       </div>
       <CardProfile data={teacherList} target={selected} keyword={keyword} />
-    </>
+    </main>
   );
 };
 export default TeacherList;

@@ -1,11 +1,11 @@
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
-import { Viewer } from '@toast-ui/react-editor';
-const test = `# markdown`;
+
+import ReactMarkdown from 'react-markdown';
 
 const TitleBox = styled.div`
   width: 1000px;
@@ -30,21 +30,28 @@ const PostButton = styled.button`
   font-size: 18px;
   float: right;
 `;
-const PostList = () => {
+const Content = styled.div`
+  width: 1000px;
+  margin: 30px auto;
+  min-height: 500px;
+  /* background-color: red; */
+`;
+const News = () => {
+  const { id } = useParams();
   return (
     <div className='inner'>
       <main>
         <TitleBox>
-          <Title placeholder='제목을 입력하세요'></Title>
+          <h1>제목입니다</h1>
         </TitleBox>
-        <Editor
+        {/* <Editor
           previewStyle='vertical'
           height='400px'
           initialEditType='markdown'
           useCommandShortcut={true}
           initialValue='마크다운으로 내용을 입력하세요.'
-        />
-        <Viewer initialValue={test} height='400px' previewStyle='vertical' />
+        /> */}
+        <Content>{id}</Content>
         <ButtonBox>
           <Link
             to={{
@@ -54,10 +61,10 @@ const PostList = () => {
           >
             <PostButton>취소</PostButton>
           </Link>
-          <PostButton>글쓰기</PostButton>
+          <PostButton>수정</PostButton>
         </ButtonBox>
       </main>
     </div>
   );
 };
-export default PostList;
+export default News;

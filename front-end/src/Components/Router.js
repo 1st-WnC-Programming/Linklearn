@@ -6,7 +6,7 @@ import Register from '../routes/Register';
 import TeacherList from '../routes/TeacherList';
 import Header from './Header';
 import PostList from '../routes/PostList';
-
+import News from '../routes/News';
 const AppRouter = ({ isLoggedIn, avataURL }) => {
   return (
     <Router>
@@ -19,6 +19,7 @@ const AppRouter = ({ isLoggedIn, avataURL }) => {
           <Route path='/TeacherList' element={<TeacherList />} />
           <Route path='/Register' element={<Register />} />
           <Route path='/Board/PostList' element={<PostList />} />
+          <Route path='/Board/:id' element={<News />} exact />
         </Routes>
       </main>
     </Router>
