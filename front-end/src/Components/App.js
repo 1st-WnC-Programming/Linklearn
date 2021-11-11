@@ -14,7 +14,9 @@ const App = () => {
     authService.onAuthStateChanged((user) => {
       if (user) {
         setIsLoggedIn(true);
-        setAvataURL(user.photoURL);
+        if (user.photoURL !== null) {
+          setAvataURL(user.photoURL);
+        }
       } else {
         setIsLoggedIn(false);
       }
