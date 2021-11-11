@@ -26,7 +26,6 @@ const App = () => {
           <GlobalStyles />
           <AppRouter isLoggedIn={isLoggedIn} />
           <Footer />
-          <footer>&copy; {new Date().getFullYear()} Linklearn</footer>
         </>
       ) : (
         'Loading...'
