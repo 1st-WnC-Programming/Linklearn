@@ -5,12 +5,39 @@ import styled from 'styled-components';
 import CardProfile from '../Components/CardProfile';
 import { async } from '@firebase/util';
 
+const SearchBox = styled.div`
+  /* margin: auto; */
+  margin-top: 10px;
+  height: 55px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+`;
+
+const SearchSelect = styled.select`
+  background-color: #f9f9f9;
+  width: 150px;
+  height: 100%;
+  line-height: 30px;
+  margin-right: 10px;
+  text-align: center;
+`;
+
+const SearchInput = styled.input`
+  text-align: center;
+  background-color: #f9f9f9;
+  width: 400px;
+  height: 100%;
+  margin-right: 10px;
+  border: 1px solid black;
+`;
+
 const TeacherList = () => {
-  const [keyword, setKeyword] = useState(null);
-  const selectList = { none: '===검색 필터===', name: '이름', field: '분야', career: '경력' };
+  const [keyword, setKeyword] = useState('');
+  const selectList = { none: '<검색 필터>', name: '이름', field: '분야', career: '경력' };
   const [searchSelected, setSearchSelected] = useState('none');
   const sortList = {
-    none: '===정렬 조건===',
+    none: '<정렬 조건>',
     starPoint_Desc: '별점 높은 순',
     starPoint_Asc: '별점 낮은 순',
     student_Desc: '학생들이 많이 수강한 순',
@@ -58,12 +85,12 @@ const TeacherList = () => {
 
   const searchSelectHandler = (e) => {
     e.preventDefault();
-    setSearchSelected(e.target.value);
+    setSearchSelected(e.currentTarget.value);
   };
 
   const sortSelectHandler = (e) => {
     e.preventDefault();
-    setSortSelected(e.target.value);
+    setSortSelected(e.currentTarget.value);
     const sort_condition = sortSelected.split('_');
     sort_condition[1] == 'Asc'
       ? sortAsc(teacherList, sort_condition[0])
@@ -101,24 +128,24 @@ const TeacherList = () => {
   return (
     <main>
       <div className='boxDiv'>
-        <div>
-          <select onChange={sortSelectHandler} value={sortSelected}>
+        <SearchBox>
+          <SearchSelect onChange={sortSelectHandler} value={sortSelected}>
             {Object.entries(sortList).map((item) => (
               <option value={item[0]} key={item[0]}>
                 {item[1]}
               </option>
             ))}
-          </select>
-          <select onChange={searchSelectHandler} value={searchSelected}>
+          </SearchSelect>
+          <SearchSelect onChange={searchSelectHandler} value={searchSelected}>
             {Object.entries(selectList).map((item) => (
               <option value={item[0]} key={item[0]}>
                 {item[1]}
               </option>
             ))}
-          </select>
-          <input type='text' placeholder='검색어를 입력하세요.' onChange={(e) => searchSpace(e)} />
+          </SearchSelect>
+          <SearchInput type='text' placeholder='검색어를 입력하세요.' onChange={(e) => searchSpace(e)} />
           {/* <Button onClick={searchHandler}>검색</Button> */}
-        </div>
+        </SearchBox>
         <CardProfile data={teacherList} target={searchSelected} keyword={keyword} />
       </div>
     </main>
