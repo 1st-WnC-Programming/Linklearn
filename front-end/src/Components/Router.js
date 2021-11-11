@@ -7,6 +7,7 @@ import TeacherList from '../routes/TeacherList';
 import Header from './Header';
 import PostList from '../routes/PostList';
 import News from '../routes/News';
+import Profile from '../routes/Profile';
 const AppRouter = ({ isLoggedIn, avataURL }) => {
   return (
     <Router>
@@ -20,6 +21,7 @@ const AppRouter = ({ isLoggedIn, avataURL }) => {
           <Route path='/Register' element={<Register />} />
           <Route path='/Board/PostList' element={<PostList />} />
           <Route path='/Board/:id' element={<News />} exact />
+          <Route path='/Profile' element={<Profile />} />
         </Routes>
       </main>
     </Router>
