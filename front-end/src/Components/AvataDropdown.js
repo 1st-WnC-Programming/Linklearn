@@ -6,6 +6,7 @@ import { authService } from '../fbase';
 
 const DropdownContainer = styled.div`
   /* width: 400px; */
+  position: relative;
 
   &:hover {
     cursor: pointer;
@@ -23,7 +24,7 @@ const DropdownMenu = styled.ul`
   width: 150px;
   background-color: white;
   position: absolute;
-  right: 70px;
+  right: 0px;
   border: 1px solid #f4acbb;
   border-radius: 3%;
 `;
