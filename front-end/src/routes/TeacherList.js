@@ -5,24 +5,50 @@ import styled from 'styled-components';
 import CardProfile from '../Components/CardProfile';
 import { async } from '@firebase/util';
 
-const Button = styled.button`
-  border: 1px solid black;
-  background-color: white;
-`;
-
 const TeacherList = () => {
-  // const [teacherList, setTeacherList] = useState('');
   const [keyword, setKeyword] = useState(null);
-  const selectList = { name: '이름', field: '분야', career: '경력' };
-  const [selected, setSelected] = useState('name');
+  const selectList = { none: '===검색 필터===', name: '이름', field: '분야', career: '경력' };
+  const [searchSelected, setSearchSelected] = useState('none');
+  const sortList = {
+    none: '===정렬 조건===',
+    starPoint_Desc: '별점 높은 순',
+    starPoint_Asc: '별점 낮은 순',
+    student_Desc: '학생들이 많이 수강한 순',
+    student_Asc: '학생들이 적게 수강한 순',
+  };
+  const [sortSelected, setSortSelected] = useState('none');
 
+  // db에 정확한 filed 성립되면 쓸 코드
+  const [teacherList, setTeacherList] = useState([
+    {
+      image: 'das',
+      name: '김밍밍',
+      field: '수학',
+      starPoint: 4.5,
+      career: '수상',
+    },
+    {
+      image: 'das',
+      name: '류건열',
+      field: '수학',
+      starPoint: 4.7,
+      career: '수상',
+    },
+    {
+      image: 'das',
+      name: '김핑핑',
+      field: '영어',
+      starPoint: 4.3,
+      career: '수상',
+    },
+  ]);
   // const q = query(collection(db, 'users'), where('role', '==', 'teacher'));
   // const unsubscribe = onSnapshot(q, (querySnapshot) => {
-  //   const teachers = [];
+  //   const teacher = [];
   //   querySnapshot.forEach((doc) => {
-  //     teachers.push(doc.data().name);
+  //     teacher.push(doc);
   //   });
-  //   console.log('teacher 목록 : ', teachers.join(', '));
+  //   setTeacherList(teacher);
   // });
 
   const searchSpace = async (e) => {
@@ -30,46 +56,71 @@ const TeacherList = () => {
     setKeyword(search);
   };
 
-  const selectHandler = (e) => {
+  const searchSelectHandler = (e) => {
     e.preventDefault();
-    setSelected(e.target.value);
+    setSearchSelected(e.target.value);
+  };
+
+  const sortSelectHandler = (e) => {
+    e.preventDefault();
+    setSortSelected(e.target.value);
+    const sort_condition = sortSelected.split('_');
+    sort_condition[1] == 'Asc'
+      ? sortAsc(teacherList, sort_condition[0])
+      : sortDesc(teacherList, sort_condition[0]);
+  };
+
+  const sortAsc = (list, criteria) => {
+    return list.sort((user1, user2) => {
+      if (user1[criteria] > user2[criteria]) {
+        return 1;
+      }
+      if (user2[criteria] > user1[criteria]) {
+        return -1;
+      }
+      return 0;
+    });
+  };
+
+  const sortDesc = (list, criteria) => {
+    return list.sort((user1, user2) => {
+      if (user1[criteria] > user2[criteria]) {
+        return -1;
+      }
+      if (user2[criteria] > user1[criteria]) {
+        return 1;
+      }
+      return 0;
+    });
   };
 
   // const searchHandler = (e) => {
   //   e.preventDefault();
   // };
 
-  var teacherList = [
-    {
-      image: 'das',
-      name: '류건열',
-      field: '수학',
-      point: 4.7,
-      career: '수상',
-    },
-    {
-      image: 'das',
-      name: '김밍밍',
-      field: '수학',
-      point: 4.7,
-      career: '수상',
-    },
-  ];
-
   return (
     <main>
-      <div>
-        <select onChange={selectHandler} value={selected}>
-          {Object.entries(selectList).map((item) => (
-            <option value={item[0]} key={item[0]}>
-              {item[1]}
-            </option>
-          ))}
-        </select>
-        <input type='text' placeholder='검색어를 입력하세요.' onChange={(e) => searchSpace(e)} />
-        {/* <Button onClick={searchHandler}>검색</Button> */}
+      <div className='boxDiv'>
+        <div>
+          <select onChange={sortSelectHandler} value={sortSelected}>
+            {Object.entries(sortList).map((item) => (
+              <option value={item[0]} key={item[0]}>
+                {item[1]}
+              </option>
+            ))}
+          </select>
+          <select onChange={searchSelectHandler} value={searchSelected}>
+            {Object.entries(selectList).map((item) => (
+              <option value={item[0]} key={item[0]}>
+                {item[1]}
+              </option>
+            ))}
+          </select>
+          <input type='text' placeholder='검색어를 입력하세요.' onChange={(e) => searchSpace(e)} />
+          {/* <Button onClick={searchHandler}>검색</Button> */}
+        </div>
+        <CardProfile data={teacherList} target={searchSelected} keyword={keyword} />
       </div>
-      <CardProfile data={teacherList} target={selected} keyword={keyword} />
     </main>
   );
 };
