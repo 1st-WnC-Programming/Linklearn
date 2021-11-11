@@ -4,9 +4,9 @@ import Home from '../routes/Home';
 import Auth from '../routes/Auth';
 import Register from '../routes/Register';
 import TeacherList from '../routes/TeacherList';
-import Header from './Header'; {
-=======
+import Header from './Header';
 import PostList from '../routes/PostList';
+
 const AppRouter = ({ isLoggedIn, avataURL }) => {
   return (
     <Router>
