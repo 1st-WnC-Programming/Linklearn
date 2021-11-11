@@ -31,7 +31,6 @@ const App = () => {
           <GlobalStyles />
           <AppRouter isLoggedIn={isLoggedIn} avataURL={avataURL} />
           <Footer />
-          <footer>&copy; {new Date().getFullYear()} Linklearn</footer>
         </>
       ) : (
         'Loading...'

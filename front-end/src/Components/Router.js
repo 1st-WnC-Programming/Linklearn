@@ -4,7 +4,9 @@ import Home from '../routes/Home';
 import Auth from '../routes/Auth';
 import Register from '../routes/Register';
 import TeacherList from '../routes/TeacherList';
-import Header from './Header';
+import Header from './Header'; {
+=======
+import PostList from '../routes/PostList';
 const AppRouter = ({ isLoggedIn, avataURL }) => {
   return (
     <Router>
@@ -16,6 +18,7 @@ const AppRouter = ({ isLoggedIn, avataURL }) => {
           <Route path='/Auth' element={<Auth />} />
           <Route path='/TeacherList' element={<TeacherList />} />
           <Route path='/Register' element={<Register />} />
+          <Route path='/Board/PostList' element={<PostList />} />
         </Routes>
       </main>
     </Router>

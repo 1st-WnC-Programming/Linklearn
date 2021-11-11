@@ -34,7 +34,7 @@ const GlobalStyles = createGlobalStyle`
     }
 
     main {
-        padding-top: 70px;
+        padding-top: 40px;
         min-height: calc(100vh - 120px);
         background-color: #E9EAE9;
     }

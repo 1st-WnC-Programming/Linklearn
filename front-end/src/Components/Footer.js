@@ -1,2 +1,2 @@
 import styled from 'styled-components';
-export default () => <div></div>;
+export default () => <footer>&copy; {new Date().getFullYear()} Linklearn</footer>;
