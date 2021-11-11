@@ -58,6 +58,11 @@ const GlobalStyles = createGlobalStyle`
         line-height: 1.5;
     }
 
+    .boxDiv{
+        padding-left: 100px;
+        padding-right: 100px;
+    }
+
     .cardContainer{
         margin-top: 20px;
         margin-right: 20px;
