@@ -42,9 +42,14 @@ const Row = styled.tr`
   border-bottom: 1px solid #ededed;
   font-size: 13px;
   background-color: #f9f9f9;
+  &:hover {
+    background-color: #e7f6f6;
+    transition: background-color 0.5s;
+  }
   &:first-child {
     & > th {
       padding: 20px;
+      background-color: #f9f9f9;
     }
   }
   #title {
@@ -62,22 +67,47 @@ const Row = styled.tr`
 const AddBoardListButton = styled.button`
   background-color: #3c78c0;
   border-radius: 10px;
-  margin: 30px auto;
+  margin: 30px auto 20px;
   width: 100%;
   height: 50px;
   font-size: 18px;
 `;
 const ButtonBox = styled.div`
-  margin: auto;
+  margin: 0px auto;
   width: 200px;
+  height: 200px;
 `;
 
+const PostButton = styled.button`
+  background-color: #3c78c0;
+  border-radius: 10px;
+  margin: auto;
+  width: 100%;
+  height: 50px;
+  font-size: 18px;
+`;
 const Board = () => {
   const [info, setInfo] = useState([
-    { title: '데이터 파일0', date: '2021-07-23', views: '24', id: 4 },
-    { title: '데이터 파일1', date: '2021-07-23', views: '24', id: 5 },
-    { title: '데이터 파일2', date: '2021-07-23', views: '24', id: 6 },
-    { title: '데이터 파일3', date: '2021-07-23', views: '24', id: 7 },
+    {
+      number: '공지',
+      title: '가',
+      type: '그룹',
+      numberOfPeople: '3',
+      time: '2',
+      teacher: '한석원',
+      date: '2021-07-23',
+      id: '7',
+    },
+    {
+      number: '공지',
+      title: '나',
+      type: '그룹',
+      numberOfPeople: '3',
+      time: '2',
+      teacher: '한석원',
+      date: '2021-07-23',
+      id: '8',
+    },
   ]);
 
   const [dataFile, setDataFile] = useState([
@@ -89,6 +119,7 @@ const Board = () => {
       time: '2',
       teacher: '한석원',
       date: '2021-07-23',
+      id: '1',
     },
     {
       number: '2',
@@ -98,6 +129,7 @@ const Board = () => {
       time: '2',
       teacher: '한석원',
       date: '2021-07-23',
+      id: '2',
     },
     {
       number: '3',
@@ -107,6 +139,7 @@ const Board = () => {
       time: '2',
       teacher: '한석원',
       date: '2021-07-23',
+      id: '3',
     },
     {
       number: '4',
@@ -116,6 +149,7 @@ const Board = () => {
       time: '2',
       teacher: '배성현',
       date: '2021-07-23',
+      id: '4',
     },
     {
       number: '5',
@@ -125,6 +159,7 @@ const Board = () => {
       time: '2',
       teacher: '전병민',
       date: '2021-07-23',
+      id: '5',
     },
     {
       number: '6',
@@ -134,6 +169,7 @@ const Board = () => {
       time: '2',
       teacher: '한석원',
       date: '2021-07-23',
+      id: '6',
     },
   ]);
   const [keyword, setKeyword] = useState(null);
@@ -175,12 +211,12 @@ const Board = () => {
       if (filterData.length <= i) break;
       let curData = filterData[i];
       result.push(
-        <Row>
+        <Row className='dataList'>
           <td>{curData.number}</td>
           <td id='title'>
             <Link
               to={{
-                pathname: '/Board/' + curData.number,
+                pathname: '/Board/' + curData.id,
                 state: { isInfo: false },
               }}
             >
@@ -197,48 +233,85 @@ const Board = () => {
     }
     return result;
   };
+  const viewInfo = (info) => {
+    const result = [];
+    info.map((curData) => {
+      result.push(
+        <Row className='dataList'>
+          <td>{curData.number}</td>
+          <td id='title'>
+            <Link
+              to={{
+                pathname: '/Board/' + curData.id,
+              }}
+            >
+              {curData.title}
+            </Link>
+          </td>
+          <td>{curData.type}</td>
+          <td>{curData.numberOfPeople}</td>
+          <td>{curData.time}</td>
+          <td>{curData.teacher}</td>
+          <td>{curData.date}</td>
+        </Row>,
+      );
+    });
+    return result;
+  };
   return (
     <div className='inner'>
-      <SearchBox>
-        <SortTitle onChange={selectHandler} value={selected}>
-          {Object.entries(selectList).map((item) => (
-            <option value={item[0]} key={item[0]}>
-              {item[1]}
-            </option>
-          ))}
-        </SortTitle>
-        <SeacrchInput
-          type='text'
-          placeholder='검색어를 입력하세요.'
-          onChange={(e) => searchSpace(e)}
-        ></SeacrchInput>
-        <SearchButton>검색</SearchButton>
-      </SearchBox>
-      <Container>
-        <Table>
-          <thead>
-            <Row>
-              <th>번호</th>
-              <th id='title'>제목</th>
-              <th>종류</th>
-              <th>모집 인원</th>
-              <th>과외 시간</th>
-              <th>선생님</th>
-              <th>등록일</th>
-            </Row>
-          </thead>
-          <tbody>{contentList(viewingListCount)}</tbody>
-        </Table>
-      </Container>
-      <ButtonBox>
-        <AddBoardListButton
-          onClick={() => {
-            setViewingListCount(viewingListCount + 5);
-          }}
-        >
-          더보기
-        </AddBoardListButton>
-      </ButtonBox>
+      <main>
+        <SearchBox>
+          <SortTitle onChange={selectHandler} value={selected}>
+            {Object.entries(selectList).map((item) => (
+              <option value={item[0]} key={item[0]}>
+                {item[1]}
+              </option>
+            ))}
+          </SortTitle>
+          <SeacrchInput
+            type='text'
+            placeholder='검색어를 입력하세요.'
+            onChange={(e) => searchSpace(e)}
+          ></SeacrchInput>
+          <SearchButton>검색</SearchButton>
+        </SearchBox>
+        <Container>
+          <Table>
+            <thead>
+              <Row>
+                <th>번호</th>
+                <th id='title'>제목</th>
+                <th>종류</th>
+                <th>모집 인원</th>
+                <th>과외 시간</th>
+                <th>선생님</th>
+                <th>등록일</th>
+              </Row>
+            </thead>
+            <tbody>
+              {viewInfo(info)}
+              {contentList(viewingListCount)}
+            </tbody>
+          </Table>
+        </Container>
+        <ButtonBox>
+          <AddBoardListButton
+            onClick={() => {
+              setViewingListCount(viewingListCount + 5);
+            }}
+          >
+            더보기
+          </AddBoardListButton>
+          <Link
+            to={{
+              pathname: '/Board/PostList',
+            }}
+          >
+            <PostButton>글쓰기</PostButton>
+          </Link>
+        </ButtonBox>
+      </main>
     </div>
   );
 };
