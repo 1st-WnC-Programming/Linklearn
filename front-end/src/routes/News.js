@@ -6,6 +6,7 @@ import { Link, useParams } from 'react-router-dom';
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 
 import ReactMarkdown from 'react-markdown';
+import { useState } from 'react';
 
 const TitleBox = styled.div`
   width: 1000px;
@@ -36,34 +37,56 @@ const Content = styled.div`
   min-height: 500px;
   /* background-color: red; */
 `;
+
 const News = () => {
   const { id } = useParams();
-  return (
-    <div className='inner'>
-      <main>
+  const [edit, setEdit] = useState(false);
+  const [title, setTitle] = useState('제목입니다');
+  const [myContent, setMyContent] = useState('내용입니다.');
+  const viewMode = () => {
+    return (
+      <>
         <TitleBox>
-          <h1>제목입니다</h1>
+          <h1>{title}</h1>
         </TitleBox>
-        {/* <Editor
-          previewStyle='vertical'
-          height='400px'
-          initialEditType='markdown'
-          useCommandShortcut={true}
-          initialValue='마크다운으로 내용을 입력하세요.'
-        /> */}
-        <Content>{id}</Content>
+        <Content>{myContent}</Content>
         <ButtonBox>
           <Link
             to={{
               pathname: '/Board/',
-              state: { isInfo: false },
             }}
           >
             <PostButton>취소</PostButton>
           </Link>
+          <PostButton onClick={() => setEdit(true)}>수정</PostButton>
+        </ButtonBox>
+      </>
+    );
+  };
+  const editMode = () => {
+    return (
+      <>
+        <TitleBox>
+          <Title value={title}></Title>
+        </TitleBox>
+        <Editor
+          previewStyle='vertical'
+          height='400px'
+          initialEditType='markdown'
+          useCommandShortcut={true}
+          initialValue={myContent}
+        />
+        <ButtonBox>
+          <PostButton onClick={() => setEdit(false)}>취소</PostButton>
+          <PostButton>삭제</PostButton>
           <PostButton>수정</PostButton>
         </ButtonBox>
-      </main>
+      </>
+    );
+  };
+  return (
+    <div className='inner'>
+      <main>{edit === false ? viewMode() : editMode()}</main>
     </div>
   );
 };

@@ -44,7 +44,6 @@ const PostList = () => {
           useCommandShortcut={true}
           initialValue='마크다운으로 내용을 입력하세요.'
         />
-        <Viewer initialValue={test} height='400px' previewStyle='vertical' />
         <ButtonBox>
           <Link
             to={{
