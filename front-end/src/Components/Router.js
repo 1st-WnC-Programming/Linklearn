@@ -31,7 +31,7 @@ const AppRouter = ({ isLoggedIn, avataURL, info, setInfo, dataFile, setDataFile 
             element={<News info={info} setInfo={setInfo} dataFile={dataFile} setDataFile={setDataFile} />}
             exact
           />
-          <Route path='/Profile' element={<Profile />} />
+          <Route path='/Profile' element={<Profile avataURL={avataURL} />} />
         </Routes>
       </main>
     </Router>
