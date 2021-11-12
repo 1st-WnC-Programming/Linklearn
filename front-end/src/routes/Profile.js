@@ -10,7 +10,11 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
 } from 'firebase/auth';
+<<<<<<< HEAD
 import InfoModal from '../Components/InfoModal';
+=======
+import BlackListModal from '../Components/BlackListModal';
+>>>>>>> 8a4c581 (add blacklist modal)
 
 const ProfileWrap = styled.div`
   flex-direction: column;
@@ -149,10 +153,15 @@ const Profile = ({ avataURL }) => {
     if (name === 'info') {
       console.log(infoToggle);
       setInfoToggle((prev) => !prev);
-    } else if (name === 'blacklist') {
-      setBlacklistToggle((prev) => !prev);
+    } else if (name === 'blacklist'){
+      setBlacklistToggle((prev)=> !prev);
     }
+    
   };
+  
+  const closeBlackList = () => {
+    setBlacklistToggle(false);
+  }
 
   return (
     <main>
@@ -211,9 +220,13 @@ const Profile = ({ avataURL }) => {
             <Button color='#3c78c8' name='info' onClick={onModalClick}>
               정보 수정
             </Button>
+            <Button color='#3c78c8' name='blacklist' onClick={onModalClick}>
+              블랙리스트 관리
+            </Button>
             <Button color='#dc3545'>회원 탈퇴</Button>
           </>
         )}
+        <BlackListModal showModal={blacklistToggle} close={closeBlackList} />
       </ProfileWrap>
     </main>
   );
