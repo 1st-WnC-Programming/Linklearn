@@ -102,6 +102,10 @@ const Profile = ({ avataURL }) => {
       if (avata === null) {
         setAvataURL(unknown);
       }
+
+      if (name === null) {
+        setName(user.name);
+      }
     })
     .catch((error) => {
       console.log(error);
