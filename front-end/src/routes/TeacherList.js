@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../fbase';
 import styled from 'styled-components';
@@ -47,36 +47,28 @@ const TeacherList = () => {
 
   // db에 정확한 filed 성립되면 쓸 코드
   const [teacherList, setTeacherList] = useState([
-    {
-      image: 'das',
-      name: '김밍밍',
-      field: '수학',
-      starPoint: 4.5,
-      career: '수상',
-    },
-    {
-      image: 'das',
-      name: '류건열',
-      field: '수학',
-      starPoint: 4.7,
-      career: '수상',
-    },
-    {
-      image: 'das',
-      name: '김핑핑',
-      field: '영어',
-      starPoint: 4.3,
-      career: '수상',
-    },
+    // {
+    //   image: 'das',
+    //   name: '김밍밍',
+    //   field: '수학',
+    //   starPoint: 4.5,
+    //   career: '수상',
+    // },
+    // {
+    //   image: 'das',
+    //   name: '류건열',
+    //   field: '수학',
+    //   starPoint: 4.7,
+    //   career: '수상',
+    // },
+    // {
+    //   image: 'das',
+    //   name: '김핑핑',
+    //   field: '영어',
+    //   starPoint: 4.3,
+    //   career: '수상',
+    // },
   ]);
-  // const q = query(collection(db, 'users'), where('role', '==', 'teacher'));
-  // const unsubscribe = onSnapshot(q, (querySnapshot) => {
-  //   const teacher = [];
-  //   querySnapshot.forEach((doc) => {
-  //     teacher.push(doc);
-  //   });
-  //   setTeacherList(teacher);
-  // });
 
   const searchSpace = async (e) => {
     let search = await e.target.value;
@@ -85,19 +77,25 @@ const TeacherList = () => {
 
   const searchSelectHandler = (e) => {
     e.preventDefault();
-    setSearchSelected(e.currentTarget.value);
+    setSearchSelected(e.target.value);
   };
 
   const sortSelectHandler = (e) => {
     e.preventDefault();
-    setSortSelected(e.currentTarget.value);
+    setSortSelected(e.target.value);
+  };
+
+  useEffect(() => {
+    if (sortSelected == 'none') return;
+    console.log(sortSelected);
     const sort_condition = sortSelected.split('_');
     sort_condition[1] == 'Asc'
       ? sortAsc(teacherList, sort_condition[0])
       : sortDesc(teacherList, sort_condition[0]);
-  };
+  }, [sortSelected]);
 
   const sortAsc = (list, criteria) => {
+    console.log('asc');
     return list.sort((user1, user2) => {
       if (user1[criteria] > user2[criteria]) {
         return 1;
@@ -110,6 +108,7 @@ const TeacherList = () => {
   };
 
   const sortDesc = (list, criteria) => {
+    console.log('desc');
     return list.sort((user1, user2) => {
       if (user1[criteria] > user2[criteria]) {
         return -1;
@@ -121,6 +120,15 @@ const TeacherList = () => {
     });
   };
 
+  // const q = query(collection(db, 'users'), where('role', '==', 'tutor'));
+  // const unsubscribe = onSnapshot(q, (querySnapshot) => {
+  //   const teacher = [];
+  //   querySnapshot.forEach((doc) => {
+  //     teacher.push(doc);
+  //   });
+  //   console.log(teacher);
+  //   // setTeacherList(teacher);
+  // });
   // const searchHandler = (e) => {
   //   e.preventDefault();
   // };
@@ -146,6 +154,7 @@ const TeacherList = () => {
           <SearchInput type='text' placeholder='검색어를 입력하세요.' onChange={(e) => searchSpace(e)} />
           {/* <Button onClick={searchHandler}>검색</Button> */}
         </SearchBox>
+        {console.log(teacherList)}
         <CardProfile data={teacherList} target={searchSelected} keyword={keyword} />
       </div>
     </main>
