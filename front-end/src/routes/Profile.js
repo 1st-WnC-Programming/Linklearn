@@ -9,7 +9,7 @@ const ProfileWrap = styled.div`
   padding: 40px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 `;
 
 const Avata = styled.img`
@@ -36,7 +36,6 @@ const TeacherInfo = styled.div`
   padding: 30px;
   display: flex;
   align-items: center;
-  justify-content: center;
 `;
 
 const TeacherInfoTitle = styled.div`
@@ -49,6 +48,12 @@ const Info = styled.div`
   font-size: 20px;
   font-weight: 400;
   margin: 10px;
+`;
+
+const Role = styled.div`
+  font-size: 20px;
+  font-weight: 200;
+  margin: 5px;
 `;
 
 const Button = styled.button`
@@ -66,47 +71,73 @@ const Button = styled.button`
 const Profile = ({ avataURL }) => {
   const user = authService.currentUser;
 
-  const uid = user.uid;
-  const currentEmail = user.email;
-
-  const fetchUser = async () => {
-    const docRef = doc(db, 'users', uid);
-
-    const docSnap = await getDoc(docRef);
-
-    return docSnap.data();
-  };
-
-  // const [avataURL, setAvataURL] = useState(unknown);
+  const [avata, setAvataURL] = useState(avataURL);
   const [name, setName] = useState(user.displayName);
   const [starRate, setStarRate] = useState('5.0');
   const [email, setEmail] = useState(user.email);
-  const [field, setField] = useState('수학');
-  const [career, setCareer] = useState('-충남대 졸업 -과외 5년');
+  const [field, setField] = useState('없음');
+  const [career, setCareer] = useState('정보 수정을 눌러 입력해주세요');
+  const [role, setRole] = useState('');
 
-  // fetchUser().then((value) => {
-  //   setName(value.name);
-  //   setEmail(value.email);
-  //   if (value.photoURL !== null) {
-  //     setAvataURL(value.photoURL);
-  //   }
-  // });
+  const fetchUser = async () => {
+    const docRef = doc(db, 'users', user.uid);
+    const docSnap = await getDoc(docRef);
+    return docSnap.data();
+  };
+
+  fetchUser()
+    .then((user) => {
+      setRole(user.role);
+      setStarRate(user.rate);
+      setField(user.major);
+
+      if (avata === null) {
+        setAvataURL(unknown);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  const onTutorClick = () => {
+    setRole('tutor');
+  };
+
+  const onResignClick = () => {};
+
   return (
     <main>
       <ProfileWrap>
-        <Avata src={avataURL} />
-        <Name>{name}</Name>
-        <Email>{email}</Email>
-
-        <TeacherInfo>
-          <TeacherInfoTitle>튜터 정보</TeacherInfoTitle>
-          <Info>{field}</Info>
-          <Info> ★★★★★ {starRate} </Info>
-          <Info>{career}</Info>
-        </TeacherInfo>
-
-        <Button color='#3c78c8'>정보 수정</Button>
-        <Button color='#dc3545'>회원 탈퇴</Button>
+        {role === 'tutor' ? (
+          <>
+            <Avata src={avata} />
+            <Name>{name}</Name>
+            <Role>{role}</Role>
+            <Email>{email}</Email>
+            <TeacherInfo>
+              <TeacherInfoTitle>튜터 정보</TeacherInfoTitle>
+              <Info>{field}</Info>
+              <Info> ★★★★★ {starRate} </Info>
+              <Info>{career}</Info>
+            </TeacherInfo>
+            <Button color='#3c78c8'>정보 수정</Button>
+            <Button color='#dc3545'>회원 탈퇴</Button>
+          </>
+        ) : role === 'student' ? (
+          <>
+            <Avata src={avata} />
+            <Name>{name}</Name>
+            <Role>{role}</Role>
+            <Email>{email}</Email>
+            <Button color='#3c78c8' onClick={onTutorClick}>
+              튜터 신청
+            </Button>
+            <Button color='#3c78c8'>정보 수정</Button>
+            <Button color='#dc3545'>회원 탈퇴</Button>
+          </>
+        ) : (
+          ''
+        )}
       </ProfileWrap>
     </main>
   );
