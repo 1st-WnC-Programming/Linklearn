@@ -21,7 +21,7 @@ const AppRouter = ({ isLoggedIn, avataURL }) => {
           <Route path='/Register' element={<Register />} />
           <Route path='/Board/PostList' element={<PostList />} />
           <Route path='/Board/:id' element={<News />} exact />
-          <Route path='/Profile' element={<Profile />} />
+          <Route path='/Profile' element={<Profile avataURL={avataURL} />} />
         </Routes>
       </main>
     </Router>

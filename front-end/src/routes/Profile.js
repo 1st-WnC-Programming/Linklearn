@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import unknown from '../Images/Unknown_person.jpeg';
 import styled from 'styled-components';
 import { authService, db } from '../fbase';
-import { getAuth } from 'firebase/auth';
-import { doc, getDoc, collection} from "firebase/firestore";
+import { doc, getDoc, collection } from 'firebase/firestore';
 
 const ProfileWrap = styled.div`
   flex-direction: column;
@@ -42,7 +41,7 @@ const TeacherInfo = styled.div`
 
 const TeacherInfoTitle = styled.div`
   font-size: 30px;
-  font-weight:600;
+  font-weight: 600;
   margin: 15px;
 `;
 
@@ -64,42 +63,41 @@ const Button = styled.button`
   border: none;
 `;
 
-const Profile = () => {
-  const auth = getAuth();
-  const user = auth.currentUser;
+const Profile = ({ avataURL }) => {
+  const user = authService.currentUser;
+
   const uid = user.uid;
   const currentEmail = user.email;
-  
-  const fetchUser=async()=>{
-    const docRef = doc(db, "users", uid);
-    
-    const docSnap = await getDoc(docRef);
-    
-    return docSnap.data();
-  }
-  
 
-  const [avataURL, setAvataURL] = useState(unknown);
-  const [name, setName] = useState("");
+  const fetchUser = async () => {
+    const docRef = doc(db, 'users', uid);
+
+    const docSnap = await getDoc(docRef);
+
+    return docSnap.data();
+  };
+
+  // const [avataURL, setAvataURL] = useState(unknown);
+  const [name, setName] = useState(user.displayName);
   const [starRate, setStarRate] = useState('5.0');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(user.email);
   const [field, setField] = useState('수학');
   const [career, setCareer] = useState('-충남대 졸업 -과외 5년');
 
-  fetchUser().then(value =>{
-    setName(value.name);
-    setEmail(value.email);
-    if(value.photoURL !== null){
-      setAvataURL(value.photoURL);
-    }
-  });
-  return(
+  // fetchUser().then((value) => {
+  //   setName(value.name);
+  //   setEmail(value.email);
+  //   if (value.photoURL !== null) {
+  //     setAvataURL(value.photoURL);
+  //   }
+  // });
+  return (
     <main>
       <ProfileWrap>
-        <Avata src = {avataURL}/>
+        <Avata src={avataURL} />
         <Name>{name}</Name>
         <Email>{email}</Email>
-        
+
         <TeacherInfo>
           <TeacherInfoTitle>튜터 정보</TeacherInfoTitle>
           <Info>{field}</Info>
