@@ -10,6 +10,7 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
 } from 'firebase/auth';
+import InfoModal from '../Components/InfoModal';
 
 const ProfileWrap = styled.div`
   flex-direction: column;
@@ -84,7 +85,7 @@ const Profile = ({ avataURL }) => {
   const [starRate, setStarRate] = useState('5.0');
   const [email, setEmail] = useState(user.email);
   const [field, setField] = useState('없음');
-  const [career, setCareer] = useState('정보 수정을 눌러 입력해주세요');
+  const [career, setCareer] = useState('없음');
   const [role, setRole] = useState(null);
   const [infoToggle, setInfoToggle] = useState(false);
   const [blacklistToggle, setBlacklistToggle] = useState(false);
@@ -99,7 +100,6 @@ const Profile = ({ avataURL }) => {
     .then((user) => {
       setRole(user.role);
       setStarRate(user.rate);
-      setField(user.major);
 
       if (avata === null) {
         setAvataURL(unknown);
@@ -147,6 +147,7 @@ const Profile = ({ avataURL }) => {
     } = e;
 
     if (name === 'info') {
+      console.log(infoToggle);
       setInfoToggle((prev) => !prev);
     } else if (name === 'blacklist') {
       setBlacklistToggle((prev) => !prev);
@@ -187,6 +188,18 @@ const Profile = ({ avataURL }) => {
               정보 수정
             </Button>
             <Button color='#dc3545'>회원 탈퇴</Button>
+
+            {/* {infoToggle === true ? (
+              <InfoModal
+                name={name}
+                avata={avata}
+                field={field}
+                career={career}
+                onModalClick={onModalClick}
+              />
+            ) : (
+              ''
+            )} */}
           </>
         ) : (
           <>
