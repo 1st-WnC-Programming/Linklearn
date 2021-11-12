@@ -6,6 +6,9 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 
+import { authService, db } from '../fbase';
+import { doc, setDoc } from 'firebase/firestore';
+
 const TitleBox = styled.div`
   width: 1000px;
   margin: 30px auto;
@@ -63,6 +66,7 @@ const PostList = ({ info, setInfo, dataFile, setDataFile }) => {
   const [numberOfPeople, setNumberOfPeople] = useState('0');
   const [time, setTime] = useState('0');
   const [isInfo, setIsInfo] = useState(false);
+
   const selectHandler = (e) => {
     e.preventDefault();
     setType(e.target.value);
@@ -70,35 +74,37 @@ const PostList = ({ info, setInfo, dataFile, setDataFile }) => {
   const editorRef = useRef();
   const navigate = useNavigate();
 
+  const user = authService.currentUser;
   const btnClick = () => {
     const editorInstance = editorRef.current.getInstance();
     const getContent_md = editorInstance.getMarkdown();
     postData(getContent_md);
   };
-  const postData = (getContent_md) => {
+
+  const postData = async (getContent_md) => {
     if (title === '') {
       alert('제목을 입력하세요.');
     } else if (getContent_md === '') {
       alert('내용을 입력하세요.');
     } else {
       let type2 = type === 'personal' ? '개인' : '그룹';
-      let id2 = isInfo ? 1000 + info[info.length - 1].id + 1 : dataFile[dataFile.length - 1] + 1;
+      let id2 = isInfo ? info[info.length - 1].id + 1 : 1 + dataFile[dataFile.length - 1].id;
       let curData = {
-        number: 999,
         title: title,
         type: type2,
         numberOfPeople: numberOfPeople,
         time: time,
-        teacher: '전병민',
+        teacher: user.displayName,
         date: new Date().toISOString().slice(0, 10),
         content: getContent_md,
         id: id2,
       };
-
       if (isInfo) {
-        setInfo([...info, curData]);
+        // setInfo([...info, curData]);
+        await setDoc(doc(db, 'info', `${id2}`), curData);
       } else {
-        setDataFile([...dataFile, curData]);
+        // setDataFile([...dataFile, curData]);
+        await setDoc(doc(db, 'dataFile', `${id2}`), curData);
       }
       alert('게시되었습니다.');
       navigate('/Board');

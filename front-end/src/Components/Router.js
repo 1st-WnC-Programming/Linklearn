@@ -8,29 +8,19 @@ import Header from './Header';
 import PostList from '../routes/PostList';
 import News from '../routes/News';
 import Profile from '../routes/Profile';
-const AppRouter = ({ isLoggedIn, avataURL, info, setInfo, dataFile, setDataFile }) => {
+const AppRouter = ({ isLoggedIn, avataURL, info, dataFile }) => {
   return (
     <Router>
       <Header isLoggedIn={isLoggedIn} avataURL={avataURL} />
       <main>
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route
-            path='/Board'
-            element={<Board info={info} setInfo={setInfo} dataFile={dataFile} setDataFile={setDataFile} />}
-          />
+          <Route path='/Board' element={<Board info={info} dataFile={dataFile} />} />
           <Route path='/Auth' element={<Auth />} />
           <Route path='/TeacherList' element={<TeacherList />} />
           <Route path='/Register' element={<Register />} />
-          <Route
-            path='/Board/PostList'
-            element={<PostList info={info} setInfo={setInfo} dataFile={dataFile} setDataFile={setDataFile} />}
-          />
-          <Route
-            path='/Board/:id'
-            element={<News info={info} setInfo={setInfo} dataFile={dataFile} setDataFile={setDataFile} />}
-            exact
-          />
+          <Route path='/Board/PostList' element={<PostList info={info} dataFile={dataFile} />} />
+          <Route path='/Board/:id' element={<News info={info} dataFile={dataFile} />} exact />
           <Route path='/Profile' element={<Profile avataURL={avataURL} />} />
         </Routes>
       </main>

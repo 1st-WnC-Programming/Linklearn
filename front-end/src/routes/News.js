@@ -7,7 +7,8 @@ import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 
 import ReactMarkdown from 'react-markdown';
 import { useEffect, useState, useRef } from 'react';
-
+import { authService, db } from '../fbase';
+import { doc, setDoc, deleteDoc } from 'firebase/firestore';
 const TitleBox = styled.div`
   width: 1000px;
   margin: 30px auto;
@@ -72,7 +73,7 @@ const Titlespan = styled.span`
   font-weight: 500px;
   margin-right: 20px;
 `;
-const News = ({ info, setInfo, dataFile, setDataFile }) => {
+const News = ({ info, dataFile }) => {
   const { id } = useParams();
   const [edit, setEdit] = useState(false);
   const [title, setTitle] = useState('');
@@ -82,6 +83,7 @@ const News = ({ info, setInfo, dataFile, setDataFile }) => {
   const [isInfo, setIsInfo] = useState(false);
   const [curData, setCurData] = useState({});
 
+  const user = authService.currentUser;
   const editorRef = useRef();
   const selectHandler = (e) => {
     e.preventDefault();
@@ -143,7 +145,17 @@ const News = ({ info, setInfo, dataFile, setDataFile }) => {
           >
             <PostButton>뒤로가기</PostButton>
           </Link>
-          <PostButton onClick={() => setEdit(true)}>수정</PostButton>
+          <PostButton
+            onClick={() => {
+              if (user.displayName !== curData.teacher) {
+                alert('작성자만 수정할 수 있습니다.');
+              } else {
+                setEdit(true);
+              }
+            }}
+          >
+            수정
+          </PostButton>
         </ButtonBox>
       </>
     );
@@ -198,23 +210,19 @@ const News = ({ info, setInfo, dataFile, setDataFile }) => {
           ref={editorRef}
         />
         <ButtonBox>
-          <PostButton onClick={() => setEdit(false)}>취소</PostButton>
+          <PostButton
+            onClick={() => {
+              setEdit(false);
+            }}
+          >
+            취소
+          </PostButton>
           <Link
             to={{
               pathname: '/Board/',
             }}
           >
-            <PostButton
-              onClick={() => {
-                if (isInfo) {
-                  setInfo(deleteData(info));
-                } else {
-                  setDataFile(deleteData(dataFile));
-                }
-              }}
-            >
-              삭제
-            </PostButton>
+            <PostButton onClick={deleteData}>삭제</PostButton>
           </Link>
           <PostButton onClick={btnClick}>수정</PostButton>
         </ButtonBox>
@@ -226,7 +234,7 @@ const News = ({ info, setInfo, dataFile, setDataFile }) => {
     const getContent_md = editorInstance.getMarkdown();
     postData(getContent_md);
   };
-  const postData = (getContent_md) => {
+  const postData = async (getContent_md) => {
     if (title === '') {
       alert('제목을 입력하세요.');
     } else if (getContent_md === '') {
@@ -234,46 +242,32 @@ const News = ({ info, setInfo, dataFile, setDataFile }) => {
     } else {
       let type2 = type === 'personal' ? '개인' : '그룹';
       let curData = {
-        number: 999,
         title: title,
         type: type2,
         numberOfPeople: numberOfPeople,
         time: time,
-        teacher: '전병민',
+        teacher: user.displayName,
         date: new Date().toISOString().slice(0, 10),
         content: getContent_md,
         id: id,
       };
       setCurData(curData);
       if (isInfo) {
-        setInfo(changeData(info, curData));
+        await setDoc(doc(db, 'info', `${id}`), curData);
       } else {
-        setDataFile(changeData(dataFile, curData));
+        await setDoc(doc(db, 'dataFile', `${id}`), curData);
       }
       setEdit(false);
       alert('수정되었습니다.');
     }
   };
-  const changeData = (datas, curData) => {
-    const nextData = datas.map((data) => {
-      if (data.id == id) {
-        data.content = curData.content;
-        data.numberOfPeople = curData.numberOfPeople;
-        data.type = curData.type;
-        data.title = curData.title;
-        data.time = curData.time;
-        return data;
-      }
-      return data;
-    });
-    return nextData;
-  };
-  const deleteData = (datas) => {
-    const nextData = datas.filter((data) => data.id != id);
-
-    console.log(nextData);
+  const deleteData = async () => {
+    if (isInfo) {
+      await deleteDoc(doc(db, 'info', `${id}`));
+    } else {
+      await deleteDoc(doc(db, 'dataFile', `${id}`));
+    }
     alert('삭제되었습니다.');
-    return nextData;
   };
   return (
     <div className='inner'>
