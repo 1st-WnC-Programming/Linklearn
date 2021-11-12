@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { importantInfo, data } from '../Data';
 const Container = styled.div`
   display: flex;
   flex: 1;
@@ -86,10 +85,7 @@ const PostButton = styled.button`
   height: 50px;
   font-size: 18px;
 `;
-const Board = () => {
-  const [info, setInfo] = useState(importantInfo);
-  const [dataFile, setDataFile] = useState(data);
-
+const Board = ({ info, setInfo, dataFile, setDataFile }) => {
   const [keyword, setKeyword] = useState(null);
   const selectList = {
     all: '전체',
@@ -127,10 +123,10 @@ const Board = () => {
     });
     for (let i = 0; i < viewingListCount; i++) {
       if (filterData.length <= i) break;
-      let curData = filterData[i];
+      let curData = filterData[filterData.length - i - 1];
       result.push(
         <Row className='dataList'>
-          <td>{curData.number}</td>
+          <td>{filterData.length - i}</td>
           <td id='title'>
             <Link
               to={{
@@ -156,7 +152,7 @@ const Board = () => {
     info.map((curData) => {
       result.push(
         <Row className='dataList'>
-          <td>{curData.number}</td>
+          <td>공지</td>
           <td id='title'>
             <Link
               to={{

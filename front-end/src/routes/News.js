@@ -38,7 +38,7 @@ const Content = styled.div`
   /* background-color: red; */
 `;
 
-const News = () => {
+const News = ({ info, setInfo, dataFile, setDataFile }) => {
   const { id } = useParams();
   const [edit, setEdit] = useState(false);
   const [title, setTitle] = useState('제목입니다');
