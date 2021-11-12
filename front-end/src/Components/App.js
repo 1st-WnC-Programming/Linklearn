@@ -12,7 +12,7 @@ const App = () => {
 
   const [info, setInfo] = useState([]);
   const [dataFile, setDataFile] = useState([]);
-
+  const [reload, setReload] = useState(1);
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
       if (user) {
@@ -26,14 +26,13 @@ const App = () => {
       setInit(true);
     });
   }, []);
-  useEffect(() => {
-    setInterval(async () => {
-      let result = await getData('dataFile', 1);
-      setDataFile(result);
-      result = await getData('info', 1001);
-      setInfo(result);
-    }, 200);
-  }, []);
+  useEffect(async () => {
+    let result = await getData('dataFile', 1);
+    setDataFile(result);
+    result = await getData('info', 1001);
+    setInfo(result);
+    console.log(123);
+  }, [reload]);
   return (
     <>
       {init ? (
@@ -43,9 +42,8 @@ const App = () => {
             isLoggedIn={isLoggedIn}
             avataURL={avataURL}
             info={info}
-            setInfo={setInfo}
             dataFile={dataFile}
-            setDataFile={setDataFile}
+            setReload={setReload}
           />
           <Footer />
         </>
