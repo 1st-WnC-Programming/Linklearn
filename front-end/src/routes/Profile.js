@@ -150,8 +150,8 @@ const Profile = ({ avataURL }) => {
     if (name === 'info') {
       console.log(infoToggle);
       setInfoToggle((prev) => !prev);
-    } else if (name === 'blacklist'){
-      setBlacklistToggle((prev)=> !prev);
+    } else if (name === 'blacklist') {
+      setBlacklistToggle((prev) => !prev);
     }
     
   };

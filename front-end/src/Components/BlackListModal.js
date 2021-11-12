@@ -49,13 +49,11 @@ const ReportList = styled.div`
     width:50%;
     height:100%;
     float:left;
-    background-color:red;
 `;
 const BlackList = styled.div`
     width:50%;
     height:100%;
     float:right;
-    background-color:blue;
 `;
 const BlackListModal = ({showModal, close}) => {
     return (
