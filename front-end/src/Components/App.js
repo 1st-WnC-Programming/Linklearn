@@ -12,7 +12,6 @@ const App = () => {
 
   const [info, setInfo] = useState([
     {
-      number: '공지',
       title: '가',
       type: '그룹',
       numberOfPeople: '3',
@@ -20,10 +19,9 @@ const App = () => {
       teacher: '한석원',
       date: '2021-07-23',
       content: '',
-      id: '7',
+      id: '1001',
     },
     {
-      number: '공지',
       title: '나',
       type: '그룹',
       numberOfPeople: '3',
@@ -31,12 +29,11 @@ const App = () => {
       teacher: '한석원',
       date: '2021-07-23',
       content: '',
-      id: '8',
+      id: '1002',
     },
   ]);
   const [dataFile, setDataFile] = useState([
     {
-      number: '1',
       title: '가',
       type: '그룹',
       numberOfPeople: '3',
@@ -47,7 +44,6 @@ const App = () => {
       id: '1',
     },
     {
-      number: '2',
       title: '나',
       type: '그룹',
       numberOfPeople: '3',
@@ -58,7 +54,6 @@ const App = () => {
       id: '2',
     },
     {
-      number: '3',
       title: '다',
       type: '개인',
       numberOfPeople: '3',
@@ -69,7 +64,6 @@ const App = () => {
       id: '3',
     },
     {
-      number: '4',
       title: '제목입니다',
       type: '그룹',
       numberOfPeople: '3',
@@ -79,7 +73,6 @@ const App = () => {
       id: '4',
     },
     {
-      number: '5',
       title: '제목입니다',
       type: '그룹',
       numberOfPeople: '3',
@@ -90,7 +83,6 @@ const App = () => {
       id: '5',
     },
     {
-      number: '6',
       title: '제목입니다',
       type: '그룹',
       numberOfPeople: '3',

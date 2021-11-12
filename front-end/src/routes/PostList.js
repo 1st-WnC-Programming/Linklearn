@@ -2,12 +2,9 @@ import { React, useState, useRef } from 'react';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
-import { Viewer } from '@toast-ui/react-editor';
-import ReactMarkdown from 'react-markdown';
-const test = `# markdown`;
 
 const TitleBox = styled.div`
   width: 1000px;
@@ -63,7 +60,7 @@ const CheckBox = styled.input`
 const PostList = ({ info, setInfo, dataFile, setDataFile }) => {
   const [title, setTitle] = useState('');
   const [type, setType] = useState('personal');
-  const [number, setNumber] = useState('0');
+  const [numberOfPeople, setNumberOfPeople] = useState('0');
   const [time, setTime] = useState('0');
   const [isInfo, setIsInfo] = useState(false);
   const selectHandler = (e) => {
@@ -71,6 +68,7 @@ const PostList = ({ info, setInfo, dataFile, setDataFile }) => {
     setType(e.target.value);
   };
   const editorRef = useRef();
+  const navigate = useNavigate();
 
   const btnClick = () => {
     const editorInstance = editorRef.current.getInstance();
@@ -84,16 +82,17 @@ const PostList = ({ info, setInfo, dataFile, setDataFile }) => {
       alert('내용을 입력하세요.');
     } else {
       let type2 = type === 'personal' ? '개인' : '그룹';
+      let id2 = isInfo ? 1000 + info[info.length - 1].id + 1 : dataFile[dataFile.length - 1] + 1;
       let curData = {
         number: 999,
         title: title,
         type: type2,
-        numberOfPeople: number,
+        numberOfPeople: numberOfPeople,
         time: time,
         teacher: '전병민',
-        date: '2021-07-23',
+        date: new Date().toISOString().slice(0, 10),
         content: getContent_md,
-        id: info.length,
+        id: id2,
       };
 
       if (isInfo) {
@@ -102,6 +101,7 @@ const PostList = ({ info, setInfo, dataFile, setDataFile }) => {
         setDataFile([...dataFile, curData]);
       }
       alert('게시되었습니다.');
+      navigate('/Board');
     }
   };
   return (
@@ -138,9 +138,9 @@ const PostList = ({ info, setInfo, dataFile, setDataFile }) => {
             min='0'
             onChange={(e) => {
               e.preventDefault();
-              setNumber(e.target.value);
+              setNumberOfPeople(e.target.value);
             }}
-            value={number}
+            value={numberOfPeople}
           />
           <TextBox>과외 시간: </TextBox>
           <InputBox
