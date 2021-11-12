@@ -86,6 +86,8 @@ const Profile = ({ avataURL }) => {
   const [field, setField] = useState('없음');
   const [career, setCareer] = useState('정보 수정을 눌러 입력해주세요');
   const [role, setRole] = useState(null);
+  const [infoToggle, setInfoToggle] = useState(false);
+  const [blacklistToggle, setBlacklistToggle] = useState(false);
 
   const fetchUser = async () => {
     const docRef = doc(db, 'users', user.uid);
@@ -134,6 +136,11 @@ const Profile = ({ avataURL }) => {
   //   }
   // };
 
+  //TODO: 정보수정 모달창 제작중
+  const onModalClick = (e) => {
+    const {};
+  };
+
   return (
     <main>
       <ProfileWrap>
@@ -152,7 +159,9 @@ const Profile = ({ avataURL }) => {
               <Info> ★★★★★ {starRate} </Info>
               <Info>{career}</Info>
             </TeacherInfo>
-            <Button color='#3c78c8'>정보 수정</Button>
+            <Button color='#3c78c8' name='info'>
+              정보 수정
+            </Button>
             <Button color='#dc3545'>회원 탈퇴</Button>
           </>
         ) : role === 'student' ? (
@@ -162,7 +171,9 @@ const Profile = ({ avataURL }) => {
             <Role>{role}</Role>
             <Email>{email}</Email>
             <Button color='#3c78c8'>튜터 신청</Button>
-            <Button color='#3c78c8'>정보 수정</Button>
+            <Button color='#3c78c8' name='info'>
+              정보 수정
+            </Button>
             <Button color='#dc3545'>회원 탈퇴</Button>
           </>
         ) : (
@@ -172,7 +183,9 @@ const Profile = ({ avataURL }) => {
             <Role>{role}</Role>
             <Email>{email}</Email>
 
-            <Button color='#3c78c8'>정보 수정</Button>
+            <Button color='#3c78c8' name='info'>
+              정보 수정
+            </Button>
             <Button color='#dc3545'>회원 탈퇴</Button>
           </>
         )}
