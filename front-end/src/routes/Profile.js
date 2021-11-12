@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import unknown from '../Images/Unknown_person.jpeg';
 import styled from 'styled-components';
 import { authService, db } from '../fbase';
-import { doc, getDoc, collection } from 'firebase/firestore';
+import { doc, getDoc, collection, deleteDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import {
+  deleteUser,
+  EmailAuthCredential,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+} from 'firebase/auth';
 
 const ProfileWrap = styled.div`
   flex-direction: column;
@@ -70,6 +77,7 @@ const Button = styled.button`
 
 const Profile = ({ avataURL }) => {
   const user = authService.currentUser;
+  const navigate = useNavigate();
 
   const [avata, setAvataURL] = useState(avataURL);
   const [name, setName] = useState(user.displayName);
@@ -77,7 +85,7 @@ const Profile = ({ avataURL }) => {
   const [email, setEmail] = useState(user.email);
   const [field, setField] = useState('없음');
   const [career, setCareer] = useState('정보 수정을 눌러 입력해주세요');
-  const [role, setRole] = useState('');
+  const [role, setRole] = useState(null);
 
   const fetchUser = async () => {
     const docRef = doc(db, 'users', user.uid);
@@ -99,16 +107,40 @@ const Profile = ({ avataURL }) => {
       console.log(error);
     });
 
-  const onTutorClick = () => {
-    setRole('tutor');
-  };
+  //TODO: 회원 탈퇴 구현 중.....
 
-  const onResignClick = () => {};
+  // const onResignClick = () => {
+  //   if (window.confirm('정말 회원 탈퇴하시겠습니까?') === true) {
+  //     const userPassword = window.prompt('비밀번호를 입력해주세요');
+  //     console.log(userPassword);
+  //     const credential = EmailAuthProvider.credential(user.email, userPassword);
+
+  //     reauthenticateWithCredential(user, credential)
+  //       .then(() => {
+  //         console.log('ASDF');
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+
+  //     deleteUser(user)
+  //       .then(async () => {
+  //         await deleteDoc(doc(db, 'users', user.uid));
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //     navigate('/');
+  //   }
+  // };
 
   return (
     <main>
       <ProfileWrap>
-        {role === 'tutor' ? (
+        {role === null ? (
+          //TODO: 추후 로딩 애니메이션 넣어야함
+          'Loading'
+        ) : role === 'tutor' ? (
           <>
             <Avata src={avata} />
             <Name>{name}</Name>
@@ -129,14 +161,20 @@ const Profile = ({ avataURL }) => {
             <Name>{name}</Name>
             <Role>{role}</Role>
             <Email>{email}</Email>
-            <Button color='#3c78c8' onClick={onTutorClick}>
-              튜터 신청
-            </Button>
+            <Button color='#3c78c8'>튜터 신청</Button>
             <Button color='#3c78c8'>정보 수정</Button>
             <Button color='#dc3545'>회원 탈퇴</Button>
           </>
         ) : (
-          ''
+          <>
+            <Avata src={avata} />
+            <Name>{name}</Name>
+            <Role>{role}</Role>
+            <Email>{email}</Email>
+
+            <Button color='#3c78c8'>정보 수정</Button>
+            <Button color='#dc3545'>회원 탈퇴</Button>
+          </>
         )}
       </ProfileWrap>
     </main>
