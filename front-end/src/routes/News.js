@@ -73,7 +73,7 @@ const Titlespan = styled.span`
   font-weight: 500px;
   margin-right: 20px;
 `;
-const News = ({ info, dataFile }) => {
+const News = ({ info, dataFile, setReload }) => {
   const { id } = useParams();
   const [edit, setEdit] = useState(false);
   const [title, setTitle] = useState('');
@@ -258,6 +258,7 @@ const News = ({ info, dataFile }) => {
         await setDoc(doc(db, 'dataFile', `${id}`), curData);
       }
       setEdit(false);
+      setReload(1);
       alert('수정되었습니다.');
     }
   };
@@ -267,6 +268,7 @@ const News = ({ info, dataFile }) => {
     } else {
       await deleteDoc(doc(db, 'dataFile', `${id}`));
     }
+    setReload(1);
     alert('삭제되었습니다.');
   };
   return (
