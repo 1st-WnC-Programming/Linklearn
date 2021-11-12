@@ -116,6 +116,10 @@ const Auth = () => {
             name: user.displayName,
             photoURL: user.photoURL,
             role: 'student',
+            major: null,
+            rate: 0,
+            bio: null,
+            numberOfReport: 0,
             createdAt: serverTimestamp(),
           });
 
@@ -146,6 +150,10 @@ const Auth = () => {
             name: user.displayName,
             photoURL: user.photoURL,
             role: 'student',
+            major: null,
+            rate: 0,
+            bio: null,
+            numberOfReport: 0,
             createdAt: serverTimestamp(),
           });
 
