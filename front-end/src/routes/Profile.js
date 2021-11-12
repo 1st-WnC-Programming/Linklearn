@@ -10,11 +10,8 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
 } from 'firebase/auth';
-<<<<<<< HEAD
 import InfoModal from '../Components/InfoModal';
-=======
 import BlackListModal from '../Components/BlackListModal';
->>>>>>> 8a4c581 (add blacklist modal)
 
 const ProfileWrap = styled.div`
   flex-direction: column;
