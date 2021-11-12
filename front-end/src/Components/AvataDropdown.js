@@ -49,7 +49,7 @@ const ItemName = styled.p`
 
 const AvataDropdown = ({ avataURL }) => {
   const navigate = useNavigate();
-  const dropdownItems = [{ name: '프로필', path: '/Profile', pathName: 'profile' }];
+  const dropdownItems = [{ id: 1, name: '프로필', path: '/Profile', pathName: 'profile' }];
   const [isActive, setIsActive] = useState(false);
   const [item, setItem] = useState(null);
 
