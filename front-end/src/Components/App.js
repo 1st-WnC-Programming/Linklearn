@@ -110,6 +110,7 @@ const App = () => {
           setAvataURL(user.photoURL);
         }
       } else {
+        setAvataURL(false);
         setIsLoggedIn(false);
       }
       setInit(true);

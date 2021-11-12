@@ -101,9 +101,6 @@ const Profile = ({ avataURL }) => {
       setStarRate(user.rate);
       setField(user.major);
 
-      if (name === null) {
-        setName(user.name);
-      }
       if (avata === null) {
         setAvataURL(unknown);
       }
@@ -111,8 +108,7 @@ const Profile = ({ avataURL }) => {
     .catch((error) => {
       console.log(error);
     });
-    //TODO: 블랙리스트 모달창
-    
+
   //TODO: 회원 탈퇴 구현 중.....
 
   // const onResignClick = () => {
@@ -194,15 +190,10 @@ const Profile = ({ avataURL }) => {
             <Name>{name}</Name>
             <Role>{role}</Role>
             <Email>{email}</Email>
-<<<<<<< HEAD
 
             <Button color='#3c78c8' name='info' onClick={onModalClick}>
               정보 수정
             </Button>
-=======
-            <Button color='#3c78c8'>블랙리스트 관리</Button>
-            <Button color='#3c78c8'>정보 수정</Button>
->>>>>>> a6d6e76 (add button)
             <Button color='#dc3545'>회원 탈퇴</Button>
           </>
         )}
