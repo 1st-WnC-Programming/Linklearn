@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import unknown from '../Images/Unknown_person.jpeg';
 import styled from 'styled-components';
+import { authService, db } from '../fbase';
+import { getAuth } from 'firebase/auth';
+import { doc, getDoc, collection} from "firebase/firestore";
 
 const ProfileWrap = styled.div`
   flex-direction: column;
@@ -62,13 +65,34 @@ const Button = styled.button`
 `;
 
 const Profile = () => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const uid = user.uid;
+  const currentEmail = user.email;
+  
+  const fetchUser=async()=>{
+    const docRef = doc(db, "users", uid);
+    
+    const docSnap = await getDoc(docRef);
+    
+    return docSnap.data();
+  }
+  
+
   const [avataURL, setAvataURL] = useState(unknown);
-  const [name, setName] = useState('홍길동');
+  const [name, setName] = useState("");
   const [starRate, setStarRate] = useState('5.0');
-  const [email, setEmail] = useState('temp@gmail.com');
+  const [email, setEmail] = useState('');
   const [field, setField] = useState('수학');
   const [career, setCareer] = useState('-충남대 졸업 -과외 5년');
 
+  fetchUser().then(value =>{
+    setName(value.name);
+    setEmail(value.email);
+    if(value.photoURL !== null){
+      setAvataURL(value.photoURL);
+    }
+  });
   return(
     <main>
       <ProfileWrap>
