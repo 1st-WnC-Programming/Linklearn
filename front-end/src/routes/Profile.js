@@ -138,7 +138,15 @@ const Profile = ({ avataURL }) => {
 
   //TODO: 정보수정 모달창 제작중
   const onModalClick = (e) => {
-    const {};
+    const {
+      target: { name },
+    } = e;
+
+    if (name === 'info') {
+      setInfoToggle((prev) => !prev);
+    } else if (name === 'blacklist') {
+      setBlacklistToggle((prev) => !prev);
+    }
   };
 
   return (
@@ -159,7 +167,7 @@ const Profile = ({ avataURL }) => {
               <Info> ★★★★★ {starRate} </Info>
               <Info>{career}</Info>
             </TeacherInfo>
-            <Button color='#3c78c8' name='info'>
+            <Button color='#3c78c8' name='info' onClick={onModalClick}>
               정보 수정
             </Button>
             <Button color='#dc3545'>회원 탈퇴</Button>
@@ -171,7 +179,7 @@ const Profile = ({ avataURL }) => {
             <Role>{role}</Role>
             <Email>{email}</Email>
             <Button color='#3c78c8'>튜터 신청</Button>
-            <Button color='#3c78c8' name='info'>
+            <Button color='#3c78c8' name='info' onClick={onModalClick}>
               정보 수정
             </Button>
             <Button color='#dc3545'>회원 탈퇴</Button>
@@ -183,7 +191,7 @@ const Profile = ({ avataURL }) => {
             <Role>{role}</Role>
             <Email>{email}</Email>
 
-            <Button color='#3c78c8' name='info'>
+            <Button color='#3c78c8' name='info' onClick={onModalClick}>
               정보 수정
             </Button>
             <Button color='#dc3545'>회원 탈퇴</Button>
