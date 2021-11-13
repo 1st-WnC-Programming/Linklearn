@@ -130,6 +130,9 @@ const TeacherList = () => {
         career: doc.data().bio,
       };
       tutor.push(temp);
+      console.log(tutor);
+      setTeacherList((teacherList) => [...teacherList, temp]);
+      console.log(teacherList);
     });
     // console.log(tutor.join(', '));
     // setTeacherList(teacher);
