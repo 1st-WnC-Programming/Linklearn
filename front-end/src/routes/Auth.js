@@ -183,14 +183,14 @@ const Auth = () => {
     <LoginWrap>
       <LoginBox>
         <Logo>LOGIN</Logo>
-        <TextField placeholder={'이메일'} id='email' name='email' onChange={onTextChange}></TextField>
+        <TextField placeholder={'이메일'} id='email' name='email' onChange={onTextChange} />
         <TextField
           type='password'
           placeholder={'비밀번호'}
           id='password'
           name='password'
           onChange={onTextChange}
-        ></TextField>
+        />
 
         {<div style={{ color: 'red' }}>{error}</div>}
 
