@@ -60,7 +60,7 @@ const TextBox = styled.label`
 const CheckBox = styled.input`
   margin-right: 50px;
 `;
-const PostList = ({ info, dataFile, serReload }) => {
+const PostList = ({ info, dataFile, setReload }) => {
   const [title, setTitle] = useState('');
   const [type, setType] = useState('personal');
   const [numberOfPeople, setNumberOfPeople] = useState('0');
@@ -106,9 +106,9 @@ const PostList = ({ info, dataFile, serReload }) => {
         // setDataFile([...dataFile, curData]);
         await setDoc(doc(db, 'dataFile', `${id2}`), curData);
       }
-      serReload(1);
       alert('게시되었습니다.');
       navigate('/Board');
+      setReload(1);
     }
   };
   return (
