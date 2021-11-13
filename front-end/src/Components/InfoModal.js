@@ -223,7 +223,7 @@ const InfoModal = ({ userObj, avata, field, career, name, role, onModalClick }) 
             <Text>이름</Text>
             <Name
               name='name'
-              autocomplete='off'
+              autoComplete='off'
               placeholder='이름을 입력하세요'
               value={tempName}
               onChange={onTextChange}
@@ -236,7 +236,7 @@ const InfoModal = ({ userObj, avata, field, career, name, role, onModalClick }) 
                 <Text>분야</Text>
                 <Info
                   name='field'
-                  autocomplete='off'
+                  autoComplete='off'
                   placeholder='분야를 입력하세요'
                   value={tempField}
                   onChange={onTextChange}
@@ -246,7 +246,7 @@ const InfoModal = ({ userObj, avata, field, career, name, role, onModalClick }) 
                 <Text>경력</Text>
                 <Bio
                   name='career'
-                  autocomplete='off'
+                  autoComplete='off'
                   placeholder='경력을 입력하세요'
                   value={tempCareer}
                   style={{ height: 150 }}
