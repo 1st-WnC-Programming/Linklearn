@@ -1,4 +1,4 @@
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useEffect } from 'react';
 import styled from 'styled-components';
 import { authService, db } from '../fbase';
@@ -105,11 +105,25 @@ const InfoModal = ({
     else if (name === 'career') setCareer(value);
   };
 
-  const onButtonClick = () => {
-    console.log(name);
-    console.log(field);
-    console.log(career);
+  const onButtonClick = async (e) => {
+    try {
+      await setDoc(
+        doc(db, 'users', user.uid),
+        {
+          name: name,
+          photoURL: avata,
+          major: field,
+          bio: career,
+        },
+        { merge: true },
+      );
+
+      onModalClick(e);
+    } catch (error) {
+      console.log(error);
+    }
   };
+
   return (
     <>
       <Background onClick={onCancelClick} name='info' />
@@ -124,7 +138,7 @@ const InfoModal = ({
         <Button color='#dc3545' name='info' onClick={onCancelClick}>
           취소
         </Button>
-        <Button color='#3c78c8' onClick={onButtonClick}>
+        <Button color='#3c78c8' name='info' onClick={onButtonClick}>
           확인
         </Button>
       </ModalContainer>

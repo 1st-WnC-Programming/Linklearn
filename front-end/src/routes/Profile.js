@@ -189,7 +189,7 @@ const Profile = ({ avataURL }) => {
           'Loading'
         ) : role === 'tutor' ? (
           <>
-            <div>
+            <Infos>
               <Avata src={avata} />
               <Name>{name}</Name>
               <Role>{role}</Role>
@@ -200,13 +200,13 @@ const Profile = ({ avataURL }) => {
                 <Info> ★★★★★ {starRate} </Info>
                 <Info>{career}</Info>
               </TeacherInfo>
-            </div>
-            <div>
+            </Infos>
+            <Buttons>
               <Button color='#3c78c8' name='info' onClick={onModalClick}>
                 정보 수정
               </Button>
               <Button color='#dc3545'>회원 탈퇴</Button>
-            </div>
+            </Buttons>
           </>
         ) : role === 'student' ? (
           <>
