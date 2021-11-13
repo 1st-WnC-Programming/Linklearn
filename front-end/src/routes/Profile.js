@@ -19,6 +19,7 @@ const ProfileWrap = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 800px;
 `;
 
 const Avata = styled.img`
@@ -75,6 +76,20 @@ const Button = styled.button`
   margin: 8px 0;
   width: 300px;
   border: none;
+`;
+
+const Infos = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Buttons = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Profile = ({ avataURL }) => {
@@ -153,12 +168,11 @@ const Profile = ({ avataURL }) => {
     } else if (name === 'blacklist') {
       setBlacklistToggle((prev) => !prev);
     }
-    
   };
-  
+
   const closeBlackList = () => {
     setBlacklistToggle(false);
-  }
+  };
 
   return (
     <main>
@@ -168,20 +182,24 @@ const Profile = ({ avataURL }) => {
           'Loading'
         ) : role === 'tutor' ? (
           <>
-            <Avata src={avata} />
-            <Name>{name}</Name>
-            <Role>{role}</Role>
-            <Email>{email}</Email>
-            <TeacherInfo>
-              <TeacherInfoTitle>튜터 정보</TeacherInfoTitle>
-              <Info>{field}</Info>
-              <Info> ★★★★★ {starRate} </Info>
-              <Info>{career}</Info>
-            </TeacherInfo>
-            <Button color='#3c78c8' name='info' onClick={onModalClick}>
-              정보 수정
-            </Button>
-            <Button color='#dc3545'>회원 탈퇴</Button>
+            <div>
+              <Avata src={avata} />
+              <Name>{name}</Name>
+              <Role>{role}</Role>
+              <Email>{email}</Email>
+              <TeacherInfo>
+                <TeacherInfoTitle>튜터 정보</TeacherInfoTitle>
+                <Info>{field}</Info>
+                <Info> ★★★★★ {starRate} </Info>
+                <Info>{career}</Info>
+              </TeacherInfo>
+            </div>
+            <div>
+              <Button color='#3c78c8' name='info' onClick={onModalClick}>
+                정보 수정
+              </Button>
+              <Button color='#dc3545'>회원 탈퇴</Button>
+            </div>
           </>
         ) : role === 'student' ? (
           <>
@@ -194,36 +212,33 @@ const Profile = ({ avataURL }) => {
               정보 수정
             </Button>
             <Button color='#dc3545'>회원 탈퇴</Button>
-
-            {/* {infoToggle === true ? (
-              <InfoModal
-                name={name}
-                avata={avata}
-                field={field}
-                career={career}
-                onModalClick={onModalClick}
-              />
-            ) : (
-              ''
-            )} */}
           </>
         ) : (
           <>
-            <Avata src={avata} />
-            <Name>{name}</Name>
-            <Role>{role}</Role>
-            <Email>{email}</Email>
+            <Infos>
+              <Avata src={avata} />
+              <Name>{name}</Name>
+              <Role>{role}</Role>
+              <Email>{email}</Email>
+            </Infos>
 
-            <Button color='#3c78c8' name='info' onClick={onModalClick}>
-              정보 수정
-            </Button>
-            <Button color='#3c78c8' name='blacklist' onClick={onModalClick}>
-              블랙리스트 관리
-            </Button>
-            <Button color='#dc3545'>회원 탈퇴</Button>
+            <Buttons>
+              <Button color='#3c78c8' name='info' onClick={onModalClick}>
+                정보 수정
+              </Button>
+              <Button color='#3c78c8' name='blacklist' onClick={onModalClick}>
+                블랙리스트 관리
+              </Button>
+              <Button color='#dc3545'>회원 탈퇴</Button>
+            </Buttons>
           </>
         )}
         <BlackListModal showModal={blacklistToggle} close={closeBlackList} />
+        {infoToggle === true ? (
+          <InfoModal name={name} avata={avata} field={field} career={career} onModalClick={onModalClick} />
+        ) : (
+          ''
+        )}
       </ProfileWrap>
     </main>
   );

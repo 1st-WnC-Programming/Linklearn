@@ -58,7 +58,7 @@ const InfoModal = ({ avata, name, field, career, onModalClick }) => {
       <Info type='text' value={field} />
       경력(200자 이하)
       <Info type='text' value={career} style={{ height: 200 }} />
-      <Button color='#dc3545' onClick={onModalClick}>
+      <Button color='#dc3545' name='info' onClick={onModalClick}>
         취소
       </Button>
       <Button color='#3c78c8'>확인</Button>
