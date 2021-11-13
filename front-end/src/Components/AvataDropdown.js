@@ -80,8 +80,8 @@ const AvataDropdown = ({ avataURL }) => {
 
       <DropdownMenu isActive={isActive}>
         {dropdownItems.map((item) => (
-          <Link to={item.path}>
-            <DropdownItemContainer id='item' key={item.id} onClick={onSelectItem}>
+          <Link to={item.path} key={item.id}>
+            <DropdownItemContainer id='item' onClick={onSelectItem}>
               <ItemName id='item_name'>{item.name}</ItemName>
             </DropdownItemContainer>
           </Link>
