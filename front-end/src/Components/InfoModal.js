@@ -1,7 +1,10 @@
+import { updateProfile } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { useEffect } from 'react';
+import { getDownloadURL, ref, uploadString } from 'firebase/storage';
+import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { authService, db } from '../fbase';
+import { v4 } from 'uuid';
+import { authService, db, storageService } from '../fbase';
 
 const Background = styled.div`
   position: fixed;
@@ -23,7 +26,7 @@ const ModalContainer = styled.div`
   align-items: center;
 
   z-index: 1002;
-  border-radius: 30px;
+  border-radius: 20px;
   position: fixed;
   transform: translate(-50%, -50%);
   left: 50%;
@@ -36,6 +39,9 @@ const Avata = styled.img`
   height: 150px;
   border-radius: 50%;
   margin-bottom: 15px;
+  &:hover {
+    opacity: 0.6;
+  }
 `;
 
 const Name = styled.input`
@@ -64,7 +70,12 @@ const Button = styled.button`
   border: none;
 `;
 
+const PhotoSelect = styled.input`
+  display: none;
+`;
+
 const InfoModal = ({
+  userObj,
   avata,
   name,
   field,
@@ -76,6 +87,8 @@ const InfoModal = ({
   setCareer,
 }) => {
   const user = authService.currentUser;
+  const [selectedImg, setSelectedImg] = useState(avata);
+  const uploadPhotoRef = useRef();
 
   const fetchUser = async () => {
     const docRef = doc(db, 'users', user.uid);
@@ -107,6 +120,23 @@ const InfoModal = ({
 
   const onButtonClick = async (e) => {
     try {
+      console.log(userObj.uid);
+      console.log(selectedImg);
+
+      if (selectedImg !== avata) {
+        const fileRef = ref(storageService, `${userObj.uid}/${v4()}`);
+        const res = await uploadString(fileRef, selectedImg, 'data_url');
+        const fileURL = await getDownloadURL(res.ref);
+
+        updateProfile(user, { photoURL: fileURL })
+          .then(() => {
+            console.log('proflie update');
+          })
+          .catch((error) => {
+            console.log();
+          });
+      }
+
       await setDoc(
         doc(db, 'users', user.uid),
         {
@@ -124,11 +154,32 @@ const InfoModal = ({
     }
   };
 
+  const onPhotoClick = () => {
+    uploadPhotoRef.current.click();
+  };
+
+  const onImgChange = async (e) => {
+    const {
+      target: { files },
+    } = e;
+
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onloadend = (finishedEvent) => {
+      const {
+        currentTarget: { result },
+      } = finishedEvent;
+      setSelectedImg(result);
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
     <>
       <Background onClick={onCancelClick} name='info' />
       <ModalContainer>
-        <Avata src={avata} />
+        <PhotoSelect type='file' accept='image/*' ref={uploadPhotoRef} name='photo' onChange={onImgChange} />
+        <Avata src={selectedImg} onClick={onPhotoClick} />
         이름
         <Name name='name' value={name} onChange={onTextChange} />
         분야

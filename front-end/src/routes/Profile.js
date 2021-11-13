@@ -92,7 +92,7 @@ const Buttons = styled.div`
   align-items: center;
 `;
 
-const Profile = ({ avataURL }) => {
+const Profile = ({ avataURL, userObj }) => {
   const user = authService.currentUser;
   const navigate = useNavigate();
 
@@ -243,6 +243,7 @@ const Profile = ({ avataURL }) => {
         <BlackListModal showModal={blacklistToggle} close={closeBlackList} />
         {infoToggle === true ? (
           <InfoModal
+            userObj={userObj}
             name={name}
             avata={avata}
             field={field}
