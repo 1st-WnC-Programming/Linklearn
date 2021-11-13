@@ -139,24 +139,6 @@ const InfoModal = ({ userObj, avata, field, career, name, role, onModalClick }) 
   const [tempCareer, setTempCareer] = useState(career);
   const uploadPhotoRef = useRef();
 
-  // const fetchUser = async () => {
-  //   const docRef = doc(db, 'users', user.uid);
-  //   const docSnap = await getDoc(docRef);
-  //   return docSnap.data();
-  // };
-
-  // const onCancelClick = (e) => {
-  //   fetchUser()
-  //     .then((user) => {
-  //       setField(user.major);
-  //       setCareer(user.bio);
-  //       onModalClick(e);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
-
   const onTextChange = (e) => {
     const {
       target: { name, value },
