@@ -11,6 +11,7 @@ const getData = async (type, id) => {
     docRef = doc(db, `${type}`, `${idx}`);
     docSnap = await getDoc(docRef);
   }
+  console.log(result);
   return result;
 };
 
