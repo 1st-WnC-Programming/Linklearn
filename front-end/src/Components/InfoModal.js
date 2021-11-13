@@ -97,7 +97,7 @@ const Button = styled.button`
   &:hover {
     background-color: ${({ color }) => color};
     color: white;
-    transition: all ease-out 0.4s 0s;
+    transition: all ease-out 0.3s 0s;
   }
 `;
 
@@ -107,12 +107,6 @@ const Infos = styled.div`
   justify-content: center;
   align-items: center;
   margin-bottom: 40px;
-`;
-
-const Buttons = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
 const TextSpace = styled.div`
@@ -145,7 +139,6 @@ const InfoModal = ({
   career,
   role,
   onModalClick,
-  setAvataURL,
   setName,
   setField,
   setCareer,
