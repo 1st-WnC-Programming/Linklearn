@@ -101,9 +101,8 @@ const Profile = ({ avataURL, userObj }) => {
   const navigate = useNavigate();
 
   const [avata, setAvataURL] = useState(avataURL);
-  const [name, setName] = useState(user.displayName);
+  const [name, setName] = useState('');
   const [starRate, setStarRate] = useState('5.0');
-  const [email, setEmail] = useState(user.email);
   const [field, setField] = useState('');
   const [career, setCareer] = useState('');
   const [role, setRole] = useState(null);
@@ -116,29 +115,22 @@ const Profile = ({ avataURL, userObj }) => {
     return docSnap.data();
   };
 
-  useEffect(() => {
-    fetchUser()
-      .then((user) => {
-        setRole(user.role);
-        setStarRate(user.rate);
-        setField(user.major);
-        setCareer(user.bio);
+  fetchUser()
+    .then((user) => {
+      setRole(user.role);
+      setStarRate(user.rate);
+      setField(user.major);
+      setCareer(user.bio);
 
-        if (avata === null) {
-          setAvataURL(unknown);
-        }
+      setName(user.name);
 
-        if (name === null) {
-          setName(user.name);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    return () => {
-      // cleanup;
-    };
-  }, []);
+      if (avata === null) {
+        setAvataURL(unknown);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
   //TODO: 회원 탈퇴 구현 중.....
 
@@ -197,7 +189,7 @@ const Profile = ({ avataURL, userObj }) => {
               <Avata src={avata} />
               <Name>{name}</Name>
               <Role>{role}</Role>
-              <Email>{email}</Email>
+              <Email>{user.email}</Email>
               <TeacherInfo>
                 <TeacherInfoTitle>튜터 정보</TeacherInfoTitle>
                 <Info>분야 : {field}</Info>
@@ -218,7 +210,7 @@ const Profile = ({ avataURL, userObj }) => {
               <Avata src={avata} />
               <Name>{name}</Name>
               <Role>{role}</Role>
-              <Email>{email}</Email>
+              <Email>{user.email}</Email>
             </Infos>
 
             <Buttons>
@@ -235,7 +227,7 @@ const Profile = ({ avataURL, userObj }) => {
               <Avata src={avata} />
               <Name>{name}</Name>
               <Role>{role}</Role>
-              <Email>{email}</Email>
+              <Email>{user.email}</Email>
             </Infos>
 
             <Buttons>
@@ -260,9 +252,6 @@ const Profile = ({ avataURL, userObj }) => {
             role={role}
             onModalClick={onModalClick}
             setAvataURL={setAvataURL}
-            setName={setName}
-            setField={setField}
-            setCareer={setCareer}
           />
         ) : (
           ''

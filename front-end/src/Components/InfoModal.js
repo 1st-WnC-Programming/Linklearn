@@ -131,48 +131,39 @@ const Title = styled.div`
   font-weight: 700;
 `;
 
-const InfoModal = ({
-  userObj,
-  avata,
-  name,
-  field,
-  career,
-  role,
-  onModalClick,
-  setName,
-  setField,
-  setCareer,
-}) => {
+const InfoModal = ({ userObj, avata, field, career, name, role, onModalClick }) => {
   const user = authService.currentUser;
   const [selectedImg, setSelectedImg] = useState(avata);
+  const [tempName, setTempName] = useState(name);
+  const [tempField, setTempField] = useState(field);
+  const [tempCareer, setTempCareer] = useState(career);
   const uploadPhotoRef = useRef();
 
-  const fetchUser = async () => {
-    const docRef = doc(db, 'users', user.uid);
-    const docSnap = await getDoc(docRef);
-    return docSnap.data();
-  };
+  // const fetchUser = async () => {
+  //   const docRef = doc(db, 'users', user.uid);
+  //   const docSnap = await getDoc(docRef);
+  //   return docSnap.data();
+  // };
 
-  const onCancelClick = (e) => {
-    fetchUser()
-      .then((user) => {
-        setName(user.name);
-        setField(user.major);
-        setCareer(user.bio);
-        onModalClick(e);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  // const onCancelClick = (e) => {
+  //   fetchUser()
+  //     .then((user) => {
+  //       setField(user.major);
+  //       setCareer(user.bio);
+  //       onModalClick(e);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
 
   const onTextChange = (e) => {
     const {
       target: { name, value },
     } = e;
-    if (name === 'name') setName(value);
-    else if (name === 'field') setField(value);
-    else if (name === 'career') setCareer(value);
+    if (name === 'name') setTempName(value);
+    else if (name === 'field') setTempField(value);
+    else if (name === 'career') setTempCareer(value);
   };
 
   const onButtonClick = async (e) => {
@@ -197,10 +188,10 @@ const InfoModal = ({
       await setDoc(
         doc(db, 'users', user.uid),
         {
-          name: name,
+          name: tempName,
           photoURL: selectedImg,
-          major: field,
-          bio: career,
+          major: tempField,
+          bio: tempCareer,
         },
         { merge: true },
       );
@@ -233,11 +224,11 @@ const InfoModal = ({
 
   return (
     <>
-      <Background onClick={onCancelClick} name='info' />
+      <Background onClick={onModalClick} name='info' />
       <ModalContainer>
         <Infos>
           <Title>정보 수정</Title>
-          <CloseIcon name='info' onClick={onCancelClick}></CloseIcon>
+          <CloseIcon name='info' onClick={onModalClick}></CloseIcon>
           <PhotoSelect
             type='file'
             accept='image/*'
@@ -248,18 +239,37 @@ const InfoModal = ({
           <Avata src={selectedImg} onClick={onPhotoClick} />
           <TextSpace>
             <Text>이름</Text>
-            <Name name='name' placeholder='이름을 입력하세요' value={name} onChange={onTextChange} />
+            <Name
+              name='name'
+              autocomplete='off'
+              placeholder='이름을 입력하세요'
+              value={tempName}
+              onChange={onTextChange}
+            />
           </TextSpace>
 
           {role === 'tutor' ? (
             <>
               <TextSpace>
                 <Text>분야</Text>
-                <Info name='field' value={field} onChange={onTextChange} />
+                <Info
+                  name='field'
+                  autocomplete='off'
+                  placeholder='분야를 입력하세요'
+                  value={tempField}
+                  onChange={onTextChange}
+                />
               </TextSpace>
               <TextSpace>
                 <Text>경력</Text>
-                <Bio name='career' value={career} style={{ height: 150 }} onChange={onTextChange} />
+                <Bio
+                  name='career'
+                  autocomplete='off'
+                  placeholder='경력을 입력하세요'
+                  value={tempCareer}
+                  style={{ height: 150 }}
+                  onChange={onTextChange}
+                />
               </TextSpace>
             </>
           ) : (
