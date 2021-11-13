@@ -6,7 +6,14 @@ import { doc, getDoc, collection, deleteDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import InfoModal from '../Components/InfoModal';
 import BlackListModal from '../Components/BlackListModal';
-import { deleteUser, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
+import {
+  deleteUser,
+  EmailAuthProvider,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  reauthenticateWithCredential,
+  reauthenticateWithPopup,
+} from 'firebase/auth';
 
 const ProfileWrap = styled.div`
   flex-direction: column;
@@ -137,26 +144,43 @@ const Profile = ({ avataURL, userObj }) => {
 
   const onResignClick = () => {
     if (window.confirm('정말 회원 탈퇴하시겠습니까?') === true) {
-      const userPassword = window.prompt('비밀번호를 입력해주세요');
-      console.log(userPassword);
-      const credential = EmailAuthProvider.credential(user.email, userPassword);
-
-      reauthenticateWithCredential(user, credential)
-        .then(() => {
-          console.log('ASDF');
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-      deleteUser(user)
-        .then(async () => {
-          await deleteDoc(doc(db, 'users', user.uid));
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      navigate('/');
+      console.log(user.providerData[0].providerId);
+      if (user.providerData[0].providerId === 'google.com') {
+        reauthenticateWithPopup(user, new GoogleAuthProvider())
+          .then((credential) => {
+            console.log(credential);
+            deleteUser(user)
+              .then(async () => {
+                await deleteDoc(doc(db, 'users', user.uid));
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+            navigate('/');
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else if (user.providerData[0].providerId === 'github.com') {
+        reauthenticateWithPopup(user, new GithubAuthProvider())
+          .then((credential) => {
+            console.log(credential);
+            deleteUser(user)
+              .then(async () => {
+                await deleteDoc(doc(db, 'users', user.uid));
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+            navigate('/');
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else if (user.providerData[0].providerId === 'password') {
+        window.prompt();
+        // const credential = EmailAuthProvider.credential(user.email, )
+      }
     }
   };
 
@@ -201,7 +225,9 @@ const Profile = ({ avataURL, userObj }) => {
               <Button color='black' name='info' onClick={onModalClick}>
                 정보 수정
               </Button>
-              <Button color='black'>회원 탈퇴</Button>
+              <Button color='black' onClick={onResignClick}>
+                회원 탈퇴
+              </Button>
             </Buttons>
           </>
         ) : role === 'student' ? (
@@ -218,7 +244,9 @@ const Profile = ({ avataURL, userObj }) => {
               <Button color='black' name='info' onClick={onModalClick}>
                 정보 수정
               </Button>
-              <Button color='black'>회원 탈퇴</Button>
+              <Button color='black' onClick={onResignClick}>
+                회원 탈퇴
+              </Button>
             </Buttons>
           </>
         ) : (
@@ -237,7 +265,9 @@ const Profile = ({ avataURL, userObj }) => {
               <Button color='black' name='blacklist' onClick={onModalClick}>
                 회원 관리
               </Button>
-              <Button color='black'>회원 탈퇴</Button>
+              <Button color='black' onClick={onResignClick}>
+                회원 탈퇴
+              </Button>
             </Buttons>
           </>
         )}
