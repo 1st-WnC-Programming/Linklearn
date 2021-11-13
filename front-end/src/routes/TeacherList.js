@@ -2,11 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../fbase';
 import styled from 'styled-components';
-import CardProfile from '../Components/CardProfile';
-import { async } from '@firebase/util';
 
 const SearchBox = styled.div`
-  /* margin: auto; */
   margin-top: 10px;
   height: 55px;
   padding: 10px;
@@ -44,30 +41,30 @@ const TeacherList = () => {
     student_Asc: '학생들이 적게 수강한 순',
   };
   const [sortSelected, setSortSelected] = useState('none');
+  const [card, setCard] = useState([]);
 
-  // db에 정확한 filed 성립되면 쓸 코드
   const [teacherList, setTeacherList] = useState([
-    // {
-    //   image: 'das',
-    //   name: '김밍밍',
-    //   field: '수학',
-    //   starPoint: 4.5,
-    //   career: '수상',
-    // },
-    // {
-    //   image: 'das',
-    //   name: '류건열',
-    //   field: '수학',
-    //   starPoint: 4.7,
-    //   career: '수상',
-    // },
-    // {
-    //   image: 'das',
-    //   name: '김핑핑',
-    //   field: '영어',
-    //   starPoint: 4.3,
-    //   career: '수상',
-    // },
+    {
+      image: 'das',
+      name: '김밍밍',
+      field: '수학',
+      starPoint: 4.5,
+      career: '수상',
+    },
+    {
+      image: 'das',
+      name: '류건열',
+      field: '수학',
+      starPoint: 4.7,
+      career: '수상',
+    },
+    {
+      image: 'das',
+      name: '김핑핑',
+      field: '영어',
+      starPoint: 4.3,
+      career: '수상',
+    },
   ]);
 
   const searchSpace = async (e) => {
@@ -86,12 +83,13 @@ const TeacherList = () => {
   };
 
   useEffect(() => {
-    if (sortSelected == 'none') return;
-    console.log(sortSelected);
+    if (sortSelected === 'none') return;
     const sort_condition = sortSelected.split('_');
-    sort_condition[1] == 'Asc'
-      ? sortAsc(teacherList, sort_condition[0])
-      : sortDesc(teacherList, sort_condition[0]);
+    setTeacherList(
+      sort_condition[1] === 'Asc'
+        ? sortAsc(teacherList, sort_condition[0])
+        : sortDesc(teacherList, sort_condition[0]),
+    );
   }, [sortSelected]);
 
   const sortAsc = (list, criteria) => {
@@ -120,18 +118,51 @@ const TeacherList = () => {
     });
   };
 
-  // const q = query(collection(db, 'users'), where('role', '==', 'tutor'));
-  // const unsubscribe = onSnapshot(q, (querySnapshot) => {
-  //   const teacher = [];
-  //   querySnapshot.forEach((doc) => {
-  //     teacher.push(doc);
-  //   });
-  //   console.log(teacher);
-  //   // setTeacherList(teacher);
-  // });
-  // const searchHandler = (e) => {
-  //   e.preventDefault();
-  // };
+  const q = query(collection(db, 'users'), where('role', '==', 'tutor'));
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const tutor = [];
+    querySnapshot.forEach((doc) => {
+      const temp = {
+        image: doc.data().photoURL,
+        name: doc.data().name,
+        field: doc.data().major,
+        starPoint: doc.data().ratio,
+        career: doc.data().bio,
+      };
+      tutor.push(temp);
+    });
+    // console.log(tutor.join(', '));
+    // setTeacherList(teacher);
+  });
+
+  useEffect(() => {
+    let count = 0;
+    const newData = teacherList.filter((item) => {
+      if (keyword === null || keyword === '' || searchSelected === 'none') return item;
+      else {
+        if (searchSelected === 'name' && item.name.toLowerCase().includes(keyword.toLowerCase())) {
+          return item;
+        } else if (searchSelected === 'field' && item.field.toLowerCase().includes(keyword.toLowerCase())) {
+          return item;
+        } else if (searchSelected === 'career' && item.career.toLowerCase().includes(keyword.toLowerCase())) {
+          return item;
+        }
+      }
+    });
+    setCard(
+      newData.map((value) => (
+        <div className='cardItem innerContainer' key={count++ + value.name + value.starPoint}>
+          <div className='innerItem'>{value.image}</div>
+          <div className='innerItem'>
+            <div>{value.name} 선생님</div>
+            <div>분야 : {value.field}</div>
+            <div>별점 : {value.starPoint}</div>
+            <div>경력 : {value.career}</div>
+          </div>
+        </div>
+      )),
+    );
+  }, [teacherList, sortSelected]);
 
   return (
     <main>
@@ -152,10 +183,8 @@ const TeacherList = () => {
             ))}
           </SearchSelect>
           <SearchInput type='text' placeholder='검색어를 입력하세요.' onChange={(e) => searchSpace(e)} />
-          {/* <Button onClick={searchHandler}>검색</Button> */}
         </SearchBox>
-        {console.log(teacherList)}
-        <CardProfile data={teacherList} target={searchSelected} keyword={keyword} />
+        <div className='cardContainer'>{card}</div>
       </div>
     </main>
   );
