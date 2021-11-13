@@ -1,6 +1,7 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { authService } from '../fbase';
 const Container = styled.div`
   display: flex;
   flex: 1;
@@ -85,7 +86,7 @@ const PostButton = styled.button`
   height: 50px;
   font-size: 18px;
 `;
-const Board = ({ info, setInfo, dataFile, setDataFile }) => {
+const Board = ({ info, dataFile }) => {
   const [keyword, setKeyword] = useState(null);
   const selectList = {
     all: '전체',
@@ -96,6 +97,10 @@ const Board = ({ info, setInfo, dataFile, setDataFile }) => {
   };
   const [selected, setSelected] = useState('all');
   const [viewingListCount, setViewingListCount] = useState(5);
+  const user = authService.currentUser;
+
+  const navigate = useNavigate();
+
   const selectHandler = (e) => {
     e.preventDefault();
     setSelected(e.target.value);
@@ -217,13 +222,17 @@ const Board = ({ info, setInfo, dataFile, setDataFile }) => {
           >
             더보기
           </AddBoardListButton>
-          <Link
-            to={{
-              pathname: '/Board/PostList',
+          <PostButton
+            onClick={() => {
+              if (user != null) {
+                navigate('/Board/PostList');
+              } else {
+                alert('로그인 후 이용할 수 있습니다.');
+              }
             }}
           >
-            <PostButton>글쓰기</PostButton>
-          </Link>
+            글쓰기
+          </PostButton>
         </ButtonBox>
       </main>
     </div>

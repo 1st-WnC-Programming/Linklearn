@@ -4,105 +4,16 @@ import GlobalStyles from './GlobalStyles';
 import Footer from './Footer';
 import unknown from '../Images/Unknown_person.jpeg';
 import { authService } from '../fbase';
-
+import getData from '../getData';
 const App = () => {
   const [init, setInit] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userObj, setUserObj] = useState(null);
   const [avataURL, setAvataURL] = useState(unknown);
 
-  const [info, setInfo] = useState([
-    {
-      number: '공지',
-      title: '가',
-      type: '그룹',
-      numberOfPeople: '3',
-      time: '2',
-      teacher: '한석원',
-      date: '2021-07-23',
-      content: '',
-      id: '7',
-    },
-    {
-      number: '공지',
-      title: '나',
-      type: '그룹',
-      numberOfPeople: '3',
-      time: '2',
-      teacher: '한석원',
-      date: '2021-07-23',
-      content: '',
-      id: '8',
-    },
-  ]);
-  const [dataFile, setDataFile] = useState([
-    {
-      number: '1',
-      title: '가',
-      type: '그룹',
-      numberOfPeople: '3',
-      time: '2',
-      teacher: '한석원',
-      date: '2021-07-23',
-      content: '',
-      id: '1',
-    },
-    {
-      number: '2',
-      title: '나',
-      type: '그룹',
-      numberOfPeople: '3',
-      time: '2',
-      teacher: '한석원',
-      date: '2021-07-23',
-      content: '',
-      id: '2',
-    },
-    {
-      number: '3',
-      title: '다',
-      type: '개인',
-      numberOfPeople: '3',
-      time: '2',
-      teacher: '한석원',
-      date: '2021-07-23',
-      content: '',
-      id: '3',
-    },
-    {
-      number: '4',
-      title: '제목입니다',
-      type: '그룹',
-      numberOfPeople: '3',
-      time: '2',
-      teacher: '배성현',
-      date: '2021-07-23',
-      id: '4',
-    },
-    {
-      number: '5',
-      title: '제목입니다',
-      type: '그룹',
-      numberOfPeople: '3',
-      time: '2',
-      teacher: '전병민',
-      date: '2021-07-23',
-      content: '',
-      id: '5',
-    },
-    {
-      number: '6',
-      title: '제목입니다',
-      type: '그룹',
-      numberOfPeople: '3',
-      time: '2',
-      teacher: '한석원',
-      date: '2021-07-23',
-      content: '',
-      id: '6',
-    },
-  ]);
-
+  const [info, setInfo] = useState([]);
+  const [dataFile, setDataFile] = useState([]);
+  const [reload, setReload] = useState(1);
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
       if (user) {
@@ -119,7 +30,13 @@ const App = () => {
       setInit(true);
     });
   }, []);
-
+  useEffect(async () => {
+    let result = await getData('dataFile', 1);
+    setDataFile(result);
+    result = await getData('info', 1001);
+    setInfo(result);
+    console.log(123);
+  }, [reload]);
   return (
     <>
       {init ? (
@@ -130,9 +47,8 @@ const App = () => {
             isLoggedIn={isLoggedIn}
             avataURL={avataURL}
             info={info}
-            setInfo={setInfo}
             dataFile={dataFile}
-            setDataFile={setDataFile}
+            setReload={setReload}
           />
         </>
       ) : (
