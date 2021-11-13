@@ -97,7 +97,7 @@ const TeacherList = () => {
     });
   };
 
-const getTutor = async () => {
+  const getTutor = async () => {
     const q = query(collection(db, 'users'), where('role', '==', 'tutor'));
     const querySnapshot = await getDocs(q);
     const tutor = [];
