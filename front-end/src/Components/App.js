@@ -14,6 +14,7 @@ const App = () => {
   const [info, setInfo] = useState([]);
   const [dataFile, setDataFile] = useState([]);
   const [reload, setReload] = useState(1);
+
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
       if (user) {
@@ -29,14 +30,18 @@ const App = () => {
       }
       setInit(true);
     });
+    awaitGetData();
   }, []);
-  useEffect(async () => {
+  useEffect(() => {
+    awaitGetData();
+  }, [reload]);
+  const awaitGetData = async () => {
     let result = await getData('dataFile', 1);
     setDataFile(result);
     result = await getData('info', 1001);
     setInfo(result);
-    console.log(123);
-  }, [reload]);
+    console.log(111);
+  };
   return (
     <>
       {init ? (
