@@ -7,7 +7,8 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from 'firebase/auth';
-import { authService, db } from '../fbase';
+import { authService, db, rt_db } from '../fbase';
+import { ref, set, child, update, push } from 'firebase/database';
 import { addDoc, collection, doc, serverTimestamp, setDoc, getDoc } from 'firebase/firestore';
 
 const Logo = styled.div`
@@ -81,10 +82,10 @@ const Auth = () => {
 
   const onSignClick = () => {
     signInWithEmailAndPassword(authService, email, password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log(user);
+        console.log(user.uid);
         navigate('/');
       })
       .catch((error) => {
@@ -109,7 +110,11 @@ const Auth = () => {
           const token = credential.accessToken;
           // The signed-in user info.
           const user = result.user;
-
+          set(ref(rt_db, 'users/' + user.uid), {
+            username: user.displayName,
+            email: user.email,
+            profile_picture: user.photoURL,
+          });
           const docRef = doc(db, 'users', user.uid);
           const docSnap = await getDoc(docRef);
 
@@ -148,7 +153,11 @@ const Auth = () => {
           const token = credential.accessToken;
           // The signed-in user info.
           const user = result.user;
-
+          set(ref(rt_db, 'users/' + user.uid), {
+            username: user.displayName,
+            email: user.email,
+            profile_picture: user.photoURL,
+          });
           const docRef = doc(db, 'users', user.uid);
           const docSnap = await getDoc(docRef);
 

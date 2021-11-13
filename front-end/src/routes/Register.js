@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { authService, db } from '../fbase';
+import { authService, db, rt_db } from '../fbase';
 import { addDoc, collection, doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { ref, set, child, update, push } from 'firebase/database';
 
 const Logo = styled.div`
   font-size: 70px;
@@ -93,7 +94,11 @@ const Register = () => {
           numberOfReport: 0,
           createdAt: serverTimestamp(),
         });
-
+        set(ref(rt_db, 'users/' + user.uid), {
+          username: name,
+          email: email,
+          profile_picture: '',
+        });
         navigate('/');
       })
       .catch((error) => {

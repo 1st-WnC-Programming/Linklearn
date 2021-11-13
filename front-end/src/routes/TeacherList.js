@@ -3,6 +3,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../fbase';
 import styled from 'styled-components';
 import unknownPersonImg from '../Images/Unknown_person.jpeg';
+import ChattingModal from '../Components/ChattingModal';
 
 const SearchBox = styled.div`
   margin-top: 10px;
@@ -43,8 +44,9 @@ const TeacherList = () => {
   };
   const [sortSelected, setSortSelected] = useState('none');
   const [card, setCard] = useState([]);
-
   const [teacherList, setTeacherList] = useState([]);
+  const [chattingToggle, setChattingToggle] = useState(false);
+  const [clickedTeacher, setClickedTeacher] = useState('');
 
   const searchSpace = async (e) => {
     let search = await e.target.value;
@@ -103,6 +105,7 @@ const TeacherList = () => {
     const tutor = [];
     querySnapshot.forEach((doc) => {
       const temp = {
+        id: doc.data().id,
         image: doc.data().photoURL,
         name: doc.data().name,
         field: doc.data().major,
@@ -112,7 +115,6 @@ const TeacherList = () => {
       tutor.push(temp);
     });
     setTeacherList((teacherList) => [...teacherList, ...tutor]);
-    console.log(teacherList);
   };
 
   useEffect(() => {
@@ -149,10 +151,19 @@ const TeacherList = () => {
             <div>별점 : {value.starPoint}</div>
             <div>경력 : {value.career}</div>
           </div>
+          <div className='innerItem'>
+            <button onClick={(e) => handleModalClick(e, value)}>채팅하기</button>
+          </div>
         </div>
       )),
     );
   }, [teacherList, sortSelected]);
+
+  const handleModalClick = (e, value) => {
+    e.preventDefault();
+    !chattingToggle ? setClickedTeacher(value) : setClickedTeacher('');
+    setChattingToggle((prev) => !prev);
+  };
 
   return (
     <main>
@@ -176,6 +187,11 @@ const TeacherList = () => {
         </SearchBox>
         <div className='cardContainer'>{card}</div>
       </div>
+      {chattingToggle === true ? (
+        <ChattingModal onModalClick={handleModalClick} teacherObj={clickedTeacher}></ChattingModal>
+      ) : (
+        ''
+      )}
     </main>
   );
 };
