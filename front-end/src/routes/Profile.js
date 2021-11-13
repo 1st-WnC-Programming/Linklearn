@@ -210,15 +210,20 @@ const Profile = ({ avataURL, userObj }) => {
           </>
         ) : role === 'student' ? (
           <>
-            <Avata src={avata} />
-            <Name>{name}</Name>
-            <Role>{role}</Role>
-            <Email>{email}</Email>
-            <Button color='#3c78c8'>튜터 신청</Button>
-            <Button color='#3c78c8' name='info' onClick={onModalClick}>
-              정보 수정
-            </Button>
-            <Button color='#dc3545'>회원 탈퇴</Button>
+            <Infos>
+              <Avata src={avata} />
+              <Name>{name}</Name>
+              <Role>{role}</Role>
+              <Email>{email}</Email>
+            </Infos>
+
+            <Buttons>
+              <Button color='#3c78c8'>튜터 신청</Button>
+              <Button color='#3c78c8' name='info' onClick={onModalClick}>
+                정보 수정
+              </Button>
+              <Button color='#dc3545'>회원 탈퇴</Button>
+            </Buttons>
           </>
         ) : (
           <>
@@ -248,6 +253,7 @@ const Profile = ({ avataURL, userObj }) => {
             avata={avata}
             field={field}
             career={career}
+            role={role}
             onModalClick={onModalClick}
             setAvataURL={setAvataURL}
             setName={setName}

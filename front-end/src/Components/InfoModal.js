@@ -48,7 +48,7 @@ const Name = styled.input`
   font-size: 15px;
   padding: 10px;
   margin: 15px;
-  width: 100%;
+  width: 75%;
 `;
 
 const Info = styled.input`
@@ -66,7 +66,7 @@ const Button = styled.button`
   justify-content: center;
   font-size: 18px;
   margin: 8px 0;
-  width: 300px;
+  width: 40%;
   border: none;
 `;
 
@@ -80,6 +80,7 @@ const InfoModal = ({
   name,
   field,
   career,
+  role,
   onModalClick,
   setAvataURL,
   setName,
@@ -141,7 +142,7 @@ const InfoModal = ({
         doc(db, 'users', user.uid),
         {
           name: name,
-          photoURL: avata,
+          photoURL: selectedImg,
           major: field,
           bio: career,
         },
@@ -182,10 +183,16 @@ const InfoModal = ({
         <Avata src={selectedImg} onClick={onPhotoClick} />
         이름
         <Name name='name' value={name} onChange={onTextChange} />
-        분야
-        <Info name='field' value={field} onChange={onTextChange} />
-        경력(200자 이하)
-        <Info name='career' value={career} style={{ height: 200 }} onChange={onTextChange} />
+        {role === 'tutor' ? (
+          <>
+            분야
+            <Info name='field' value={field} onChange={onTextChange} />
+            경력(200자 이하)
+            <Info name='career' value={career} style={{ height: 200 }} onChange={onTextChange} />
+          </>
+        ) : (
+          ''
+        )}
         <Button color='#dc3545' name='info' onClick={onCancelClick}>
           취소
         </Button>
