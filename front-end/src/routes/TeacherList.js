@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../fbase';
 import styled from 'styled-components';
-import CardProfile from '../Components/CardProfile';
+// import CardProfile from '../Components/CardProfile';
 import { async } from '@firebase/util';
 
 const SearchBox = styled.div`
@@ -155,7 +155,7 @@ const TeacherList = () => {
           {/* <Button onClick={searchHandler}>검색</Button> */}
         </SearchBox>
         {console.log(teacherList)}
-        <CardProfile data={teacherList} target={searchSelected} keyword={keyword} />
+        {/* <CardProfile data={teacherList} target={searchSelected} keyword={keyword} /> */}
       </div>
     </main>
   );
