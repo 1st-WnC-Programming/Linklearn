@@ -8,6 +8,7 @@ import getData from '../getData';
 const App = () => {
   const [init, setInit] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userObj, setUserObj] = useState(null);
   const [avataURL, setAvataURL] = useState(unknown);
 
   const [info, setInfo] = useState([]);
@@ -17,6 +18,8 @@ const App = () => {
     authService.onAuthStateChanged((user) => {
       if (user) {
         setIsLoggedIn(true);
+        setUserObj(user);
+
         if (user.photoURL !== null) {
           setAvataURL(user.photoURL);
         }
@@ -40,13 +43,13 @@ const App = () => {
         <>
           <GlobalStyles />
           <AppRouter
+            userObj={userObj}
             isLoggedIn={isLoggedIn}
             avataURL={avataURL}
             info={info}
             dataFile={dataFile}
             setReload={setReload}
           />
-          <Footer />
         </>
       ) : (
         //TODO: 추후 로딩 애니메이션 넣어야함

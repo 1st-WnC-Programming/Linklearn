@@ -85,7 +85,6 @@ const Register = () => {
           id: user.uid,
           email: user.email,
           name: name,
-          photoURL: user.photoURL,
           role: 'student',
           major: null,
           rate: 0,

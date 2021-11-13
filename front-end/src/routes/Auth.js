@@ -8,7 +8,7 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 import { authService, db } from '../fbase';
-import { addDoc, collection, doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, serverTimestamp, setDoc, getDoc } from 'firebase/firestore';
 
 const Logo = styled.div`
   font-size: 70px;
@@ -110,18 +110,22 @@ const Auth = () => {
           // The signed-in user info.
           const user = result.user;
 
-          await setDoc(doc(db, 'users', user.uid), {
-            id: user.uid,
-            email: user.email,
-            name: user.displayName,
-            photoURL: user.photoURL,
-            role: 'student',
-            major: null,
-            rate: 0,
-            bio: null,
-            numberOfReport: 0,
-            createdAt: serverTimestamp(),
-          });
+          const docRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(docRef);
+
+          if (!docSnap.exists) {
+            await setDoc(doc(db, 'users', user.uid), {
+              id: user.uid,
+              email: user.email,
+              name: user.displayName,
+              role: 'student',
+              major: null,
+              rate: 0,
+              bio: null,
+              numberOfReport: 0,
+              createdAt: serverTimestamp(),
+            });
+          }
 
           navigate('/');
         })
@@ -144,18 +148,22 @@ const Auth = () => {
           // The signed-in user info.
           const user = result.user;
 
-          await setDoc(doc(db, 'users', user.uid), {
-            id: user.uid,
-            email: user.email,
-            name: user.displayName,
-            photoURL: user.photoURL,
-            role: 'student',
-            major: null,
-            rate: 0,
-            bio: null,
-            numberOfReport: 0,
-            createdAt: serverTimestamp(),
-          });
+          const docRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(docRef);
+
+          if (!docSnap.exists()) {
+            await setDoc(doc(db, 'users', user.uid), {
+              id: user.uid,
+              email: user.email,
+              name: user.displayName,
+              role: 'student',
+              major: null,
+              rate: 0,
+              bio: null,
+              numberOfReport: 0,
+              createdAt: serverTimestamp(),
+            });
+          }
 
           navigate('/');
         })
@@ -183,14 +191,14 @@ const Auth = () => {
     <LoginWrap>
       <LoginBox>
         <Logo>LOGIN</Logo>
-        <TextField placeholder={'이메일'} id='email' name='email' onChange={onTextChange}></TextField>
+        <TextField placeholder={'이메일'} id='email' name='email' onChange={onTextChange} />
         <TextField
           type='password'
           placeholder={'비밀번호'}
           id='password'
           name='password'
           onChange={onTextChange}
-        ></TextField>
+        />
 
         {<div style={{ color: 'red' }}>{error}</div>}
 
