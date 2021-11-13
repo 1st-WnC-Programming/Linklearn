@@ -178,8 +178,23 @@ const Profile = ({ avataURL, userObj }) => {
             console.log(error);
           });
       } else if (user.providerData[0].providerId === 'password') {
-        window.prompt();
-        // const credential = EmailAuthProvider.credential(user.email, )
+        const password = window.prompt('비밀번호를 입력해주세요');
+        const credential = EmailAuthProvider.credential(user.email, password);
+        reauthenticateWithCredential(user, credential)
+          .then((credential) => {
+            console.log(credential);
+            deleteUser(user)
+              .then(async () => {
+                await deleteDoc(doc(db, 'users', user.uid));
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+            navigate('/');
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       }
     }
   };
