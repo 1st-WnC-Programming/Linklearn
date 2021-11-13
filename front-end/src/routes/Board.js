@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { authService } from '../fbase';
+import { useState, useEffect } from 'react';
+import { authService, db } from '../fbase';
+import { doc, getDoc } from 'firebase/firestore';
 const Container = styled.div`
   display: flex;
   flex: 1;
@@ -98,7 +99,22 @@ const Board = ({ info, dataFile }) => {
   const [selected, setSelected] = useState('all');
   const [viewingListCount, setViewingListCount] = useState(5);
   const user = authService.currentUser;
+  let [userData, setUserData] = useState({});
+  const fetchUser = async () => {
+    const docRef = doc(db, 'users', user.uid);
+    const docSnap = await getDoc(docRef);
+    return docSnap.data();
+  };
 
+  useEffect(() => {
+    fetchUser()
+      .then((user) => {
+        setUserData(user);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
   const navigate = useNavigate();
 
   const selectHandler = (e) => {
@@ -108,6 +124,21 @@ const Board = ({ info, dataFile }) => {
   const searchSpace = async (e) => {
     let search = await e.target.value;
     setKeyword(search);
+  };
+  const viewPostBtn = () => {
+    if (user != null) {
+      if (userData.role !== 'student') {
+        return (
+          <PostButton
+            onClick={() => {
+              navigate('/Board/PostList');
+            }}
+          >
+            글쓰기
+          </PostButton>
+        );
+      }
+    }
   };
   const contentList = (viewingListCount) => {
     const result = [];
@@ -222,17 +253,8 @@ const Board = ({ info, dataFile }) => {
           >
             더보기
           </AddBoardListButton>
-          <PostButton
-            onClick={() => {
-              if (user != null) {
-                navigate('/Board/PostList');
-              } else {
-                alert('로그인 후 이용할 수 있습니다.');
-              }
-            }}
-          >
-            글쓰기
-          </PostButton>
+
+          {viewPostBtn()}
         </ButtonBox>
       </main>
     </div>

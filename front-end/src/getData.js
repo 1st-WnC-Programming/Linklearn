@@ -1,17 +1,13 @@
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDocs, collection, query } from 'firebase/firestore';
 import { db } from './fbase';
-const getData = async (type, id) => {
+const getData = async (type) => {
   const result = [];
-  let docRef = doc(db, `${type}`, `${id}`);
-  let docSnap = await getDoc(docRef);
-  let idx = id;
-  while (docSnap.exists()) {
-    result.push(docSnap.data());
-    idx += 1;
-    docRef = doc(db, `${type}`, `${idx}`);
-    docSnap = await getDoc(docRef);
-  }
-  console.log(result);
+  // let docRef = doc(db, `${type}`, `${id}`)
+  let docRef = query(collection(db, `${type}`));
+  let querySnapshot = await getDocs(docRef);
+  querySnapshot.forEach((doc) => {
+    result.push(doc.data());
+  });
   return result;
 };
 

@@ -1,4 +1,4 @@
-import { React, useState, useRef } from 'react';
+import { React, useState, useRef, useEffect } from 'react';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
 import styled from 'styled-components';
@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 
 import { authService, db } from '../fbase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 const TitleBox = styled.div`
   width: 1000px;
@@ -75,6 +75,38 @@ const PostList = ({ info, dataFile, setReload }) => {
   const navigate = useNavigate();
 
   const user = authService.currentUser;
+  let [userData, setUserData] = useState({});
+  const fetchUser = async () => {
+    const docRef = doc(db, 'users', user.uid);
+    const docSnap = await getDoc(docRef);
+    return docSnap.data();
+  };
+
+  useEffect(() => {
+    fetchUser()
+      .then((user) => {
+        setUserData(user);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  const viewInfoBox = () => {
+    if (userData.role === 'admin') {
+      return (
+        <>
+          <TextBox>공지</TextBox>
+          <CheckBox
+            type='checkbox'
+            onClick={() => {
+              setIsInfo(!isInfo);
+            }}
+          />
+        </>
+      );
+    }
+  };
   const btnClick = () => {
     const editorInstance = editorRef.current.getInstance();
     const getContent_md = editorInstance.getMarkdown();
@@ -88,7 +120,12 @@ const PostList = ({ info, dataFile, setReload }) => {
       alert('내용을 입력하세요.');
     } else {
       let type2 = type === 'personal' ? '개인' : '그룹';
-      let id2 = isInfo ? info[info.length - 1].id + 1 : 1 + dataFile[dataFile.length - 1].id;
+      let id2;
+      if (isInfo) {
+        id2 = info.length === 0 ? 1001 : info[dataFile.info - 1].id + 1;
+      } else {
+        id2 = dataFile.length === 0 ? 1 : dataFile[dataFile.length - 1].id + 1;
+      }
       let curData = {
         title: title,
         type: type2,
@@ -98,6 +135,7 @@ const PostList = ({ info, dataFile, setReload }) => {
         date: new Date().toISOString().slice(0, 10),
         content: getContent_md,
         id: id2,
+        uid: user.uid,
       };
       if (isInfo) {
         // setInfo([...info, curData]);
@@ -108,7 +146,7 @@ const PostList = ({ info, dataFile, setReload }) => {
       }
       alert('게시되었습니다.');
       navigate('/Board');
-      setReload(1);
+      setReload(id2);
     }
   };
   return (
@@ -125,13 +163,7 @@ const PostList = ({ info, dataFile, setReload }) => {
           ></Title>
         </TitleBox>
         <SortBox>
-          <TextBox>공지</TextBox>
-          <CheckBox
-            type='checkbox'
-            onClick={() => {
-              setIsInfo(!isInfo);
-            }}
-          />
+          {viewInfoBox()}
           <SortTitle onChange={selectHandler} value={type}>
             {Object.entries(selectList).map((item) => (
               <option value={item[0]} key={item[0]}>
