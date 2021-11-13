@@ -169,10 +169,10 @@ const BlackListModal = ({ showModal, close }) => {
   return (
     <div>
       {showModal ? (
-        <Background name='blacklist' onClick={close}>
+        <Background onClick={close}>
           <ModalContainer onClick={(e) => e.stopPropagation()}>
             <ModalHeader>블랙리스트 관리</ModalHeader>
-            <CloseIcon name='blacklist' onClick={close}></CloseIcon>
+            <CloseIcon onClick={close}></CloseIcon>
             <ModalBody>
               <ReportList>
                 <Header>신고 목록</Header>

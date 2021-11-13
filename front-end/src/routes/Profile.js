@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import unknown from '../Images/Unknown_person.jpeg';
 import styled from 'styled-components';
 import { authService, db } from '../fbase';
@@ -92,7 +92,7 @@ const Buttons = styled.div`
   align-items: center;
 `;
 
-const Profile = ({ avataURL }) => {
+const Profile = ({ avataURL, userObj }) => {
   const user = authService.currentUser;
   const navigate = useNavigate();
 
@@ -100,8 +100,8 @@ const Profile = ({ avataURL }) => {
   const [name, setName] = useState(user.displayName);
   const [starRate, setStarRate] = useState('5.0');
   const [email, setEmail] = useState(user.email);
-  const [field, setField] = useState('없음');
-  const [career, setCareer] = useState('없음');
+  const [field, setField] = useState('');
+  const [career, setCareer] = useState('');
   const [role, setRole] = useState(null);
   const [infoToggle, setInfoToggle] = useState(false);
   const [blacklistToggle, setBlacklistToggle] = useState(false);
@@ -112,22 +112,29 @@ const Profile = ({ avataURL }) => {
     return docSnap.data();
   };
 
-  fetchUser()
-    .then((user) => {
-      setRole(user.role);
-      setStarRate(user.rate);
+  useEffect(() => {
+    fetchUser()
+      .then((user) => {
+        setRole(user.role);
+        setStarRate(user.rate);
+        setField(user.major);
+        setCareer(user.bio);
 
-      if (avata === null) {
-        setAvataURL(unknown);
-      }
+        if (avata === null) {
+          setAvataURL(unknown);
+        }
 
-      if (name === null) {
-        setName(user.name);
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+        if (name === null) {
+          setName(user.name);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return () => {
+      // cleanup;
+    };
+  }, []);
 
   //TODO: 회원 탈퇴 구현 중.....
 
@@ -162,7 +169,7 @@ const Profile = ({ avataURL }) => {
       target: { name },
     } = e;
 
-    if (name === 'info') {
+    if (name === 'info' || e.target.getAttribute('name') === 'info') {
       console.log(infoToggle);
       setInfoToggle((prev) => !prev);
     } else if (name === 'blacklist') {
@@ -182,7 +189,7 @@ const Profile = ({ avataURL }) => {
           'Loading'
         ) : role === 'tutor' ? (
           <>
-            <div>
+            <Infos>
               <Avata src={avata} />
               <Name>{name}</Name>
               <Role>{role}</Role>
@@ -193,25 +200,30 @@ const Profile = ({ avataURL }) => {
                 <Info> ★★★★★ {starRate} </Info>
                 <Info>{career}</Info>
               </TeacherInfo>
-            </div>
-            <div>
+            </Infos>
+            <Buttons>
               <Button color='#3c78c8' name='info' onClick={onModalClick}>
                 정보 수정
               </Button>
               <Button color='#dc3545'>회원 탈퇴</Button>
-            </div>
+            </Buttons>
           </>
         ) : role === 'student' ? (
           <>
-            <Avata src={avata} />
-            <Name>{name}</Name>
-            <Role>{role}</Role>
-            <Email>{email}</Email>
-            <Button color='#3c78c8'>튜터 신청</Button>
-            <Button color='#3c78c8' name='info' onClick={onModalClick}>
-              정보 수정
-            </Button>
-            <Button color='#dc3545'>회원 탈퇴</Button>
+            <Infos>
+              <Avata src={avata} />
+              <Name>{name}</Name>
+              <Role>{role}</Role>
+              <Email>{email}</Email>
+            </Infos>
+
+            <Buttons>
+              <Button color='#3c78c8'>튜터 신청</Button>
+              <Button color='#3c78c8' name='info' onClick={onModalClick}>
+                정보 수정
+              </Button>
+              <Button color='#dc3545'>회원 탈퇴</Button>
+            </Buttons>
           </>
         ) : (
           <>
@@ -235,7 +247,19 @@ const Profile = ({ avataURL }) => {
         )}
         <BlackListModal showModal={blacklistToggle} close={closeBlackList} />
         {infoToggle === true ? (
-          <InfoModal name={name} avata={avata} field={field} career={career} onModalClick={onModalClick} />
+          <InfoModal
+            userObj={userObj}
+            name={name}
+            avata={avata}
+            field={field}
+            career={career}
+            role={role}
+            onModalClick={onModalClick}
+            setAvataURL={setAvataURL}
+            setName={setName}
+            setField={setField}
+            setCareer={setCareer}
+          />
         ) : (
           ''
         )}

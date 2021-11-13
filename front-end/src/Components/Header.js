@@ -1,8 +1,9 @@
 /* eslint-disable import/no-anonymous-default-export */
-import { React, useState } from 'react';
+import { React, useRef, useState } from 'react';
 import { Link, withRouter, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Avata from './AvataDropdown';
+import linklearn from '../Images/linklearn.png';
 
 const navList = [
   { path: '/Board', pathName: 'board', name: '게시판' },
@@ -31,13 +32,8 @@ const FlexBox = styled.div`
   align-items: center;
 `;
 
-const Logo = styled.div`
-  font-size: 35px;
-  font-family: 'Arimo', sans-serif;
-  font-weight: 900;
-  font-style: italic;
+const Logo = styled.img`
   width: 200px;
-  color: #3c78c8;
 `;
 
 const Gnb = styled.div`
@@ -69,15 +65,13 @@ const LoginBox = styled.div`
 `;
 
 const MyHeader = ({ isLoggedIn, avataURL }) => {
+  const navigate = useNavigate();
+
   return (
     <>
       <Header>
         <FlexBox className='inner'>
-          <Logo>
-            <Link to='/' onClick={() => {}}>
-              LinkLearn
-            </Link>
-          </Logo>
+          <Logo src={linklearn} onClick={() => navigate('/')} />
 
           <Gnb>
             <NavGroup>
