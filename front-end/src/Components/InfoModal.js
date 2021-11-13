@@ -16,6 +16,7 @@ const Background = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1001;
 `;
+
 const CloseIcon = styled(Close)`
   position: absolute;
   right: 40px;
@@ -210,7 +211,9 @@ const InfoModal = ({ userObj, avata, field, career, name, role, onModalClick }) 
       <ModalContainer>
         <Infos>
           <Title>정보 수정</Title>
-          <CloseIcon name='info' onClick={onModalClick}></CloseIcon>
+
+          <CloseIcon name='info' onClick={onModalClick} />
+
           <PhotoSelect
             type='file'
             accept='image/*'

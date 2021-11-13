@@ -6,6 +6,7 @@ import { doc, getDoc, collection, deleteDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import InfoModal from '../Components/InfoModal';
 import BlackListModal from '../Components/BlackListModal';
+import { deleteUser, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 
 const ProfileWrap = styled.div`
   flex-direction: column;
@@ -134,32 +135,31 @@ const Profile = ({ avataURL, userObj }) => {
 
   //TODO: 회원 탈퇴 구현 중.....
 
-  // const onResignClick = () => {
-  //   if (window.confirm('정말 회원 탈퇴하시겠습니까?') === true) {
-  //     const userPassword = window.prompt('비밀번호를 입력해주세요');
-  //     console.log(userPassword);
-  //     const credential = EmailAuthProvider.credential(user.email, userPassword);
+  const onResignClick = () => {
+    if (window.confirm('정말 회원 탈퇴하시겠습니까?') === true) {
+      const userPassword = window.prompt('비밀번호를 입력해주세요');
+      console.log(userPassword);
+      const credential = EmailAuthProvider.credential(user.email, userPassword);
 
-  //     reauthenticateWithCredential(user, credential)
-  //       .then(() => {
-  //         console.log('ASDF');
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
+      reauthenticateWithCredential(user, credential)
+        .then(() => {
+          console.log('ASDF');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
-  //     deleteUser(user)
-  //       .then(async () => {
-  //         await deleteDoc(doc(db, 'users', user.uid));
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //     navigate('/');
-  //   }
-  // };
+      deleteUser(user)
+        .then(async () => {
+          await deleteDoc(doc(db, 'users', user.uid));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      navigate('/');
+    }
+  };
 
-  //TODO: 정보수정 모달창 제작중
   const onModalClick = (e) => {
     const {
       target: { name },
