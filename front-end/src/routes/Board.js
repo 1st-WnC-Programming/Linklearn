@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { importantInfo, data } from '../Data';
+import { authService } from '../fbase';
 const Container = styled.div`
   display: flex;
   flex: 1;
@@ -86,10 +86,7 @@ const PostButton = styled.button`
   height: 50px;
   font-size: 18px;
 `;
-const Board = () => {
-  const [info, setInfo] = useState(importantInfo);
-  const [dataFile, setDataFile] = useState(data);
-
+const Board = ({ info, dataFile }) => {
   const [keyword, setKeyword] = useState(null);
   const selectList = {
     all: '전체',
@@ -100,6 +97,10 @@ const Board = () => {
   };
   const [selected, setSelected] = useState('all');
   const [viewingListCount, setViewingListCount] = useState(5);
+  const user = authService.currentUser;
+
+  const navigate = useNavigate();
+
   const selectHandler = (e) => {
     e.preventDefault();
     setSelected(e.target.value);
@@ -127,10 +128,10 @@ const Board = () => {
     });
     for (let i = 0; i < viewingListCount; i++) {
       if (filterData.length <= i) break;
-      let curData = filterData[i];
+      let curData = filterData[filterData.length - i - 1];
       result.push(
         <Row className='dataList'>
-          <td>{curData.number}</td>
+          <td>{filterData.length - i}</td>
           <td id='title'>
             <Link
               to={{
@@ -156,7 +157,7 @@ const Board = () => {
     info.map((curData) => {
       result.push(
         <Row className='dataList'>
-          <td>{curData.number}</td>
+          <td>공지</td>
           <td id='title'>
             <Link
               to={{
@@ -221,13 +222,17 @@ const Board = () => {
           >
             더보기
           </AddBoardListButton>
-          <Link
-            to={{
-              pathname: '/Board/PostList',
+          <PostButton
+            onClick={() => {
+              if (user != null) {
+                navigate('/Board/PostList');
+              } else {
+                alert('로그인 후 이용할 수 있습니다.');
+              }
             }}
           >
-            <PostButton>글쓰기</PostButton>
-          </Link>
+            글쓰기
+          </PostButton>
         </ButtonBox>
       </main>
     </div>
