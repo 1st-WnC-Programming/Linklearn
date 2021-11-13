@@ -1,14 +1,14 @@
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
 import styled from 'styled-components';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 
 import ReactMarkdown from 'react-markdown';
 import { useEffect, useState, useRef } from 'react';
 import { authService, db } from '../fbase';
-import { doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
 const TitleBox = styled.div`
   width: 1000px;
   margin: 30px auto;
@@ -83,7 +83,24 @@ const News = ({ info, dataFile, setReload }) => {
   const [isInfo, setIsInfo] = useState(false);
   const [curData, setCurData] = useState({});
 
+  const navigate = useNavigate();
   const user = authService.currentUser;
+  let [userData, setUserData] = useState({ role: '' });
+  const fetchUser = async () => {
+    const docRef = doc(db, 'users', user.uid);
+    const docSnap = await getDoc(docRef);
+    return docSnap.data();
+  };
+
+  useEffect(() => {
+    fetchUser()
+      .then((user) => {
+        setUserData(user);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
   const editorRef = useRef();
   const selectHandler = (e) => {
     e.preventDefault();
@@ -101,17 +118,23 @@ const News = ({ info, dataFile, setReload }) => {
       setIsInfo(true);
     } else {
       data = dataFile.find((item) => {
-        // console.log(item);
+        console.log(dataFile);
+        console.log(item);
         if (item.id == id) {
           return true;
         }
       });
     }
-    setTitle(data.title);
-    setType(data.type);
-    setNumberOfPeople(data.numberOfPeople);
-    setTime(data.time);
-    setCurData(data);
+    console.log(data);
+    if (data === undefined) {
+      navigate('/Board');
+    } else {
+      setTitle(data.title);
+      setType(data.type);
+      setNumberOfPeople(data.numberOfPeople);
+      setTime(data.time);
+      setCurData(data);
+    }
   }, []);
   const viewMode = () => {
     return (
@@ -147,10 +170,10 @@ const News = ({ info, dataFile, setReload }) => {
           </Link>
           <PostButton
             onClick={() => {
-              if (user.displayName !== curData.teacher) {
-                alert('작성자만 수정할 수 있습니다.');
-              } else {
+              if (userData.id == curData.uid || userData.role !== 'admin') {
                 setEdit(true);
+              } else {
+                alert('관리자 혹은 작성자만 수정할 수 있습니다.');
               }
             }}
           >
