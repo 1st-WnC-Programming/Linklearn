@@ -1,14 +1,14 @@
 import '@toast-ui/editor/dist/toastui-editor.css';
-import { Editor } from '@toast-ui/react-editor';
+import { Editor, Viewer } from '@toast-ui/react-editor';
 import styled from 'styled-components';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 
-import ReactMarkdown from 'react-markdown';
 import { useEffect, useState, useRef } from 'react';
 import { authService, db } from '../fbase';
 import { doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
+import ReactMarkdown from 'react-markdown';
 const TitleBox = styled.div`
   width: 1000px;
   margin: 30px auto;
@@ -32,13 +32,14 @@ const PostButton = styled.button`
   font-size: 18px;
   float: right;
 `;
-const Content = styled.div`
+const Content = styled.section`
   width: 1000px;
   margin: 30px auto;
   min-height: 500px;
   border: 1px solid black;
   padding: 20px;
-  /* background-color: red; */
+  font-size: 1rem;
+  line-height: 2.5rem;
 `;
 const SortBox = styled.div`
   height: 30px;
@@ -53,9 +54,6 @@ const InputBox = styled.input`
 `;
 const TextBox = styled.label`
   margin-right: 10px;
-`;
-const CheckBox = styled.input`
-  margin-right: 50px;
 `;
 const SortTitle = styled.select`
   background-color: #f9f9f9;
@@ -118,14 +116,11 @@ const News = ({ info, dataFile, setReload }) => {
       setIsInfo(true);
     } else {
       data = dataFile.find((item) => {
-        console.log(dataFile);
-        console.log(item);
         if (item.id == id) {
           return true;
         }
       });
     }
-    console.log(data);
     if (data === undefined) {
       navigate('/Board');
     } else {
@@ -144,7 +139,7 @@ const News = ({ info, dataFile, setReload }) => {
           <Titlespan>{title}</Titlespan>
         </TitleBox>
         <SortBox>
-          <SortTitle onChange={selectHandler} value={type} disabled>
+          <SortTitle value={type} disabled>
             {Object.entries(selectList).map((item) => (
               <option value={item[0]} key={item[0]}>
                 {item[1]}
@@ -156,8 +151,10 @@ const News = ({ info, dataFile, setReload }) => {
           <TextBox>과외 시간: </TextBox>
           <InputBox type='number' readonly value={time} />
         </SortBox>
+
         <Content>
-          <ReactMarkdown children={curData.content} />
+          <ReactMarkdown>{curData.content}</ReactMarkdown>
+          {/* <Viewer initialValue={curData.content} /> */}
         </Content>
 
         <ButtonBox>
