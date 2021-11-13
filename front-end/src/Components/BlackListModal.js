@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { authService, db } from '../fbase';
 import { Close } from '@styled-icons/evaicons-solid';
-import {collection, query, where, getDocs} from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, deleteDoc, setDoc } from 'firebase/firestore';
 
 const Background = styled.div`
   position: fixed;
@@ -43,6 +44,7 @@ const ModalHeader = styled.div`
 `;
 
 const ModalBody = styled.div`
+  padding-top: 40px;
   width: 100%;
   height: 95%;
 `;
@@ -68,17 +70,16 @@ const Container = styled.div`
 `;
 const Table = styled.table`
   width: 1500px;
-  border: 1px solid #ededed;
+  border: 1px solid rgba(0, 0, 0, 0.5);
 `;
 const Row = styled.tr`
-  border-bottom: 1px solid #ededed;
   font-size: 12px;
   background-color: #fff;
 
   &:first-child {
     & > th {
       padding: 10px;
-      background-color: #f9f9f9;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.5);
     }
   }
   & > td {
@@ -91,62 +92,89 @@ const Row = styled.tr`
     }
   }
 `;
- const Button = styled.button`
+const Button = styled.button`
+  padding: 3px 5px;
+  text-align: center;
+  font-size: 13px;
+
+  color: black;
+  border: 1px solid black;
+  border-radius: 5px;
+
+  &:hover {
     background-color: ${({ color }) => color};
-    border: none;
     color: white;
-    border-radius:5px;
-    padding: 3px 5px;
-    text-align: center;
-    font-size: 13px;
- `;
+    transition: all ease-out 0.3s 0s;
+  }
+`;
+const Notice = styled.div`
+  font-size: 12px;
+  float: right;
+  margin-right: 5px;
+`;
 
 const BlackListModal = ({ showModal, close }) => {
-    const [reportList, setReportList] = useState([]);
-    const SetReportList = async() => {
-        const q = query(collection(db, "users"), where("numberOfReport", ">", 3));
-        const querySnapshot = await getDocs(q);
-        const list =[];
-        querySnapshot.forEach((doc) => {
-            const temp = {
-                name: doc.data().name,
-                email: doc.data().email,
-                numberOfReport: doc.data().numberOfReport,
-                id: doc.data().id
-            };
-            list.push(temp);
-        });
-        setReportList([...list]);
-        console.log(reportList);
-    }
-    useEffect(() => {
-        SetReportList();
-      }, []);
-    
+  const [reportList, setReportList] = useState([]);
+  const SetReportList = async () => {
+    const q = query(collection(db, 'users'), where('numberOfReport', '>', 3));
+    const querySnapshot = await getDocs(q);
+    var list = [];
+    querySnapshot.forEach((doc) => {
+      const temp = {
+        name: doc.data().name,
+        email: doc.data().email,
+        numberOfReport: doc.data().numberOfReport,
+        id: doc.data().id,
+      };
+      list.push(temp);
+    });
+    blackList.map((blackdata) => {
+      list = list.filter((data) => {
+        return blackdata.id != data.id;
+      });
+    });
+    setReportList(list);
+  };
 
-  const [blackList, setBlackList] = useState([
-    {
-      name: '정균',
-      numberOfReport: 5,
-      email: 'wjk6044@naver.com',
-      role: 'tutor',
-    },
-    {
-      name: '우균',
-      numberOfReport: 5,
-      email: 'wjk6044@naver.com',
-      role: 'tutor',
-    },
-  ]);
+  const [blackList, setBlackList] = useState([]);
+  const SetBlackList = async () => {
+    const q = query(collection(db, 'blackList'));
+    const querySnapshot = await getDocs(q);
+    const list = [];
+    querySnapshot.forEach((doc) => {
+      const temp = {
+        name: doc.data().name,
+        email: doc.data().email,
+        numberOfReport: doc.data().numberOfReport,
+        id: doc.data().id,
+      };
+      list.push(temp);
+    });
+    setBlackList([...list]);
+    console.log(blackList);
+  };
+
+  useEffect(() => {
+    SetBlackList();
+  }, []);
+
+  useEffect(() => {
+    SetReportList();
+  }, [blackList]);
+
   const viewList = (info) => {
     const result = [];
-    info.map((curData) => {
+    info?.map((curData) => {
       result.push(
         <Row className='dataList'>
-          <td>{curData.name}</td>
-          <td>{curData.email}</td>
-          <td>🚨 {curData.numberOfReport}</td>
-          <td><Button color='#dc3545'>블랙</Button></td>
+          <td>{curData?.name}</td>
+          <td>{curData?.email}</td>
+          <td>🚨 {curData?.numberOfReport}</td>
+          <td>
+            <Button color='black' onClick={() => moveToBlack(curData)}>
+              블랙
+            </Button>
+          </td>
         </Row>,
       );
     });
@@ -154,23 +182,39 @@ const BlackListModal = ({ showModal, close }) => {
   };
   const viewBlackList = (info) => {
     const result = [];
-    info.map((curData) => {
+    info?.map((curData) => {
       result.push(
         <Row className='dataList'>
           <td>{curData.name}</td>
           <td>{curData.email}</td>
-          <td><Button color='#3c78c8'>해제</Button></td>
+          <td>
+            <Button color='black' onClick={() => deleteBlack(curData)}>
+              해제
+            </Button>
+          </td>
         </Row>,
       );
     });
     return result;
+  };
+  const moveToBlack = async (data) => {
+    await setDoc(doc(db, 'blackList', data.id), {
+      name: data.name,
+      id: data.id,
+      email: data.email,
+      numberOfReport: data.numberOfReport,
+    });
+    SetBlackList();
+  };
+  const deleteBlack = async (data) => {
+    await deleteDoc(doc(db, 'blackList', data.id));
+    SetBlackList();
   };
   return (
     <div>
       {showModal ? (
         <Background onClick={close}>
           <ModalContainer onClick={(e) => e.stopPropagation()}>
-            <ModalHeader>블랙리스트 관리</ModalHeader>
             <CloseIcon onClick={close}></CloseIcon>
             <ModalBody>
               <ReportList>
@@ -182,12 +226,13 @@ const BlackListModal = ({ showModal, close }) => {
                         <th>이름</th>
                         <th>이메일</th>
                         <th>신고 수</th>
-                        <th>블랙</th>
+                        <th></th>
                       </Row>
                     </thead>
                     <tbody>{viewList(reportList)}</tbody>
                   </Table>
                 </Container>
+                <Notice>* 신고 수가 3회 이상인 선생님들이 표시됩니다 </Notice>
               </ReportList>
               <BlackList>
                 <Header>블랙리스트</Header>
@@ -197,7 +242,7 @@ const BlackListModal = ({ showModal, close }) => {
                       <Row>
                         <th>이름</th>
                         <th>이메일</th>
-                        <th>해제</th>
+                        <th></th>
                       </Row>
                     </thead>
                     <tbody>{viewBlackList(blackList)}</tbody>

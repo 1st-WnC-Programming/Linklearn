@@ -113,7 +113,7 @@ const Auth = () => {
           const docRef = doc(db, 'users', user.uid);
           const docSnap = await getDoc(docRef);
 
-          if (!docSnap.exists) {
+          if (!docSnap.exists()) {
             await setDoc(doc(db, 'users', user.uid), {
               id: user.uid,
               email: user.email,
