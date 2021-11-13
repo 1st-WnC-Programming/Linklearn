@@ -7,7 +7,7 @@ import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 
 import { useEffect, useState, useRef } from 'react';
 import { authService, db } from '../fbase';
-import { doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, getDoc, updateDoc } from 'firebase/firestore';
 import ReactMarkdown from 'react-markdown';
 const TitleBox = styled.div`
   width: 1000px;
@@ -76,11 +76,11 @@ const News = ({ info, dataFile, setReload }) => {
   const [edit, setEdit] = useState(false);
   const [title, setTitle] = useState('');
   const [type, setType] = useState('personal');
-  const [numberOfPeople, setNumberOfPeople] = useState('0');
+  const [numberOfPeople, setNumberOfPeople] = useState(0);
   const [time, setTime] = useState('0');
   const [isInfo, setIsInfo] = useState(false);
   const [curData, setCurData] = useState({});
-
+  const [studentId, setStudentId] = useState([]);
   const navigate = useNavigate();
   const user = authService.currentUser;
   let [userData, setUserData] = useState({ role: '' });
@@ -129,6 +129,7 @@ const News = ({ info, dataFile, setReload }) => {
       setNumberOfPeople(data.numberOfPeople);
       setTime(data.time);
       setCurData(data);
+      setStudentId(data.studentId);
     }
   }, []);
   const viewMode = () => {
@@ -154,7 +155,6 @@ const News = ({ info, dataFile, setReload }) => {
 
         <Content>
           <ReactMarkdown>{curData.content}</ReactMarkdown>
-          {/* <Viewer initialValue={curData.content} /> */}
         </Content>
 
         <ButtonBox>
@@ -176,6 +176,7 @@ const News = ({ info, dataFile, setReload }) => {
           >
             수정
           </PostButton>
+          <PostButton onClick={tapSubmitBtn}>신청하기</PostButton>
         </ButtonBox>
       </>
     );
@@ -264,7 +265,7 @@ const News = ({ info, dataFile, setReload }) => {
       let curData = {
         title: title,
         type: type2,
-        numberOfPeople: numberOfPeople,
+        numberOfPeople: Number(numberOfPeople),
         time: time,
         teacher: user.displayName,
         date: new Date().toISOString().slice(0, 10),
@@ -290,6 +291,30 @@ const News = ({ info, dataFile, setReload }) => {
     }
     setReload(1);
     alert('삭제되었습니다.');
+  };
+  const tapSubmitBtn = async () => {
+    if (user == null) {
+      alert('로그인 후 이용할 수 있습니다.');
+    } else {
+      if (studentId.indexOf(user.uid) !== -1) {
+        alert('이미 신청 하였습니다.');
+      } else if (studentId.length >= numberOfPeople && numberOfPeople != 0) {
+        alert('이미 모집이 완료 되었습니다.');
+      } else {
+        setStudentId([...studentId, user.uid]);
+        if (isInfo) {
+          await updateDoc(doc(db, 'info', `${id}`), {
+            studentId: [...studentId, user.uid],
+          });
+        } else {
+          await updateDoc(doc(db, 'dataFile', `${id}`), { studentId: [...studentId, user.uid] });
+        }
+        alert('신청 되었습니다.');
+        if (studentId.length === numberOfPeople) {
+          //신청 완료 알림
+        }
+      }
+    }
   };
   return (
     <div className='inner'>

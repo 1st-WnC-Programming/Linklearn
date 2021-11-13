@@ -63,7 +63,7 @@ const CheckBox = styled.input`
 const PostList = ({ info, dataFile, setReload }) => {
   const [title, setTitle] = useState('');
   const [type, setType] = useState('personal');
-  const [numberOfPeople, setNumberOfPeople] = useState('0');
+  const [numberOfPeople, setNumberOfPeople] = useState(0);
   const [time, setTime] = useState('0');
   const [isInfo, setIsInfo] = useState(false);
 
@@ -129,13 +129,14 @@ const PostList = ({ info, dataFile, setReload }) => {
       let curData = {
         title: title,
         type: type2,
-        numberOfPeople: numberOfPeople,
+        numberOfPeople: Number(numberOfPeople),
         time: time,
         teacher: user.displayName,
         date: new Date().toISOString().slice(0, 10),
         content: getContent_md,
         id: id2,
         uid: user.uid,
+        studentId: [],
       };
       if (isInfo) {
         // setInfo([...info, curData]);
