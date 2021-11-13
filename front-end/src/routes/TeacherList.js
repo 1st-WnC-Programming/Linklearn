@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../fbase';
 import styled from 'styled-components';
+import unknownPersonImg from '../Images/Unknown_person.jpeg';
 
 const SearchBox = styled.div`
   margin-top: 10px;
@@ -43,29 +44,7 @@ const TeacherList = () => {
   const [sortSelected, setSortSelected] = useState('none');
   const [card, setCard] = useState([]);
 
-  const [teacherList, setTeacherList] = useState([
-    {
-      image: 'das',
-      name: '김밍밍',
-      field: '수학',
-      starPoint: 4.5,
-      career: '수상',
-    },
-    {
-      image: 'das',
-      name: '류건열',
-      field: '수학',
-      starPoint: 4.7,
-      career: '수상',
-    },
-    {
-      image: 'das',
-      name: '김핑핑',
-      field: '영어',
-      starPoint: 4.3,
-      career: '수상',
-    },
-  ]);
+  const [teacherList, setTeacherList] = useState([]);
 
   const searchSpace = async (e) => {
     let search = await e.target.value;
@@ -118,25 +97,27 @@ const TeacherList = () => {
     });
   };
 
-  const q = query(collection(db, 'users'), where('role', '==', 'tutor'));
-  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+const getTutor = async () => {
+    const q = query(collection(db, 'users'), where('role', '==', 'tutor'));
+    const querySnapshot = await getDocs(q);
     const tutor = [];
     querySnapshot.forEach((doc) => {
       const temp = {
         image: doc.data().photoURL,
         name: doc.data().name,
         field: doc.data().major,
-        starPoint: doc.data().ratio,
+        starPoint: doc.data().rate,
         career: doc.data().bio,
       };
       tutor.push(temp);
-      console.log(tutor);
-      setTeacherList((teacherList) => [...teacherList, temp]);
-      console.log(teacherList);
     });
-    // console.log(tutor.join(', '));
-    // setTeacherList(teacher);
-  });
+    setTeacherList((teacherList) => [...teacherList, ...tutor]);
+    console.log(teacherList);
+  };
+
+  useEffect(() => {
+    getTutor();
+  }, []);
 
   useEffect(() => {
     let count = 0;
@@ -155,7 +136,13 @@ const TeacherList = () => {
     setCard(
       newData.map((value) => (
         <div className='cardItem innerContainer' key={count++ + value.name + value.starPoint}>
-          <div className='innerItem'>{value.image}</div>
+          <div className='innerItem'>
+            {value.image === null || value.image === '' ? (
+              <img src={unknownPersonImg} display='block' width='100%' height='100%' />
+            ) : (
+              <img src={value.image} display='block' width='100%' height='100%' />
+            )}
+          </div>
           <div className='innerItem'>
             <div>{value.name} 선생님</div>
             <div>분야 : {value.field}</div>
