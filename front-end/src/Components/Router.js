@@ -9,7 +9,7 @@ import PostList from '../routes/PostList';
 import News from '../routes/News';
 import Profile from '../routes/Profile';
 
-const AppRouter = ({ isLoggedIn, avataURL, info, setInfo, dataFile, setDataFile, userObj }) => {
+const AppRouter = ({ isLoggedIn, avataURL, info, dataFile, setReload, userObj }) => {
 
   return (
     <Router>
