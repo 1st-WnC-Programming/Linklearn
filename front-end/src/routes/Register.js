@@ -87,6 +87,7 @@ const Register = () => {
           name: name,
           role: 'student',
           major: null,
+          photoURL: null,
           rate: 0,
           bio: null,
           numberOfReport: 0,
