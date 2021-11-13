@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Close } from '@styled-icons/evaicons-solid';
 import { authService, db, rt_db } from '../fbase';
-import { ref, set, child, update, push } from 'firebase/database';
+import { ref, set, child, update, push, get, serverTimestamp, onValue } from 'firebase/database';
 
 const Background = styled.div`
   position: fixed;
@@ -38,32 +38,11 @@ const ModalContainer = styled.div`
   box-shadow: 1px 1px 15px -2px grey;
 `;
 
-const Avata = styled.img`
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  margin-bottom: 15px;
-  margin-top: 90px;
-  &:hover {
-    opacity: 0.6;
-  }
-`;
-
 const ChattingInput = styled.input`
   font-size: 20px;
   padding: 10px;
   margin: 15px;
   width: 75%;
-  background-color: #e2e2e2;
-  border-radius: 5px;
-  border: none;
-`;
-
-const Bio = styled.textarea`
-  font-size: 20px;
-  padding: 10px;
-  margin: 15px;
-  width: 64%;
   background-color: #e2e2e2;
   border-radius: 5px;
   border: none;
@@ -102,8 +81,13 @@ const TextSpace = styled.div`
   align-items: center;
 `;
 
-const Text = styled.div`
+const ChattingSpace = styled.div`
   font-size: 20px;
+  padding: 10px;
+  margin-top: 50px;
+  height: 350px;
+  width: 90%;
+  border: 1px solid black;
 `;
 
 const Title = styled.div`
@@ -115,24 +99,98 @@ const Title = styled.div`
 `;
 
 const ChattingModal = ({ handleModalClick, teacherObj }) => {
+  const [tempInput, setTempInput] = useState('');
+  const [chatList, setChatList] = useState('');
+  const [chatCount, setChatCount] = useState(0);
   const user = authService.currentUser;
+  const roomKey = user.uid + teacherObj.id;
+  const messageRef = ref(rt_db, 'messages' + roomKey);
 
-  const handleCancelButton = (e) => {
-    handleModalClick(e);
+  const handleCancelButton = async (e) => {
+    handleModalClick(await e);
   };
 
-  const handleSendChat = (data) => {};
+  const handleChattingInput = async (e) => {
+    e.preventDefault();
+    setTempInput(await e.target.value);
+  };
+
+  const handleSendChat = (e, message) => {
+    e.preventDefault();
+    console.log(message);
+    console.log(user);
+    console.log(teacherObj);
+    // 메시지 디비 생성
+    const messageKey = push(child(ref(rt_db), 'messages')).key;
+    set(ref(rt_db, 'messages/' + roomKey + '/' + messageKey), {
+      message: message,
+      timestamp: serverTimestamp(),
+      uid: user.uid,
+      userName: user.displayName,
+    });
+
+    // 채팅방 유저 목록 디비 생성
+    const dbRef = ref(rt_db);
+    get(child(dbRef, 'roomUsers/' + roomKey))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log(snapshot.val());
+        } else {
+          set(ref(rt_db, 'roomUsers/' + roomKey), {
+            uid1: user.uid,
+            uid2: teacherObj.id,
+          });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    // 유저의 채팅 목록 생성
+    set(ref(rt_db, 'userRooms/' + user.uid + '/' + roomKey), {
+      lastMessage: message,
+      timestamp: serverTimestamp(),
+      roomid: roomKey,
+      roomUserName: user.displayName + '@' + teacherObj.name,
+      roomuserList: user.uid + '@' + teacherObj.id,
+    });
+
+    set(ref(rt_db, 'userRooms/' + teacherObj.id + '/' + roomKey), {
+      lastMessage: message,
+      timestamp: serverTimestamp(),
+      roomid: roomKey,
+      roomUserName: teacherObj.name + '@' + user.displayName,
+      roomuserList: teacherObj.id + '@' + user.uid,
+    });
+
+    setChatCount((chatCount) => chatCount + 1);
+    setTempInput('');
+  };
+
+  useEffect(() => {
+    //채팅 개수만큼 카운트 ++
+  }, []);
+
+  useEffect(() => {
+    // chatCount 변할 때 마다 실시간 가져오기?
+  }, [chatCount]);
 
   return (
     <>
       <Background onClick={handleCancelButton} />
       <ModalContainer>
         <ChattingBox>
-          <Title>{teacherObj.name} 선생님과의 채팅</Title>
+          <Title>{teacherObj.name}과(와)의 채팅</Title>
           <CloseIcon onClick={handleCancelButton}></CloseIcon>
+          <ChattingSpace></ChattingSpace>
           <TextSpace>
-            <ChattingInput name='chattingInput' placeholder='' />
-            <Button color='black' onClick={(e) => handleSendChat(e)}>
+            <ChattingInput
+              name='chattingInput'
+              placeholder=''
+              value={tempInput}
+              onChange={handleChattingInput}
+            />
+            <Button color='black' onClick={(e) => handleSendChat(e, tempInput)}>
               전송
             </Button>
           </TextSpace>
