@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { v4 } from 'uuid';
 import { authService, db, storageService } from '../fbase';
+import { Close } from '@styled-icons/evaicons-solid';
 
 const Background = styled.div`
   position: fixed;
@@ -16,15 +17,22 @@ const Background = styled.div`
   z-index: 1001;
 `;
 
+const CloseIcon = styled(Close)`
+  position: absolute;
+  right: 40px;
+  top: 40px;
+  width: 2rem;
+  cursor: pointer;
+`;
+
 const ModalContainer = styled.div`
   flex-direction: column;
   width: 500px;
-  height: 800px;
   background-color: white;
   padding: 40px;
   display: flex;
   align-items: center;
-
+  justify-content: space-between;
   z-index: 1002;
   border-radius: 20px;
   position: fixed;
@@ -39,84 +47,106 @@ const Avata = styled.img`
   height: 150px;
   border-radius: 50%;
   margin-bottom: 15px;
+  margin-top: 90px;
   &:hover {
     opacity: 0.6;
   }
 `;
 
 const Name = styled.input`
-  font-size: 15px;
+  font-size: 20px;
   padding: 10px;
   margin: 15px;
   width: 75%;
+  background-color: #e2e2e2;
+  border-radius: 5px;
+  border: none;
 `;
 
 const Info = styled.input`
-  font-size: 15px;
+  font-size: 20px;
   padding: 10px;
   margin: 15px;
-  width: 100%;
+  width: 75%;
+  background-color: #e2e2e2;
+  border-radius: 5px;
+  border: none;
+`;
+
+const Bio = styled.textarea`
+  font-size: 20px;
+  padding: 10px;
+  margin: 15px;
+  width: 64%;
+  background-color: #e2e2e2;
+  border-radius: 5px;
+  border: none;
 `;
 
 const Button = styled.button`
-  background-color: ${({ color }) => color};
   font-size: 15px;
   padding: 12px 50px;
-  color: white;
+  color: black;
   justify-content: center;
   font-size: 18px;
   margin: 8px 0;
   width: 40%;
-  border: none;
+  border: 2px solid black;
+  margin: 10px;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: ${({ color }) => color};
+    color: white;
+    transition: all ease-out 0.3s 0s;
+  }
+`;
+
+const Infos = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 40px;
+`;
+
+const TextSpace = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Text = styled.div`
+  font-size: 20px;
 `;
 
 const PhotoSelect = styled.input`
   display: none;
 `;
 
-const InfoModal = ({
-  userObj,
-  avata,
-  name,
-  field,
-  career,
-  role,
-  onModalClick,
-  setAvataURL,
-  setName,
-  setField,
-  setCareer,
-}) => {
+const Title = styled.div`
+  font-size: 30px;
+  position: absolute;
+  left: 40px;
+  top: 40px;
+  font-weight: 700;
+`;
+
+const InfoModal = ({ userObj, avata, field, career, name, role, onModalClick }) => {
   const user = authService.currentUser;
   const [selectedImg, setSelectedImg] = useState(avata);
+  const [tempName, setTempName] = useState(name);
+  const [tempField, setTempField] = useState(field);
+  const [tempCareer, setTempCareer] = useState(career);
   const uploadPhotoRef = useRef();
-
-  const fetchUser = async () => {
-    const docRef = doc(db, 'users', user.uid);
-    const docSnap = await getDoc(docRef);
-    return docSnap.data();
-  };
-
-  const onCancelClick = (e) => {
-    fetchUser()
-      .then((user) => {
-        setName(user.name);
-        setField(user.major);
-        setCareer(user.bio);
-        onModalClick(e);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   const onTextChange = (e) => {
     const {
       target: { name, value },
     } = e;
-    if (name === 'name') setName(value);
-    else if (name === 'field') setField(value);
-    else if (name === 'career') setCareer(value);
+    if (name === 'name') setTempName(value);
+    else if (name === 'field') setTempField(value);
+    else if (name === 'career') setTempCareer(value);
   };
 
   const onButtonClick = async (e) => {
@@ -141,10 +171,10 @@ const InfoModal = ({
       await setDoc(
         doc(db, 'users', user.uid),
         {
-          name: name,
+          name: tempName,
           photoURL: selectedImg,
-          major: field,
-          bio: career,
+          major: tempField,
+          bio: tempCareer,
         },
         { merge: true },
       );
@@ -177,26 +207,61 @@ const InfoModal = ({
 
   return (
     <>
-      <Background onClick={onCancelClick} name='info' />
+      <Background onClick={onModalClick} name='info' />
       <ModalContainer>
-        <PhotoSelect type='file' accept='image/*' ref={uploadPhotoRef} name='photo' onChange={onImgChange} />
-        <Avata src={selectedImg} onClick={onPhotoClick} />
-        이름
-        <Name name='name' value={name} onChange={onTextChange} />
-        {role === 'tutor' ? (
-          <>
-            분야
-            <Info name='field' value={field} onChange={onTextChange} />
-            경력(200자 이하)
-            <Info name='career' value={career} style={{ height: 200 }} onChange={onTextChange} />
-          </>
-        ) : (
-          ''
-        )}
-        <Button color='#dc3545' name='info' onClick={onCancelClick}>
-          취소
-        </Button>
-        <Button color='#3c78c8' name='info' onClick={onButtonClick}>
+        <Infos>
+          <Title>정보 수정</Title>
+
+          <CloseIcon name='info' onClick={onModalClick} />
+
+          <PhotoSelect
+            type='file'
+            accept='image/*'
+            ref={uploadPhotoRef}
+            name='photo'
+            onChange={onImgChange}
+          />
+          <Avata src={selectedImg} onClick={onPhotoClick} />
+          <TextSpace>
+            <Text>이름</Text>
+            <Name
+              name='name'
+              autoComplete='off'
+              placeholder='이름을 입력하세요'
+              value={tempName}
+              onChange={onTextChange}
+            />
+          </TextSpace>
+
+          {role === 'tutor' ? (
+            <>
+              <TextSpace>
+                <Text>분야</Text>
+                <Info
+                  name='field'
+                  autoComplete='off'
+                  placeholder='분야를 입력하세요'
+                  value={tempField}
+                  onChange={onTextChange}
+                />
+              </TextSpace>
+              <TextSpace>
+                <Text>경력</Text>
+                <Bio
+                  name='career'
+                  autoComplete='off'
+                  placeholder='경력을 입력하세요'
+                  value={tempCareer}
+                  style={{ height: 150 }}
+                  onChange={onTextChange}
+                />
+              </TextSpace>
+            </>
+          ) : (
+            ''
+          )}
+        </Infos>
+        <Button color='black' name='info' onClick={onButtonClick}>
           확인
         </Button>
       </ModalContainer>

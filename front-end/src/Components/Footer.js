@@ -1,2 +1,9 @@
 import styled from 'styled-components';
-export default () => <footer>&copy; {new Date().getFullYear()} Linklearn</footer>;
+
+const Footer = styled.div`
+  width: 100%;
+  height: 300px;
+  background-color: #f2efef;
+`;
+
+export default () => <Footer></Footer>;

@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { authService, db } from '../fbase';
 import { Close } from '@styled-icons/evaicons-solid';
+import {collection, query, where, getDocs} from 'firebase/firestore';
 
 const Background = styled.div`
   position: fixed;
@@ -9,7 +11,7 @@ const Background = styled.div`
   bottom: 0;
   right: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 0;
+  z-index: 1001;
 `;
 
 const ModalContainer = styled.div`
@@ -72,10 +74,7 @@ const Row = styled.tr`
   border-bottom: 1px solid #ededed;
   font-size: 12px;
   background-color: #fff;
-  //   &:hover {
-  //     background-color: #e7f6f6;
-  //     transition: background-color 0.5s;
-  //   }
+
   &:first-child {
     & > th {
       padding: 10px;
@@ -92,38 +91,38 @@ const Row = styled.tr`
     }
   }
 `;
-//  const Button = styled.button`
-//     background-color: #4CAF50; /* Green */
-//     border: none;
-//     color: white;
-//     padding: 15px 32px;
-//     text-align: center;
-//     text-decoration: none;
-//     display: inline-block;
-//     font-size: 16px;
-//  `;
+ const Button = styled.button`
+    background-color: ${({ color }) => color};
+    border: none;
+    color: white;
+    border-radius:5px;
+    padding: 3px 5px;
+    text-align: center;
+    font-size: 13px;
+ `;
 
 const BlackListModal = ({ showModal, close }) => {
-  const [reportList, setReportList] = useState([
-    {
-      name: '우정균',
-      numberOfReport: 5,
-      email: 'wjk6044@naver.com',
-      role: 'tutor',
-    },
-    {
-      name: '김정균',
-      numberOfReport: 7,
-      email: 'jk6044@naver.com',
-      role: 'tutor',
-    },
-    {
-      name: '박정균',
-      numberOfReport: 6,
-      email: 'wjk6044@naver.com',
-      role: 'tutor',
-    },
-  ]);
+    const [reportList, setReportList] = useState([]);
+    const SetReportList = async() => {
+        const q = query(collection(db, "users"), where("numberOfReport", ">", 3));
+        const querySnapshot = await getDocs(q);
+        const list =[];
+        querySnapshot.forEach((doc) => {
+            const temp = {
+                name: doc.data().name,
+                email: doc.data().email,
+                numberOfReport: doc.data().numberOfReport,
+                id: doc.data().id
+            };
+            list.push(temp);
+        });
+        setReportList([...list]);
+        console.log(reportList);
+    }
+    useEffect(() => {
+        SetReportList();
+      }, []);
+    
 
   const [blackList, setBlackList] = useState([
     {
@@ -147,7 +146,7 @@ const BlackListModal = ({ showModal, close }) => {
           <td>{curData.name}</td>
           <td>{curData.email}</td>
           <td>🚨 {curData.numberOfReport}</td>
-          <td></td>
+          <td><Button color='#dc3545'>블랙</Button></td>
         </Row>,
       );
     });
@@ -160,7 +159,7 @@ const BlackListModal = ({ showModal, close }) => {
         <Row className='dataList'>
           <td>{curData.name}</td>
           <td>{curData.email}</td>
-          <td></td>
+          <td><Button color='#3c78c8'>해제</Button></td>
         </Row>,
       );
     });

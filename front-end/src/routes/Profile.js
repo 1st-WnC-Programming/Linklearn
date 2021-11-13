@@ -4,22 +4,24 @@ import styled from 'styled-components';
 import { authService, db } from '../fbase';
 import { doc, getDoc, collection, deleteDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import {
-  deleteUser,
-  EmailAuthCredential,
-  EmailAuthProvider,
-  reauthenticateWithCredential,
-} from 'firebase/auth';
 import InfoModal from '../Components/InfoModal';
 import BlackListModal from '../Components/BlackListModal';
+import {
+  deleteUser,
+  EmailAuthProvider,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  reauthenticateWithCredential,
+  reauthenticateWithPopup,
+} from 'firebase/auth';
 
 const ProfileWrap = styled.div`
   flex-direction: column;
   padding: 40px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  height: 800px;
+  justify-content: center;
+  /* height: 100%; */
 `;
 
 const Avata = styled.img`
@@ -30,7 +32,7 @@ const Avata = styled.img`
 `;
 
 const Name = styled.div`
-  font-size: 50px;
+  font-size: 45px;
   font-weight: 700;
   margin: 15px;
 `;
@@ -39,24 +41,26 @@ const Email = styled.div`
   font-size: 20px;
   font-weight: 200;
   margin: 5px;
+  margin-bottom: 40px;
 `;
 
 const TeacherInfo = styled.div`
   flex-direction: column;
   padding: 30px;
   display: flex;
+
   align-items: center;
 `;
 
 const TeacherInfoTitle = styled.div`
   font-size: 30px;
-  font-weight: 600;
+  font-weight: 300;
   margin: 15px;
 `;
 
 const Info = styled.div`
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 200;
   margin: 10px;
 `;
 
@@ -67,15 +71,22 @@ const Role = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: ${({ color }) => color};
   font-size: 15px;
   padding: 12px 50px;
-  color: white;
+  color: black;
   justify-content: center;
   font-size: 18px;
   margin: 8px 0;
-  width: 300px;
-  border: none;
+  width: 200px;
+  border: 2px solid black;
+  margin: 10px;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: ${({ color }) => color};
+    color: white;
+    transition: all ease-out 0.3s 0s;
+  }
 `;
 
 const Infos = styled.div`
@@ -83,6 +94,7 @@ const Infos = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin-bottom: 80px;
 `;
 
 const Buttons = styled.div`
@@ -97,9 +109,8 @@ const Profile = ({ avataURL, userObj }) => {
   const navigate = useNavigate();
 
   const [avata, setAvataURL] = useState(avataURL);
-  const [name, setName] = useState(user.displayName);
+  const [name, setName] = useState('');
   const [starRate, setStarRate] = useState('5.0');
-  const [email, setEmail] = useState(user.email);
   const [field, setField] = useState('');
   const [career, setCareer] = useState('');
   const [role, setRole] = useState(null);
@@ -112,58 +123,82 @@ const Profile = ({ avataURL, userObj }) => {
     return docSnap.data();
   };
 
-  useEffect(() => {
-    fetchUser()
-      .then((user) => {
-        setRole(user.role);
-        setStarRate(user.rate);
-        setField(user.major);
-        setCareer(user.bio);
+  fetchUser()
+    .then((user) => {
+      setRole(user.role);
+      setStarRate(user.rate);
+      setField(user.major);
+      setCareer(user.bio);
 
-        if (avata === null) {
-          setAvataURL(unknown);
-        }
+      setName(user.name);
 
-        if (name === null) {
-          setName(user.name);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    return () => {
-      // cleanup;
-    };
-  }, []);
+      if (avata === null) {
+        setAvataURL(unknown);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
   //TODO: 회원 탈퇴 구현 중.....
 
-  // const onResignClick = () => {
-  //   if (window.confirm('정말 회원 탈퇴하시겠습니까?') === true) {
-  //     const userPassword = window.prompt('비밀번호를 입력해주세요');
-  //     console.log(userPassword);
-  //     const credential = EmailAuthProvider.credential(user.email, userPassword);
+  const onResignClick = () => {
+    if (window.confirm('정말 회원 탈퇴하시겠습니까?') === true) {
+      console.log(user.providerData[0].providerId);
+      if (user.providerData[0].providerId === 'google.com') {
+        reauthenticateWithPopup(user, new GoogleAuthProvider())
+          .then((credential) => {
+            console.log(credential);
+            deleteUser(user)
+              .then(async () => {
+                await deleteDoc(doc(db, 'users', user.uid));
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+            navigate('/');
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else if (user.providerData[0].providerId === 'github.com') {
+        reauthenticateWithPopup(user, new GithubAuthProvider())
+          .then((credential) => {
+            console.log(credential);
+            deleteUser(user)
+              .then(async () => {
+                await deleteDoc(doc(db, 'users', user.uid));
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+            navigate('/');
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else if (user.providerData[0].providerId === 'password') {
+        const password = window.prompt('비밀번호를 입력해주세요');
+        const credential = EmailAuthProvider.credential(user.email, password);
+        reauthenticateWithCredential(user, credential)
+          .then((credential) => {
+            console.log(credential);
+            deleteUser(user)
+              .then(async () => {
+                await deleteDoc(doc(db, 'users', user.uid));
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+            navigate('/');
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    }
+  };
 
-  //     reauthenticateWithCredential(user, credential)
-  //       .then(() => {
-  //         console.log('ASDF');
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-
-  //     deleteUser(user)
-  //       .then(async () => {
-  //         await deleteDoc(doc(db, 'users', user.uid));
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //     navigate('/');
-  //   }
-  // };
-
-  //TODO: 정보수정 모달창 제작중
   const onModalClick = (e) => {
     const {
       target: { name },
@@ -193,19 +228,21 @@ const Profile = ({ avataURL, userObj }) => {
               <Avata src={avata} />
               <Name>{name}</Name>
               <Role>{role}</Role>
-              <Email>{email}</Email>
+              <Email>{user.email}</Email>
               <TeacherInfo>
                 <TeacherInfoTitle>튜터 정보</TeacherInfoTitle>
-                <Info>{field}</Info>
-                <Info> ★★★★★ {starRate} </Info>
-                <Info>{career}</Info>
+                <Info>분야 : {field}</Info>
+                <Info>평점 : {starRate} </Info>
+                <Info>경력 : {career}</Info>
               </TeacherInfo>
             </Infos>
             <Buttons>
-              <Button color='#3c78c8' name='info' onClick={onModalClick}>
+              <Button color='black' name='info' onClick={onModalClick}>
                 정보 수정
               </Button>
-              <Button color='#dc3545'>회원 탈퇴</Button>
+              <Button color='black' onClick={onResignClick}>
+                회원 탈퇴
+              </Button>
             </Buttons>
           </>
         ) : role === 'student' ? (
@@ -214,15 +251,17 @@ const Profile = ({ avataURL, userObj }) => {
               <Avata src={avata} />
               <Name>{name}</Name>
               <Role>{role}</Role>
-              <Email>{email}</Email>
+              <Email>{user.email}</Email>
             </Infos>
 
             <Buttons>
-              <Button color='#3c78c8'>튜터 신청</Button>
-              <Button color='#3c78c8' name='info' onClick={onModalClick}>
+              <Button color='black'>튜터 신청</Button>
+              <Button color='black' name='info' onClick={onModalClick}>
                 정보 수정
               </Button>
-              <Button color='#dc3545'>회원 탈퇴</Button>
+              <Button color='black' onClick={onResignClick}>
+                회원 탈퇴
+              </Button>
             </Buttons>
           </>
         ) : (
@@ -231,17 +270,19 @@ const Profile = ({ avataURL, userObj }) => {
               <Avata src={avata} />
               <Name>{name}</Name>
               <Role>{role}</Role>
-              <Email>{email}</Email>
+              <Email>{user.email}</Email>
             </Infos>
 
             <Buttons>
-              <Button color='#3c78c8' name='info' onClick={onModalClick}>
+              <Button color='black' name='info' onClick={onModalClick}>
                 정보 수정
               </Button>
-              <Button color='#3c78c8' name='blacklist' onClick={onModalClick}>
-                블랙리스트 관리
+              <Button color='black' name='blacklist' onClick={onModalClick}>
+                회원 관리
               </Button>
-              <Button color='#dc3545'>회원 탈퇴</Button>
+              <Button color='black' onClick={onResignClick}>
+                회원 탈퇴
+              </Button>
             </Buttons>
           </>
         )}
@@ -256,9 +297,6 @@ const Profile = ({ avataURL, userObj }) => {
             role={role}
             onModalClick={onModalClick}
             setAvataURL={setAvataURL}
-            setName={setName}
-            setField={setField}
-            setCareer={setCareer}
           />
         ) : (
           ''
