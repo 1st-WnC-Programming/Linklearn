@@ -10,6 +10,8 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
 } from 'firebase/auth';
+import InfoModal from '../Components/InfoModal';
+import BlackListModal from '../Components/BlackListModal';
 
 const ProfileWrap = styled.div`
   flex-direction: column;
@@ -17,6 +19,7 @@ const ProfileWrap = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 800px;
 `;
 
 const Avata = styled.img`
@@ -75,6 +78,20 @@ const Button = styled.button`
   border: none;
 `;
 
+const Infos = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Buttons = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
 const Profile = ({ avataURL }) => {
   const user = authService.currentUser;
   const navigate = useNavigate();
@@ -84,8 +101,10 @@ const Profile = ({ avataURL }) => {
   const [starRate, setStarRate] = useState('5.0');
   const [email, setEmail] = useState(user.email);
   const [field, setField] = useState('없음');
-  const [career, setCareer] = useState('정보 수정을 눌러 입력해주세요');
+  const [career, setCareer] = useState('없음');
   const [role, setRole] = useState(null);
+  const [infoToggle, setInfoToggle] = useState(false);
+  const [blacklistToggle, setBlacklistToggle] = useState(false);
 
   const fetchUser = async () => {
     const docRef = doc(db, 'users', user.uid);
@@ -97,7 +116,6 @@ const Profile = ({ avataURL }) => {
     .then((user) => {
       setRole(user.role);
       setStarRate(user.rate);
-      setField(user.major);
 
       if (avata === null) {
         setAvataURL(unknown);
@@ -138,6 +156,24 @@ const Profile = ({ avataURL }) => {
   //   }
   // };
 
+  //TODO: 정보수정 모달창 제작중
+  const onModalClick = (e) => {
+    const {
+      target: { name },
+    } = e;
+
+    if (name === 'info') {
+      console.log(infoToggle);
+      setInfoToggle((prev) => !prev);
+    } else if (name === 'blacklist') {
+      setBlacklistToggle((prev) => !prev);
+    }
+  };
+
+  const closeBlackList = () => {
+    setBlacklistToggle(false);
+  };
+
   return (
     <main>
       <ProfileWrap>
@@ -146,18 +182,24 @@ const Profile = ({ avataURL }) => {
           'Loading'
         ) : role === 'tutor' ? (
           <>
-            <Avata src={avata} />
-            <Name>{name}</Name>
-            <Role>{role}</Role>
-            <Email>{email}</Email>
-            <TeacherInfo>
-              <TeacherInfoTitle>튜터 정보</TeacherInfoTitle>
-              <Info>{field}</Info>
-              <Info> ★★★★★ {starRate} </Info>
-              <Info>{career}</Info>
-            </TeacherInfo>
-            <Button color='#3c78c8'>정보 수정</Button>
-            <Button color='#dc3545'>회원 탈퇴</Button>
+            <div>
+              <Avata src={avata} />
+              <Name>{name}</Name>
+              <Role>{role}</Role>
+              <Email>{email}</Email>
+              <TeacherInfo>
+                <TeacherInfoTitle>튜터 정보</TeacherInfoTitle>
+                <Info>{field}</Info>
+                <Info> ★★★★★ {starRate} </Info>
+                <Info>{career}</Info>
+              </TeacherInfo>
+            </div>
+            <div>
+              <Button color='#3c78c8' name='info' onClick={onModalClick}>
+                정보 수정
+              </Button>
+              <Button color='#dc3545'>회원 탈퇴</Button>
+            </div>
           </>
         ) : role === 'student' ? (
           <>
@@ -166,19 +208,36 @@ const Profile = ({ avataURL }) => {
             <Role>{role}</Role>
             <Email>{email}</Email>
             <Button color='#3c78c8'>튜터 신청</Button>
-            <Button color='#3c78c8'>정보 수정</Button>
+            <Button color='#3c78c8' name='info' onClick={onModalClick}>
+              정보 수정
+            </Button>
             <Button color='#dc3545'>회원 탈퇴</Button>
           </>
         ) : (
           <>
-            <Avata src={avata} />
-            <Name>{name}</Name>
-            <Role>{role}</Role>
-            <Email>{email}</Email>
+            <Infos>
+              <Avata src={avata} />
+              <Name>{name}</Name>
+              <Role>{role}</Role>
+              <Email>{email}</Email>
+            </Infos>
 
-            <Button color='#3c78c8'>정보 수정</Button>
-            <Button color='#dc3545'>회원 탈퇴</Button>
+            <Buttons>
+              <Button color='#3c78c8' name='info' onClick={onModalClick}>
+                정보 수정
+              </Button>
+              <Button color='#3c78c8' name='blacklist' onClick={onModalClick}>
+                블랙리스트 관리
+              </Button>
+              <Button color='#dc3545'>회원 탈퇴</Button>
+            </Buttons>
           </>
+        )}
+        <BlackListModal showModal={blacklistToggle} close={closeBlackList} />
+        {infoToggle === true ? (
+          <InfoModal name={name} avata={avata} field={field} career={career} onModalClick={onModalClick} />
+        ) : (
+          ''
         )}
       </ProfileWrap>
     </main>

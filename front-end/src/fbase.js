@@ -7,14 +7,13 @@ import { getFirestore } from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyCCsLHcL1J4YDnc38UZ8mBAMHPWCbVcShk',
-  authDomain: 'linklearn-6c2e3.firebaseapp.com',
-  projectId: 'linklearn-6c2e3',
-  storageBucket: 'linklearn-6c2e3.appspot.com',
-  messagingSenderId: '436683944294',
-  appId: '1:436683944294:web:c0ba963044511a801618a7',
+  apiKey: 'AIzaSyAKxT4CVX8kt5TGatY457bC__RQNMqn1-I',
+  authDomain: 'linklearn2-b0a72.firebaseapp.com',
+  projectId: 'linklearn2-b0a72',
+  storageBucket: 'linklearn2-b0a72.appspot.com',
+  messagingSenderId: '313554324787',
+  appId: '1:313554324787:web:40e57184d38f9d5544c246',
 };
-
 const app = initializeApp(firebaseConfig);
 
 export const authService = getAuth();
