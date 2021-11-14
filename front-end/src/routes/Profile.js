@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import unknown from '../Images/Unknown_person.jpeg';
 import styled from 'styled-components';
 import { authService, db } from '../fbase';
-import { doc, getDoc, collection, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, deleteDoc, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import InfoModal from '../Components/InfoModal';
 import BlackListModal from '../Components/BlackListModal';
@@ -232,6 +232,20 @@ const Profile = ({ avataURL, userObj }) => {
     setBlacklistToggle(false);
   };
 
+  const onTutorClick = async () => {
+    if (window.confirm('튜터로 전환합니다') === true) {
+      setRole('tutor');
+
+      await setDoc(
+        doc(db, 'users', user.uid),
+        {
+          role: 'tutor',
+        },
+        { merge: true },
+      );
+    }
+  };
+
   return (
     <main>
       <ProfileWrap>
@@ -270,7 +284,9 @@ const Profile = ({ avataURL, userObj }) => {
             </Infos>
 
             <Buttons>
-              <Button color='black'>튜터 신청</Button>
+              <Button color='black' onClick={onTutorClick}>
+                튜터 신청
+              </Button>
               <Button color='black' name='info' onClick={onModalClick}>
                 정보 수정
               </Button>
