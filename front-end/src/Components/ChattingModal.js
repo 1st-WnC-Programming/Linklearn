@@ -111,13 +111,17 @@ const TextSpace = styled.div`
 
 const ChattingSpace = styled.div`
   font-size: 20px;
-  padding: 40px;
+  padding: 30px;
   margin-top: 50px;
   height: 450px;
   width: 90%;
   border-radius: 3%;
   border: 2px solid black;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: right;
+  align-items: right;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -139,6 +143,36 @@ const Title = styled.div`
   font-weight: 700;
 `;
 
+const MyChat = styled.div`
+  margin-bottom: 10px;
+  background-color: #e2e2e2;
+  max-width: 80%;
+  float: right;
+  height: auto;
+  overflow: word-break;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  padding: 10px 15px;
+`;
+
+const ChatContainer = styled.div``;
+
+const OpponentChat = styled.div`
+  margin-bottom: 10px;
+  background-color: #e2e2e2;
+  max-width: 80%;
+  float: left;
+  height: auto;
+  overflow: word-break;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  padding: 10px 15px;
+`;
+
 const ChattingModal = ({ handleModalClick, teacherObj }) => {
   const [tempInput, setTempInput] = useState('');
   const [chatList, setChatList] = useState([]);
@@ -146,15 +180,14 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
   const user = authService.currentUser;
   const roomKey = user.uid + teacherObj.id;
   const messageRef = ref(rt_db, 'messages/' + roomKey);
-  const [name, setName] = useState('');
 
   const handleCancelButton = async (e) => {
     handleModalClick(await e);
   };
 
-  const handleChattingInput = async (e) => {
+  const handleChattingInput = (e) => {
     e.preventDefault();
-    setTempInput(await e.target.value);
+    setTempInput(e.target.value);
   };
 
   const handleSendChat = (e, message) => {
@@ -165,7 +198,7 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
       message: message,
       timestamp: serverTimestamp(),
       uid: user.uid,
-      userName: name,
+      userName: user.displayName,
     });
 
     // 채팅방 유저 목록 디비 생성
@@ -190,7 +223,7 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
       lastMessage: message,
       timestamp: serverTimestamp(),
       roomid: roomKey,
-      roomUserName: name + '@' + teacherObj.name,
+      roomUserName: user.displayName + '@' + teacherObj.name,
       roomuserList: user.uid + '@' + teacherObj.id,
     });
 
@@ -198,19 +231,15 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
       lastMessage: message,
       timestamp: serverTimestamp(),
       roomid: roomKey,
-      roomUserName: teacherObj.name + '@' + name,
+      roomUserName: teacherObj.name + '@' + user.displayName,
       roomuserList: teacherObj.id + '@' + user.uid,
     });
 
     setChatList((chatList) => [
       ...chatList,
-      <div key={chatCount + 1}>
-        {name} : {message + ' '}(
-        <SimpleDateTime dateSeparator='/' timeSeparator='-' format='YMD'>
-          {new Date()}
-        </SimpleDateTime>
-        )
-      </div>,
+      <ChatContainer key={chatCount + 1}>
+        <MyChat>{message}</MyChat>
+      </ChatContainer>,
     ]);
     setChatCount((chatCount) => chatCount + 1);
     setTempInput('');
@@ -218,6 +247,7 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
 
   useEffect(() => {
     //채팅 개수만큼 카운트 ++
+
     get(child(messageRef, '/'))
       .then((snapshot) => {
         //날짜 순 정렬
@@ -226,34 +256,29 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
         if (snapshot.exists()) {
           let cnt = 0;
           setChatList(
-            sortDesc.map((msg) => (
-              <div key={cnt++} style={{ marginBottom: '10px' }}>
-                {msg[1].userName} : {msg[1].message + ' '}(
-                <SimpleDateTime dateSeparator='/' timeSeparator='-' format='YMD'>
-                  {new Date(msg[1].timestamp)}
-                </SimpleDateTime>
-                )
-              </div>
-            )),
+            sortDesc.map((msg) => {
+              console.log(msg[1].userName);
+              console.log(user.displayName);
+              if (msg[1].userName === user.displayName) {
+                // 자신의 채팅
+                return (
+                  <ChatContainer>
+                    <MyChat key={cnt++}>{msg[1].message}</MyChat>
+                  </ChatContainer>
+                );
+              } else {
+                return (
+                  <ChatContainer>
+                    <OpponentChat key={cnt++}>{msg[1].message}</OpponentChat>
+                  </ChatContainer>
+                );
+              }
+            }),
           );
           setChatCount((chatCount) => chatCount + Object.keys(data).length);
         } else {
           console.log('chatlog not exist');
         }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-
-    const fetchUser = async () => {
-      const docRef = doc(db, 'users', user.uid);
-      const docSnap = await getDoc(docRef);
-      return docSnap.data();
-    };
-
-    fetchUser()
-      .then((user) => {
-        setName(user.name);
       })
       .catch((error) => {
         console.error(error);

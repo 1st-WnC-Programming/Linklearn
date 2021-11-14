@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { authService, db, rt_db } from '../fbase';
 import { addDoc, collection, doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { ref, set, child, update, push } from 'firebase/database';
@@ -91,9 +91,21 @@ const Register = () => {
           photoURL: null,
           rate: 0,
           bio: null,
+          myLacture: [],
           numberOfReport: 0,
           createdAt: serverTimestamp(),
         });
+
+        updateProfile(authService.currentUser, {
+          displayName: name,
+        })
+          .then(() => {
+            console.log('update profile');
+          })
+          .catch((error) => {
+            console.long(error);
+          });
+
         set(ref(rt_db, 'users/' + user.uid), {
           username: name,
           email: email,
