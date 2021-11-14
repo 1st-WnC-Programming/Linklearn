@@ -92,7 +92,7 @@ const CheckBox = styled.input`
 const PostList = ({ info, dataFile, setReload }) => {
   const [title, setTitle] = useState('');
   const [type, setType] = useState('personal');
-  const [numberOfPeople, setNumberOfPeople] = useState(0);
+  const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [time, setTime] = useState('0');
   const [isInfo, setIsInfo] = useState(false);
   const selectHandler = (e) => {
@@ -146,6 +146,10 @@ const PostList = ({ info, dataFile, setReload }) => {
       alert('제목을 입력하세요.');
     } else if (getContent_md === '') {
       alert('내용을 입력하세요.');
+    } else if (time === '0') {
+      alert('과외 기간을 입력하세요.');
+    } else if (type === 'personal' && numberOfPeople != 1) {
+      alert('개인 과외는 한명만 가능합니다.');
     } else {
       let type2 = type === 'personal' ? '개인' : '그룹';
       let id2;
@@ -195,17 +199,18 @@ const PostList = ({ info, dataFile, setReload }) => {
           </SortTitle>
           <InputBox
             type='number'
-            min='0'
+            min='1'
             placeholder='모집인원'
             onChange={(e) => {
               e.preventDefault();
               setNumberOfPeople(e.target.value);
             }}
           />
+
           <InputBox
-            type='number'
+            type='date'
             min='0'
-            placeholder='과외 시간'
+            placeholder='과외 기간'
             onChange={(e) => {
               e.preventDefault();
               setTime(e.target.value);
