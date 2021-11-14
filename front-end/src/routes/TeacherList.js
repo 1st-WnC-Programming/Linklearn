@@ -61,10 +61,10 @@ const CardContainer = styled.div`
 
 const Container = styled.div`
   /* max-width: 80%; */
-  display: flex;
-  flex-direction: row;
   width: 1000px;
-  margin: 0 auto;
+  position: absolute;
+  left: 48%;
+  transform: translate(-50%);
 `;
 
 const Infos = styled.div`
@@ -243,7 +243,7 @@ const TeacherList = () => {
     setCard(
       newData.map((value) => (
         <CardContainer key={count++ + value.name + value.starPoint}>
-          <Infos>
+          <Infos className='inner'>
             {value.image === null || value.image === '' ? (
               <Avata src={unknownPersonImg} display='block' />
             ) : (
@@ -293,7 +293,9 @@ const TeacherList = () => {
           </SearchSelect>
           <SearchInput type='text' placeholder='검색어를 입력하세요.' onChange={(e) => searchSpace(e)} />
         </SearchBox>
-        <div className='cardContainer'>{card}</div>
+        <Container className='cardContainer' style={{ width: 1000 }}>
+          {card}
+        </Container>
       </div>
       {chattingToggle === true && currentUserRole === 'student' ? (
         <ChattingModal handleModalClick={handleModalClick} teacherObj={clickedTeacher}></ChattingModal>
