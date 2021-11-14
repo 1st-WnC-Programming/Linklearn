@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { authService, db } from '../fbase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -38,7 +38,7 @@ const Row = styled.tr`
   }
 `;
 const RateBtn = styled.button``;
-const reportBtn = styled.button``;
+const ReportBtn = styled.button``;
 const MyLecture = () => {
   const user = authService.currentUser;
   let [userData, setUserData] = useState();
@@ -58,9 +58,13 @@ const MyLecture = () => {
         console.log(error);
       });
   }, []);
+  useEffect(() => {
+    if (userData !== undefined) {
+      getData(userData.myLecture);
+    }
+  }, [userData]);
   const viewContent = () => {
     const result = [];
-    getData(userData.myLecture);
     myLecture.map((curData) => {
       result.push(
         <Row className='dataList'>
@@ -85,7 +89,7 @@ const MyLecture = () => {
                 } else {
                   let rate = prompt(`평점을 입력하시오.(1~5)`);
                   if (1 <= rate && rate <= 5) {
-                    setRate((curData.rate + rate) / 2, curData.uid);
+                    // 평가부분
                     alert('평가 되었습니다.');
                   } else {
                     alert('1~5 사이의 평점을 입력하세요');
@@ -95,7 +99,7 @@ const MyLecture = () => {
             ></RateBtn>
           </td>
           <td>
-            <reportBtn></reportBtn>
+            <ReportBtn></ReportBtn>
           </td>
         </Row>,
       );
@@ -114,12 +118,12 @@ const MyLecture = () => {
       fetch(id)
         .then((data) => {
           result.push(data);
+          setMyLecture(result);
         })
         .catch((error) => {
           console.log(error);
         });
     });
-    setMyLecture(result);
   };
   const setRate = async (rate, uid) => {
     await updateDoc(doc(db, 'users', uid), { rate: rate });
@@ -142,7 +146,7 @@ const MyLecture = () => {
                 <th>신고하기</th>
               </Row>
             </thead>
-            {/* <tbody>{userData !== undefined ? viewContent() : ''}</tbody> */}
+            <tbody>{userData !== undefined ? viewContent() : ''}</tbody>
           </Table>
         </Container>
       </main>

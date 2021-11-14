@@ -7,7 +7,7 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 
 import { authService, db } from '../fbase';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 
 const TitleBox = styled.div`
   width: 100%;
@@ -95,7 +95,6 @@ const PostList = ({ info, dataFile, setReload }) => {
   const [numberOfPeople, setNumberOfPeople] = useState(0);
   const [time, setTime] = useState('0');
   const [isInfo, setIsInfo] = useState(false);
-
   const selectHandler = (e) => {
     e.preventDefault();
     setType(e.target.value);
@@ -174,6 +173,9 @@ const PostList = ({ info, dataFile, setReload }) => {
         // setDataFile([...dataFile, curData]);
         await setDoc(doc(db, 'dataFile', `${id2}`), curData);
       }
+      await updateDoc(doc(db, 'users', user.uid), {
+        myLecture: [...userData.myLecture, id2],
+      });
       alert('게시되었습니다.');
       navigate('/Board');
       setReload(id2);
