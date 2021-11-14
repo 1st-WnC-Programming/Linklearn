@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Close } from '@styled-icons/evaicons-solid';
 import { authService, db, rt_db } from '../fbase';
 import { ref, set, child, update, push, get, serverTimestamp, onValue } from 'firebase/database';
-
+import SimpleDateTime from 'react-simple-timestamp-to-date';
 const Background = styled.div`
   position: fixed;
   top: 0;
@@ -88,6 +88,17 @@ const ChattingSpace = styled.div`
   height: 350px;
   width: 90%;
   border: 1px solid black;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.4);
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+  }
 `;
 
 const Title = styled.div`
@@ -100,11 +111,11 @@ const Title = styled.div`
 
 const ChattingModal = ({ handleModalClick, teacherObj }) => {
   const [tempInput, setTempInput] = useState('');
-  const [chatList, setChatList] = useState('');
+  const [chatList, setChatList] = useState([]);
   const [chatCount, setChatCount] = useState(0);
   const user = authService.currentUser;
   const roomKey = user.uid + teacherObj.id;
-  const messageRef = ref(rt_db, 'messages' + roomKey);
+  const messageRef = ref(rt_db, 'messages/' + roomKey);
 
   const handleCancelButton = async (e) => {
     handleModalClick(await e);
@@ -117,9 +128,6 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
 
   const handleSendChat = (e, message) => {
     e.preventDefault();
-    console.log(message);
-    console.log(user);
-    console.log(teacherObj);
     // 메시지 디비 생성
     const messageKey = push(child(ref(rt_db), 'messages')).key;
     set(ref(rt_db, 'messages/' + roomKey + '/' + messageKey), {
@@ -134,7 +142,7 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
     get(child(dbRef, 'roomUsers/' + roomKey))
       .then((snapshot) => {
         if (snapshot.exists()) {
-          console.log(snapshot.val());
+          console.log('ChattingRoom DB already exist.');
         } else {
           set(ref(rt_db, 'roomUsers/' + roomKey), {
             uid1: user.uid,
@@ -163,17 +171,49 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
       roomuserList: teacherObj.id + '@' + user.uid,
     });
 
+    setChatList((chatList) => [
+      ...chatList,
+      <div key={chatCount + 1}>
+        {user.displayName} : {message + ' '}(
+        <SimpleDateTime dateSeparator='/' timeSeparator='-' format='YMD'>
+          {new Date()}
+        </SimpleDateTime>
+        )
+      </div>,
+    ]);
     setChatCount((chatCount) => chatCount + 1);
     setTempInput('');
   };
 
   useEffect(() => {
     //채팅 개수만큼 카운트 ++
+    get(child(messageRef, '/'))
+      .then((snapshot) => {
+        //날짜 순 정렬
+        const data = snapshot.val();
+        const sortDesc = Object.entries(data).sort((a, b) => a[1].timestamp - b[1].timestamp);
+        if (snapshot.exists()) {
+          let cnt = 0;
+          setChatList(
+            sortDesc.map((msg) => (
+              <div key={cnt++}>
+                {msg[1].userName} : {msg[1].message + ' '}(
+                <SimpleDateTime dateSeparator='/' timeSeparator='-' format='YMD'>
+                  {new Date(msg[1].timestamp)}
+                </SimpleDateTime>
+                )
+              </div>
+            )),
+          );
+          setChatCount((chatCount) => chatCount + Object.keys(data).length);
+        } else {
+          console.log('chatlog not exist');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
-
-  useEffect(() => {
-    // chatCount 변할 때 마다 실시간 가져오기?
-  }, [chatCount]);
 
   return (
     <>
@@ -182,7 +222,7 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
         <ChattingBox>
           <Title>{teacherObj.name}과(와)의 채팅</Title>
           <CloseIcon onClick={handleCancelButton}></CloseIcon>
-          <ChattingSpace></ChattingSpace>
+          <ChattingSpace>{chatList}</ChattingSpace>
           <TextSpace>
             <ChattingInput
               name='chattingInput'
