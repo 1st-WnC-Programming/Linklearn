@@ -173,8 +173,8 @@ const News = ({ info, dataFile, setReload }) => {
           </SortTitle>
           <TextBox>모집 인원: </TextBox>
           <InputBox type='number' value={numberOfPeople} readonly />
-          <TextBox>과외 시간: </TextBox>
-          <InputBox type='number' readonly value={time} />
+          <TextBox>과외 기간: </TextBox>
+          <InputBox type='date' readonly value={time} />
         </SortBox>
 
         <Content>
@@ -219,17 +219,16 @@ const News = ({ info, dataFile, setReload }) => {
           <TextBox>모집 인원 </TextBox>
           <InputBox
             type='number'
-            min='0'
+            min='1'
             onChange={(e) => {
               e.preventDefault();
               setNumberOfPeople(e.target.value);
             }}
             value={numberOfPeople}
           />
-          <TextBox>과외 시간 </TextBox>
+          <TextBox>과외 기간 </TextBox>
           <InputBox
-            type='number'
-            min='0'
+            type='date'
             onChange={(e) => {
               e.preventDefault();
               setTime(e.target.value);
@@ -281,12 +280,18 @@ const News = ({ info, dataFile, setReload }) => {
     postData(getContent_md);
   };
   const postData = async (getContent_md) => {
+    console.log(type);
+    console.log(numberOfPeople);
     if (title === '') {
       alert('제목을 입력하세요.');
     } else if (getContent_md === '') {
       alert('내용을 입력하세요.');
+    } else if (time === '0') {
+      alert('과외 기간을 입력하세요.');
+    } else if ((type === 'personal' || type === '개인') && numberOfPeople > 1) {
+      alert('개인 과외는 한명만 가능합니다.');
     } else {
-      let type2 = type === 'personal' ? '개인' : '그룹';
+      let type2 = type === 'personal' ? '개인' : type;
       let curData = {
         title: title,
         type: type2,
@@ -296,6 +301,8 @@ const News = ({ info, dataFile, setReload }) => {
         date: new Date().toISOString().slice(0, 10),
         content: getContent_md,
         id: id,
+        uid: user.uid,
+        studentId: [],
       };
       setCurData(curData);
       if (isInfo) {
