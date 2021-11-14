@@ -168,13 +168,15 @@ const InfoModal = ({ userObj, avata, field, career, name, role, onModalClick }) 
           });
       }
 
+      const text = tempCareer.replace(/(?:\r\n|\r|\n)/g, '<br/>');
+
       await setDoc(
         doc(db, 'users', user.uid),
         {
           name: tempName,
           photoURL: selectedImg,
           major: tempField,
-          bio: tempCareer,
+          bio: text,
         },
         { merge: true },
       );

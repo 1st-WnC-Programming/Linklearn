@@ -145,7 +145,6 @@ const Profile = ({ avataURL, userObj }) => {
       setStarRate(user.rate);
       setField(user.major);
       setCareer(user.bio);
-
       setName(user.name);
 
       if (avata === null) {
@@ -263,7 +262,11 @@ const Profile = ({ avataURL, userObj }) => {
                 <TeacherInfoTitle>튜터 정보</TeacherInfoTitle>
                 <Info>분야 : {field}</Info>
                 <Info>평점 : {starRate} </Info>
-                <Info>경력 : {career}</Info>
+                <Info>
+                  {career.split('<br/>').map((line) => {
+                    return <div style={{ margin: 10 }}>{line}</div>;
+                  })}
+                </Info>
               </TeacherInfo>
             </Infos>
             <Buttons>
