@@ -126,7 +126,8 @@ const Profile = ({ avataURL, userObj }) => {
 
   const [avata, setAvataURL] = useState(avataURL);
   const [name, setName] = useState('');
-  const [starRate, setStarRate] = useState('5.0');
+  const [totalStarRate, setTotalStarRate] = useState();
+  const [evaluateNum, setEvaluateNum] = useState();
   const [field, setField] = useState('');
   const [career, setCareer] = useState('');
   const [role, setRole] = useState(null);
@@ -142,7 +143,8 @@ const Profile = ({ avataURL, userObj }) => {
   fetchUser()
     .then((user) => {
       setRole(user.role);
-      setStarRate(user.rate);
+      setTotalStarRate(user.rate);
+      setEvaluateNum(user.evaluateNumber);
       setField(user.major);
       setCareer(user.bio);
       setName(user.name);
@@ -261,11 +263,12 @@ const Profile = ({ avataURL, userObj }) => {
               <TeacherInfo>
                 <TeacherInfoTitle>튜터 정보</TeacherInfoTitle>
                 <Info>분야 : {field}</Info>
-                <Info>평점 : {starRate} </Info>
+                <Info>평점 : {totalStarRate / evaluateNum} </Info>
                 <Info>
-                  {career.split('<br/>').map((line) => {
-                    return <div style={{ margin: 10 }}>{line}</div>;
-                  })}
+                  {career &&
+                    career.split('<br/>').map((line) => {
+                      return <div style={{ margin: 10 }}>{line}</div>;
+                    })}
                 </Info>
               </TeacherInfo>
             </Infos>

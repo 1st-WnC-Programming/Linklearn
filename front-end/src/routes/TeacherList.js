@@ -213,7 +213,8 @@ const TeacherList = () => {
         image: doc.data().photoURL,
         name: doc.data().name,
         field: doc.data().major,
-        starPoint: doc.data().rate,
+        totalStarPoint: doc.data().rate,
+        evaluateNumber: doc.data().evaluateNumber,
         career: doc.data().bio,
       };
       tutor.push(temp);
@@ -251,7 +252,7 @@ const TeacherList = () => {
             )}
             <Name>{value.name}</Name>
             <Field>{value.field}</Field>
-            <Rate>{value.starPoint}</Rate>
+            <Rate>{value.totalStarPoint / value.evaluateNumber}</Rate>
             <Career>
               {value.career &&
                 value.career.split('<br/>').map((line) => {
