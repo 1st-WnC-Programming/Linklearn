@@ -296,7 +296,7 @@ const TeacherList = () => {
         <div className='cardContainer'>{card}</div>
       </div>
       {chattingToggle === true && currentUserRole === 'student' ? (
-        <ChattingModal handleModalClick={handleModalClick} teacherObj={clickedTeacher}></ChattingModal>
+        <ChattingModal handleModalClick={handleModalClick} opponentObj={clickedTeacher}></ChattingModal>
       ) : (
         ''
       )}

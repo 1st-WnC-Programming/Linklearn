@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Close } from '@styled-icons/evaicons-solid';
 import { authService, db, rt_db } from '../fbase';
 import { doc, getDoc } from 'firebase/firestore';
-import { ref, set, child, update, push, get, serverTimestamp, onValue } from 'firebase/database';
-import SimpleDateTime from 'react-simple-timestamp-to-date';
+import { ref, set, child, push, get, serverTimestamp, onValue, query, orderByChild } from 'firebase/database';
 
 const Background = styled.div`
   position: fixed;
@@ -173,13 +172,28 @@ const OpponentChat = styled.div`
   padding: 10px 15px;
 `;
 
-const ChattingModal = ({ handleModalClick, teacherObj }) => {
+const ChattingModal = ({ handleModalClick, opponentObj }) => {
   const [tempInput, setTempInput] = useState('');
   const [chatList, setChatList] = useState([]);
   const [chatCount, setChatCount] = useState(0);
   const user = authService.currentUser;
-  const roomKey = user.uid + teacherObj.id;
-  const messageRef = ref(rt_db, 'messages/' + roomKey);
+  const [currentUserRole, setCurrentUserRole] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const docRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(docRef);
+      return docSnap.data();
+    };
+
+    fetchUser()
+      .then((user) => {
+        setCurrentUserRole(user.role);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const handleCancelButton = async (e) => {
     handleModalClick(await e);
@@ -192,6 +206,8 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
 
   const handleSendChat = (e, message) => {
     e.preventDefault();
+    const roomKey = currentUserRole === 'student' ? user.uid + opponentObj.id : opponentObj.id + user.uid;
+
     // 메시지 디비 생성
     const messageKey = push(child(ref(rt_db), 'messages')).key;
     set(ref(rt_db, 'messages/' + roomKey + '/' + messageKey), {
@@ -210,7 +226,7 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
         } else {
           set(ref(rt_db, 'roomUsers/' + roomKey), {
             uid1: user.uid,
-            uid2: teacherObj.id,
+            uid2: opponentObj.id,
           });
         }
       })
@@ -223,16 +239,16 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
       lastMessage: message,
       timestamp: serverTimestamp(),
       roomid: roomKey,
-      roomUserName: user.displayName + '@' + teacherObj.name,
-      roomuserList: user.uid + '@' + teacherObj.id,
+      roomUserName: user.displayName + '@' + opponentObj.name,
+      roomuserList: user.uid + '@' + opponentObj.id,
     });
 
-    set(ref(rt_db, 'userRooms/' + teacherObj.id + '/' + roomKey), {
+    set(ref(rt_db, 'userRooms/' + opponentObj.id + '/' + roomKey), {
       lastMessage: message,
       timestamp: serverTimestamp(),
       roomid: roomKey,
-      roomUserName: teacherObj.name + '@' + user.displayName,
-      roomuserList: teacherObj.id + '@' + user.uid,
+      roomUserName: opponentObj.name + '@' + user.displayName,
+      roomuserList: opponentObj.id + '@' + user.uid,
     });
 
     setChatList((chatList) => [
@@ -246,43 +262,36 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
   };
 
   useEffect(() => {
+    const roomKey = currentUserRole === 'student' ? user.uid + opponentObj.id : opponentObj.id + user.uid;
+
+    console.log(roomKey);
+    const messageRef = ref(rt_db, 'messages/' + roomKey);
+    console.log(messageRef);
     //채팅 개수만큼 카운트 ++
 
-    get(child(messageRef, '/'))
-      .then((snapshot) => {
-        //날짜 순 정렬
-        const data = snapshot.val();
-        const sortDesc = Object.entries(data).sort((a, b) => a[1].timestamp - b[1].timestamp);
-        if (snapshot.exists()) {
-          let cnt = 0;
-          setChatList(
-            sortDesc.map((msg) => {
-              console.log(msg[1].userName);
-              console.log(user.displayName);
-              if (msg[1].userName === user.displayName) {
-                // 자신의 채팅
-                return (
-                  <ChatContainer>
-                    <MyChat key={cnt++}>{msg[1].message}</MyChat>
-                  </ChatContainer>
-                );
-              } else {
-                return (
-                  <ChatContainer>
-                    <OpponentChat key={cnt++}>{msg[1].message}</OpponentChat>
-                  </ChatContainer>
-                );
-              }
-            }),
-          );
-          setChatCount((chatCount) => chatCount + Object.keys(data).length);
+    onValue(query(messageRef, orderByChild('timestamp')), (snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        console.log(childSnapshot.val());
+        const data = childSnapshot.val();
+        let cnt = 0;
+        if (data.uid === user.uid) {
+          setChatList((chatList) => [
+            ...chatList,
+            <ChatContainer>
+              <MyChat key={cnt++}>{data.message}</MyChat>
+            </ChatContainer>,
+          ]);
         } else {
-          console.log('chatlog not exist');
+          setChatList((chatList) => [
+            ...chatList,
+            <ChatContainer>
+              <OpponentChat key={cnt++}>{data.message}</OpponentChat>
+            </ChatContainer>,
+          ]);
         }
-      })
-      .catch((error) => {
-        console.error(error);
+        setChatCount((chatCount) => chatCount + cnt);
       });
+    });
   }, []);
 
   return (
@@ -290,7 +299,7 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
       <Background onClick={handleCancelButton} />
       <ModalContainer>
         <ChattingBox>
-          <Title>{teacherObj.name}과(와)의 채팅</Title>
+          <Title>{opponentObj.name}과(와)의 채팅</Title>
           <CloseIcon onClick={handleCancelButton}></CloseIcon>
           <ChattingSpace>{chatList}</ChattingSpace>
           <TextSpace>
