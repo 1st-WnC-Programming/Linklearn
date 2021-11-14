@@ -14,7 +14,7 @@ const SearchBox = styled.div`
 `;
 
 const SearchSelect = styled.select`
-  background-color: #f9f9f9;
+  background-color: white;
   font-size: 15px;
   width: 150px;
   height: 40px;
@@ -22,6 +22,7 @@ const SearchSelect = styled.select`
   margin-right: 10px;
   text-align: center;
   border-radius: 10px;
+  border: 2px solid black;
 `;
 
 const SearchInput = styled.input`
@@ -53,7 +54,7 @@ const CardContainer = styled.div`
   justify-content: space-between;
   border-radius: 20px;
   border: none;
-  box-shadow: 1px 1px 10px -2px grey;
+  box-shadow: 5px 10px 20px -2px #e2e2e2;
   margin: 20px;
 `;
 
@@ -118,10 +119,10 @@ const Button = styled.button`
 const TeacherList = () => {
   const user = authService.currentUser;
   const [keyword, setKeyword] = useState('');
-  const selectList = { none: '<검색 필터>', name: '이름', field: '분야', career: '경력' };
+  const selectList = { none: '검색 필터', name: '이름', field: '분야', career: '경력' };
   const [searchSelected, setSearchSelected] = useState('none');
   const sortList = {
-    none: '<정렬 조건>',
+    none: '정렬 조건',
     starPoint_Desc: '별점 높은 순',
     starPoint_Asc: '별점 낮은 순',
     student_Desc: '학생들이 많이 수강한 순',
