@@ -263,7 +263,9 @@ const Profile = ({ avataURL, userObj }) => {
               <TeacherInfo>
                 <TeacherInfoTitle>튜터 정보</TeacherInfoTitle>
                 <Info>분야 : {field}</Info>
-                <Info>평점 : {totalStarRate / evaluateNum} </Info>
+                <Info>
+                  평점 : {evaluateNum > 0 ? Math.round((totalStarRate / evaluateNum) * 10) / 10 : 0}{' '}
+                </Info>
                 <Info>
                   {career &&
                     career.split('<br/>').map((line) => {
