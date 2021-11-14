@@ -50,19 +50,21 @@ const TeacherList = () => {
   const [clickedTeacher, setClickedTeacher] = useState('');
   const [currentUserRole, setCurrentUserRole] = useState(null);
 
-  const fetchUser = async () => {
-    const docRef = doc(db, 'users', user.uid);
-    const docSnap = await getDoc(docRef);
-    return docSnap.data();
-  };
+  useEffect(() => {
+    const fetchUser = async () => {
+      const docRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(docRef);
+      return docSnap.data();
+    };
 
-  fetchUser()
-    .then((user) => {
-      setCurrentUserRole(user.role);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+    fetchUser()
+      .then((user) => {
+        setCurrentUserRole(user.role);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const searchSpace = async (e) => {
     let search = await e.target.value;
