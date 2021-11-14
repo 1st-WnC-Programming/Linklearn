@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Close } from '@styled-icons/evaicons-solid';
 import { authService, db, rt_db } from '../fbase';
+import { doc, getDoc } from 'firebase/firestore';
 import { ref, set, child, update, push, get, serverTimestamp, onValue } from 'firebase/database';
 import SimpleDateTime from 'react-simple-timestamp-to-date';
 
@@ -145,6 +146,7 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
   const user = authService.currentUser;
   const roomKey = user.uid + teacherObj.id;
   const messageRef = ref(rt_db, 'messages/' + roomKey);
+  const [name, setName] = useState('');
 
   const handleCancelButton = async (e) => {
     handleModalClick(await e);
@@ -163,7 +165,7 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
       message: message,
       timestamp: serverTimestamp(),
       uid: user.uid,
-      userName: user.displayName,
+      userName: name,
     });
 
     // 채팅방 유저 목록 디비 생성
@@ -188,7 +190,7 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
       lastMessage: message,
       timestamp: serverTimestamp(),
       roomid: roomKey,
-      roomUserName: user.displayName + '@' + teacherObj.name,
+      roomUserName: name + '@' + teacherObj.name,
       roomuserList: user.uid + '@' + teacherObj.id,
     });
 
@@ -196,14 +198,14 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
       lastMessage: message,
       timestamp: serverTimestamp(),
       roomid: roomKey,
-      roomUserName: teacherObj.name + '@' + user.displayName,
+      roomUserName: teacherObj.name + '@' + name,
       roomuserList: teacherObj.id + '@' + user.uid,
     });
 
     setChatList((chatList) => [
       ...chatList,
       <div key={chatCount + 1}>
-        {user.displayName} : {message + ' '}(
+        {name} : {message + ' '}(
         <SimpleDateTime dateSeparator='/' timeSeparator='-' format='YMD'>
           {new Date()}
         </SimpleDateTime>
@@ -238,6 +240,20 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
         } else {
           console.log('chatlog not exist');
         }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    const fetchUser = async () => {
+      const docRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(docRef);
+      return docSnap.data();
+    };
+
+    fetchUser()
+      .then((user) => {
+        setName(user.name);
       })
       .catch((error) => {
         console.error(error);
