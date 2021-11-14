@@ -85,6 +85,16 @@ const SortTitle = styled.select`
   width: 20%;
   height: 45px;
 `;
+const SortTitle2 = styled.div`
+  background-color: white;
+  border-radius: 10px;
+  border: 1px solid grey;
+  font-size: 18px;
+
+  padding: 10px;
+  width: 20%;
+  height: 45px;
+`;
 const selectList = {
   personal: '개인',
   group: '그룹',
@@ -164,13 +174,7 @@ const News = ({ info, dataFile, setReload }) => {
           <Titlespan>{title}</Titlespan>
         </TitleBox>
         <SortBox>
-          <SortTitle value={type} disabled>
-            {Object.entries(selectList).map((item) => (
-              <option value={item[0]} key={item[0]}>
-                {item[1]}
-              </option>
-            ))}
-          </SortTitle>
+          <SortTitle2>{type === 'personal' || type === '개인' ? '개인' : '그룹'}</SortTitle2>
           <TextBox>모집 인원: </TextBox>
           <InputBox type='number' value={numberOfPeople} readonly />
           <TextBox>과외 기간: </TextBox>
@@ -205,6 +209,9 @@ const News = ({ info, dataFile, setReload }) => {
       </>
     );
   };
+  // {
+  //   type === '개인' || type === 'personal' ? '개인' : '그룹';
+  // }
   const editMode = () => {
     return (
       <>
@@ -292,6 +299,7 @@ const News = ({ info, dataFile, setReload }) => {
       alert('개인 과외는 한명만 가능합니다.');
     } else {
       let type2 = type === 'personal' ? '개인' : type;
+      type2 = type === 'group' ? '그룹' : type;
       let curData = {
         title: title,
         type: type2,

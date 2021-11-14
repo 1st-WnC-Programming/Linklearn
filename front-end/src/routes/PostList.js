@@ -69,7 +69,7 @@ const SortBox = styled.div`
   justify-content: space-between;
   margin: 20px auto;
   align-items: center;
-  width: 40%;
+  width: 60%;
 `;
 
 const InputBox = styled.input`
