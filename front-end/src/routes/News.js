@@ -334,6 +334,7 @@ const News = ({ info, dataFile, setReload }) => {
         } else {
           await updateDoc(doc(db, 'dataFile', `${id}`), { studentId: [...studentId, user.uid] });
         }
+        await updateDoc(doc(db, 'users', user.uid), { myLecture: [...userData.myLecture, id] });
         alert('신청 되었습니다.');
         if (studentId.length === numberOfPeople) {
           //신청 완료 알림
