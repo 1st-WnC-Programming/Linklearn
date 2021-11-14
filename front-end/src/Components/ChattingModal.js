@@ -4,6 +4,7 @@ import { Close } from '@styled-icons/evaicons-solid';
 import { authService, db, rt_db } from '../fbase';
 import { ref, set, child, update, push, get, serverTimestamp, onValue } from 'firebase/database';
 import SimpleDateTime from 'react-simple-timestamp-to-date';
+
 const Background = styled.div`
   position: fixed;
   top: 0;
@@ -13,6 +14,7 @@ const Background = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1001;
 `;
+
 const CloseIcon = styled(Close)`
   position: absolute;
   right: 40px;
@@ -23,7 +25,8 @@ const CloseIcon = styled(Close)`
 
 const ModalContainer = styled.div`
   flex-direction: column;
-  width: 500px;
+  width: 600px;
+  height: 800px;
   background-color: white;
   padding: 40px;
   display: flex;
@@ -67,28 +70,54 @@ const Button = styled.button`
   }
 `;
 
+const SendButton = styled.button`
+  font-size: 15px;
+  padding: 10px 10px;
+  color: black;
+  justify-content: center;
+  font-size: 18px;
+  margin: 8px 0;
+  width: 20%;
+  border: 2px solid black;
+  margin: 10px;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: ${({ color }) => color};
+    color: white;
+    transition: all ease-out 0.4s 0s;
+  }
+`;
+
 const ChattingBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-bottom: 40px;
+  margin-top: 30px;
+  width: 100%;
+  height: 100%;
 `;
 
 const TextSpace = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 10px;
+  width: 95%;
 `;
 
 const ChattingSpace = styled.div`
   font-size: 20px;
-  padding: 10px;
+  padding: 40px;
   margin-top: 50px;
-  height: 350px;
+  height: 450px;
   width: 90%;
-  border: 1px solid black;
+  border-radius: 3%;
+  border: 2px solid black;
   overflow-y: auto;
+
   &::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -196,7 +225,7 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
           let cnt = 0;
           setChatList(
             sortDesc.map((msg) => (
-              <div key={cnt++}>
+              <div key={cnt++} style={{ marginBottom: '10px' }}>
                 {msg[1].userName} : {msg[1].message + ' '}(
                 <SimpleDateTime dateSeparator='/' timeSeparator='-' format='YMD'>
                   {new Date(msg[1].timestamp)}
@@ -230,9 +259,9 @@ const ChattingModal = ({ handleModalClick, teacherObj }) => {
               value={tempInput}
               onChange={handleChattingInput}
             />
-            <Button color='black' onClick={(e) => handleSendChat(e, tempInput)}>
+            <SendButton color='black' onClick={(e) => handleSendChat(e, tempInput)}>
               전송
-            </Button>
+            </SendButton>
           </TextSpace>
         </ChattingBox>
         <Button color='black' onClick={handleCancelButton}>
