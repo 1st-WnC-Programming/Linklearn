@@ -9,7 +9,7 @@ const App = () => {
   const [init, setInit] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userObj, setUserObj] = useState(null);
-  const [avataURL, setAvataURL] = useState(unknown);
+  const [avataURL, setAvataURL] = useState('');
 
   const [info, setInfo] = useState([]);
   const [dataFile, setDataFile] = useState([]);
@@ -20,18 +20,15 @@ const App = () => {
       if (user) {
         setIsLoggedIn(true);
         setUserObj(user);
-
-        if (user.photoURL !== null) {
-          setAvataURL(user.photoURL);
-        }
+        setAvataURL(user.photoURL);
       } else {
-        setAvataURL(false);
         setIsLoggedIn(false);
       }
       setInit(true);
     });
     awaitGetData();
   }, []);
+
   useEffect(() => {
     awaitGetData();
   }, [reload]);
@@ -41,6 +38,7 @@ const App = () => {
     result = await getData('info', 1001);
     setInfo(result);
   };
+
   return (
     <>
       {init ? (
