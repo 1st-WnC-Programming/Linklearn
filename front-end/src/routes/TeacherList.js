@@ -252,7 +252,11 @@ const TeacherList = () => {
             )}
             <Name>{value.name}</Name>
             <Field>{value.field}</Field>
-            <Rate>{value.totalStarPoint / value.evaluateNumber}</Rate>
+            <Rate>
+              {value.evaluateNumber > 0
+                ? Math.round((value.totalStarPoint / value.evaluateNumber) * 10) / 10
+                : 0}
+            </Rate>
             <Career>
               {value.career &&
                 value.career.split('<br/>').map((line) => {

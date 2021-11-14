@@ -72,8 +72,11 @@ const MyLecture = () => {
   const user = authService.currentUser;
   let [userData, setUserData] = useState();
   let [myLecture, setMyLecture] = useState([]);
+
   let [tutorReport, setTutorReport] = useState([]);
   let [tutorRate, setTutorRate] = useState([]);
+  let [rate, setRate] = useState(-1);
+
   const fetchUser = async () => {
     const docRef = doc(db, 'users', user.uid);
     const docSnap = await getDoc(docRef);
@@ -97,9 +100,16 @@ const MyLecture = () => {
 
   useEffect(() => {
     if (tutorReport.length !== 0) {
-      setNumOfReport(tutorReport);
+      updateNumOfReport(tutorReport);
     }
   }, [tutorReport]);
+
+  useEffect(() => {
+    if (tutorRate.length !== 0 && rate !== -1) {
+      updateRate(tutorRate);
+      setRate(-1);
+    }
+  }, [tutorRate]);
 
   const viewContent = () => {
     const result = [];
@@ -128,7 +138,8 @@ const MyLecture = () => {
                 } else {
                   let rate = prompt(`평점을 입력하시오.(1~5)`);
                   if (1 <= rate && rate <= 5) {
-                    // 평가부분
+                    setRate(rate);
+                    getTutorRate(curData.uid);
                     alert('평가 되었습니다.');
                   } else {
                     alert('1~5 사이의 평점을 입력하세요');
@@ -162,9 +173,10 @@ const MyLecture = () => {
         </Row>,
       );
     });
+
     return result;
   };
-  const getData = async (ids) => {
+  const getData = (ids) => {
     const fetch = async (id) => {
       const docRef = doc(db, 'dataFile', `${id}`);
       const docSnap = await getDoc(docRef);
@@ -214,11 +226,18 @@ const MyLecture = () => {
         console.log(error);
       });
   };
-  const setRate = async (uid, rate) => {
-    await updateDoc(doc(db, 'users', uid), { rate: rate });
+  const updateRate = async (data) => {
+    console.log(rate);
+    console.log(data.rate);
+    await updateDoc(doc(db, 'users', data.id), {
+      rate: data.rate + Number(rate),
+      evaluateNumber: data.evaluateNumber + 1,
+    });
   };
-  const setNumOfReport = async (data) => {
-    await updateDoc(doc(db, 'users', data.id), { numberOfReport: data.numberOfReport + 1 });
+  const updateNumOfReport = async (data) => {
+    await updateDoc(doc(db, 'users', data.id), {
+      numberOfReport: data.numberOfReport + 1,
+    });
   };
 
   return (
