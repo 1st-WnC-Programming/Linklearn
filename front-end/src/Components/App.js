@@ -55,7 +55,7 @@ const App = () => {
             dataFile={dataFile}
             setReload={setReload}
           />
-          <Footer />
+          {/* <Footer /> */}
         </>
       ) : (
         //TODO: 추후 로딩 애니메이션 넣어야함
