@@ -71,7 +71,6 @@ const Role = styled.div`
 `;
 
 const Button = styled.button`
-  font-size: 15px;
   padding: 12px 50px;
   color: black;
   justify-content: center;
@@ -102,6 +101,23 @@ const Buttons = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin: 20px;
+`;
+
+const ResignButton = styled.button`
+  padding: 12px 50px;
+  color: red;
+  font-size: 18px;
+  justify-content: center;
+  border: 2px solid white;
+  background-color: white;
+  margin: 10px;
+  width: 200px;
+
+  &:hover {
+    opacity: 60%;
+    transition: all ease-out 0.2s 0s;
+  }
 `;
 
 const Profile = ({ avataURL, userObj }) => {
@@ -240,10 +256,9 @@ const Profile = ({ avataURL, userObj }) => {
               <Button color='black' name='info' onClick={onModalClick}>
                 정보 수정
               </Button>
-              <Button color='black' onClick={onResignClick}>
-                회원 탈퇴
-              </Button>
             </Buttons>
+
+            <ResignButton onClick={onResignClick}>회원 탈퇴</ResignButton>
           </>
         ) : role === 'student' ? (
           <>
@@ -259,10 +274,9 @@ const Profile = ({ avataURL, userObj }) => {
               <Button color='black' name='info' onClick={onModalClick}>
                 정보 수정
               </Button>
-              <Button color='black' onClick={onResignClick}>
-                회원 탈퇴
-              </Button>
             </Buttons>
+
+            <ResignButton onClick={onResignClick}>회원 탈퇴</ResignButton>
           </>
         ) : (
           <>
@@ -280,10 +294,9 @@ const Profile = ({ avataURL, userObj }) => {
               <Button color='black' name='blacklist' onClick={onModalClick}>
                 회원 관리
               </Button>
-              <Button color='black' onClick={onResignClick}>
-                회원 탈퇴
-              </Button>
             </Buttons>
+
+            <ResignButton onClick={onResignClick}>회원 탈퇴</ResignButton>
           </>
         )}
         <BlackListModal showModal={blacklistToggle} close={closeBlackList} />

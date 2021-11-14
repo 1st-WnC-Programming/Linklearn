@@ -14,30 +14,115 @@ const SearchBox = styled.div`
 `;
 
 const SearchSelect = styled.select`
-  background-color: #f9f9f9;
+  background-color: white;
+  font-size: 15px;
   width: 150px;
-  height: 100%;
+  height: 40px;
   line-height: 30px;
   margin-right: 10px;
   text-align: center;
+  border-radius: 10px;
+  border: 2px solid black;
 `;
 
 const SearchInput = styled.input`
-  text-align: center;
-  background-color: #f9f9f9;
-  width: 400px;
-  height: 100%;
+  padding: 15px;
+  font-size: 15px;
+  width: 500px;
+  height: 40px;
   margin-right: 10px;
-  border: 1px solid black;
+  border: 2px solid black;
+  border-radius: 10px;
+`;
+
+const Avata = styled.img`
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: none;
+  margin-bottom: 20px;
+`;
+
+const CardContainer = styled.div`
+  flex-direction: column;
+  width: 450px;
+  height: 600px;
+  background-color: white;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 20px;
+  border: none;
+  box-shadow: 5px 10px 20px -2px #e2e2e2;
+  margin: 20px;
+`;
+
+const Container = styled.div`
+  /* max-width: 80%; */
+  display: flex;
+  flex-direction: row;
+  width: 1000px;
+  margin: 0 auto;
+`;
+
+const Infos = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Name = styled.div`
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 10px;
+`;
+
+const Field = styled.div`
+  font-size: 20px;
+  font-weight: 200;
+  margin-bottom: 10px;
+`;
+
+const Rate = styled.div`
+  font-size: 20px;
+  font-weight: 200;
+  margin-bottom: 30px;
+`;
+
+const Career = styled.div`
+  font-size: 20px;
+  font-weight: 200;
+  margin-bottom: 10px;
+`;
+
+const Button = styled.button`
+  font-size: 15px;
+  padding: 12px 30px;
+  color: black;
+  justify-content: center;
+  font-size: 18px;
+  margin: 8px 0;
+  width: 40%;
+  border: 2px solid black;
+  margin: 10px;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: ${({ color }) => color};
+    color: white;
+    transition: all ease-out 0.3s 0s;
+  }
 `;
 
 const TeacherList = () => {
   const user = authService.currentUser;
   const [keyword, setKeyword] = useState('');
-  const selectList = { none: '<검색 필터>', name: '이름', field: '분야', career: '경력' };
+  const selectList = { none: '검색 필터', name: '이름', field: '분야', career: '경력' };
   const [searchSelected, setSearchSelected] = useState('none');
   const sortList = {
-    none: '<정렬 조건>',
+    none: '정렬 조건',
     starPoint_Desc: '별점 높은 순',
     starPoint_Asc: '별점 낮은 순',
     student_Desc: '학생들이 많이 수강한 순',
@@ -151,28 +236,28 @@ const TeacherList = () => {
         } else if (searchSelected === 'career' && item.career.toLowerCase().includes(keyword.toLowerCase())) {
           return item;
         }
+        return '??';
       }
     });
     setCard(
       newData.map((value) => (
-        <div className='cardItem innerContainer' key={count++ + value.name + value.starPoint}>
-          <div className='innerItem'>
+        <CardContainer key={count++ + value.name + value.starPoint}>
+          <Infos>
             {value.image === null || value.image === '' ? (
-              <img src={unknownPersonImg} display='block' width='100%' height='100%' />
+              <Avata src={unknownPersonImg} display='block' />
             ) : (
-              <img src={value.image} display='block' width='100%' height='100%' />
+              <Avata src={value.image} display='block' />
             )}
-          </div>
-          <div className='innerItem'>
-            <div>{value.name} 선생님</div>
-            <div>분야 : {value.field}</div>
-            <div>별점 : {value.starPoint}</div>
-            <div>경력 : {value.career}</div>
-          </div>
-          <div className='innerItem'>
-            <button onClick={(e) => handleModalClick(e, value)}>채팅하기</button>
-          </div>
-        </div>
+            <Name>{value.name}</Name>
+            <Field>{value.field}</Field>
+            <Rate>{value.starPoint}</Rate>
+            <Career>{value.career}</Career>
+          </Infos>
+
+          <Button color={'black'} onClick={(e) => handleModalClick(e, value)}>
+            채팅하기
+          </Button>
+        </CardContainer>
       )),
     );
   }, [teacherList, sortSelected]);
