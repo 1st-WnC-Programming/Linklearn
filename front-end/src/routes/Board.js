@@ -263,7 +263,7 @@ const Board = ({ info, dataFile }) => {
                 <th id='title'>제목</th>
                 <th>종류</th>
                 <th>모집 인원</th>
-                <th>과외 시간</th>
+                <th>과외 기간</th>
                 <th>선생님</th>
                 <th>등록일</th>
               </Row>
