@@ -118,10 +118,10 @@ const Button = styled.button`
 const TeacherList = () => {
   const user = authService.currentUser;
   const [keyword, setKeyword] = useState('');
-  const selectList = { none: '<검색 필터>', name: '이름', field: '분야', career: '경력' };
+  const selectList = { none: '검색 필터', name: '이름', field: '분야', career: '경력' };
   const [searchSelected, setSearchSelected] = useState('none');
   const sortList = {
-    none: '<정렬 조건>',
+    none: '정렬 조건',
     starPoint_Desc: '별점 높은 순',
     starPoint_Asc: '별점 낮은 순',
     student_Desc: '학생들이 많이 수강한 순',

@@ -18,22 +18,37 @@ const SearchBox = styled.div`
 `;
 const SortTitle = styled.select`
   background-color: #f9f9f9;
-  width: 100px;
-  height: 100%;
+  font-size: 15px;
+  width: 150px;
+  height: 40px;
   line-height: 30px;
   margin-right: 10px;
+  text-align: center;
+  border-radius: 10px;
 `;
 const SeacrchInput = styled.input`
-  background-color: #f9f9f9;
-  width: 600px;
-  height: 100%;
-  border: 0px;
+  padding: 15px;
+  font-size: 15px;
+  width: 500px;
+  height: 40px;
   margin-right: 10px;
-  border: 1px solid black;
+  border: 2px solid black;
+  border-radius: 10px;
 `;
 const SearchButton = styled.button`
-  width: 150px;
-  background-color: #3c78c0;
+  padding: 2px 20px;
+  height: 40px;
+  color: black;
+  justify-content: center;
+  font-size: 15px;
+  border: 2px solid black;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: black;
+    color: white;
+    transition: all ease-out 0.3s 0s;
+  }
 `;
 const Table = styled.table`
   width: 1500px;
