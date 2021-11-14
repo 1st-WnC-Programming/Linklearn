@@ -91,7 +91,7 @@ const Register = () => {
           photoURL: null,
           rate: 0,
           bio: null,
-          myLacture: [],
+          myLecture: [],
           numberOfReport: 0,
           createdAt: serverTimestamp(),
         });
