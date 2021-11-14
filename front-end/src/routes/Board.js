@@ -6,6 +6,7 @@ import { doc, getDoc } from 'firebase/firestore';
 const Container = styled.div`
   display: flex;
   flex: 1;
+  margin-bottom: 60px;
 `;
 const SearchBox = styled.div`
   margin: auto;
@@ -17,7 +18,7 @@ const SearchBox = styled.div`
   justify-content: center;
 `;
 const SortTitle = styled.select`
-  background-color: #f9f9f9;
+  background-color: white;
   font-size: 15px;
   width: 150px;
   height: 40px;
@@ -25,6 +26,7 @@ const SortTitle = styled.select`
   margin-right: 10px;
   text-align: center;
   border-radius: 10px;
+  border: 2px solid black;
 `;
 const SeacrchInput = styled.input`
   padding: 15px;
@@ -52,41 +54,42 @@ const SearchButton = styled.button`
 `;
 const Table = styled.table`
   width: 1500px;
-  border: 1px solid #ededed;
 `;
 const Row = styled.tr`
   border-bottom: 1px solid #ededed;
-  font-size: 13px;
-  background-color: #f9f9f9;
+
   &:hover {
-    background-color: #e7f6f6;
-    transition: background-color 0.5s;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s;
   }
   &:first-child {
     & > th {
-      padding: 20px;
-      background-color: #f9f9f9;
+      padding: 40px 0;
+      font-size: 18px;
+      font-weight: 400;
     }
   }
   #title {
     width: 500px;
   }
   & > td {
-    padding: 15px;
-    font-size: 15px;
+    padding: 40px 0;
+    font-size: 18px;
+    font-weight: 200;
     text-align: center;
-    &:first-child {
-      font-weight: 500;
-    }
   }
 `;
 const AddBoardListButton = styled.button`
-  background-color: #3c78c0;
-  border-radius: 10px;
-  margin: 30px auto 20px;
-  width: 100%;
-  height: 50px;
   font-size: 18px;
+  padding: 12px 10px;
+  color: #3c78c0;
+  width: 200px;
+  margin: 10px;
+
+  &:hover {
+    opacity: 60%;
+    transition: all ease-out 0.2s 0s;
+  }
 `;
 const ButtonBox = styled.div`
   margin: 0px auto;
@@ -95,13 +98,23 @@ const ButtonBox = styled.div`
 `;
 
 const PostButton = styled.button`
-  background-color: #3c78c0;
-  border-radius: 10px;
-  margin: auto;
-  width: 100%;
-  height: 50px;
   font-size: 18px;
+  padding: 12px 10px;
+  color: black;
+  width: 200px;
+  font-size: 18px;
+
+  border: 2px solid black;
+  margin: 10px;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: ${({ color }) => color};
+    color: white;
+    transition: all ease-out 0.3s 0s;
+  }
 `;
+
 const Board = ({ info, dataFile }) => {
   const [keyword, setKeyword] = useState(null);
   const selectList = {
@@ -114,7 +127,7 @@ const Board = ({ info, dataFile }) => {
   const [selected, setSelected] = useState('all');
   const [viewingListCount, setViewingListCount] = useState(5);
   const user = authService.currentUser;
-  let [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState({});
   const fetchUser = async () => {
     const docRef = doc(db, 'users', user.uid);
     const docSnap = await getDoc(docRef);
@@ -145,6 +158,7 @@ const Board = ({ info, dataFile }) => {
       if (userData.role !== 'student') {
         return (
           <PostButton
+            color='black'
             onClick={() => {
               navigate('/Board/PostList');
             }}
