@@ -104,17 +104,15 @@ const Register = () => {
         // Signed in
         const user = userCredential.user;
 
-        console.log(user.uid);
+        let fileURL = '';
 
-        const fileRef = storageRef(storageService, `${user.uid}/${v4()}`);
-
-        console.log(fileRef);
-        const res = await uploadString(fileRef, selectedImg, 'data_url');
-
-        console.log(ref);
-        const fileURL = await getDownloadURL(res.ref);
-
-        console.log(fileURL);
+        if (selectedImg !== unknown) {
+          const fileRef = storageRef(storageService, `${user.uid}/${v4()}`);
+          const res = await uploadString(fileRef, selectedImg, 'data_url');
+          fileURL = await getDownloadURL(res.ref);
+        } else {
+          fileURL = unknown;
+        }
 
         await setDoc(doc(db, 'users', user.uid), {
           id: user.uid,
