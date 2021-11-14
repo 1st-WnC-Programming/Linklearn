@@ -177,9 +177,11 @@ const PostList = ({ info, dataFile, setReload }) => {
         // setDataFile([...dataFile, curData]);
         await setDoc(doc(db, 'dataFile', `${id2}`), curData);
       }
-      await updateDoc(doc(db, 'users', user.uid), {
-        myLecture: [...userData.myLecture, id2],
-      });
+      if (!isInfo) {
+        await updateDoc(doc(db, 'users', user.uid), {
+          myLecture: [...userData.myLecture, id2],
+        });
+      }
       alert('게시되었습니다.');
       navigate('/Board');
       setReload(id2);

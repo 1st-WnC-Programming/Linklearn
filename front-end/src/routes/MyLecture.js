@@ -114,6 +114,7 @@ const MyLecture = () => {
   const viewContent = () => {
     const result = [];
     myLecture.map((curData) => {
+      console.log(curData);
       result.push(
         <Row className='dataList'>
           <td>{Number(curData.numberOfPeople) <= curData.studentId.length ? `완료` : `미완료`}</td>
