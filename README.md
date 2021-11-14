@@ -1,21 +1,12 @@
-# 💫2021 1st WnC Programming Contest💫
-> 📚LinkLearn
-> > LinkLearn is a project that provides connection between teachers and students.
-## 📝Index
-> <b><a href="#system-architecture">System Architecture</a></b> </br>
+# 💫 2021 1st WnC Programming Contest 💫
+> 📚 LinkLearn is a project that provides connection between teachers and students.
+## 📝 Index
 > <b><a href="#development-stack">Development Stack</a></b></br>
 > <b><a href="#function">Function</a></b></br>
-> <b><a href="#frontend">Frontend</a></b></br>
-> <b><a href="#backend">Backend</a></b></br>
 > <b><a href="#contributors">Contributors</a></b></br>
 > <b><a href="#prerequisites">Prerequisites</a></b></br>
- 
-## ⚙System Architecture
-![System Architecture]
 
-<br>
-
-## 🛠Development Stack
+## 🛠 Development Stack
 <p align="center">
   <img src="https://img.shields.io/badge/React-v17.0.2-blue" />
   <img src="https://img.shields.io/badge/VSCode-blue" />
@@ -28,7 +19,7 @@
 
 <br>
 
-## 📱Function
+## 📱 Function
   > 회원가입/로그인 (+소셜 로그인 추가점수) - 병민 </br>
   > 회원정보 수정/탈퇴 - 병민 </br>
   > (선생) 게시물 등록/수정/삭제 - 성현 </br>
@@ -42,29 +33,8 @@
 
 <br>
 
-## 🖼Frontend
-### 🎨Design
-  > [Design Document]   
-  
-### 🏠Structure  
-  > [Structure]
- 
-<div align="right">
-    <b><a href="#2021-1st-wnc-programming-contest">⬆️ Back to Top</a></b>
-</div>
 
-<br>
-
-## ✨Backend
-### 🏠Structure
-  > [backend]   
-<div align="right">
-    <b><a href="#2021-1st-WnC-Programming-Contest">⬆️ Back to Top</a></b>
-</div>
-
-<br>
-
-## 👨‍👨‍👦‍👦Contributors
+## 👨‍👨‍👦‍👦 Contributors
 | Name | Country | Where to find us | Role |
 | ---- | ------- | ----------------- | ---- |
 | Seonghyeon Bae <br /> <img src="https://avatars.githubusercontent.com/bae-sh" width="100" />  | Republic of Korea | [Github](https://github.com/bae-sh)| Frontend |
@@ -78,7 +48,7 @@
 
 <br>
 
-## 📌Prerequisites
+## 📌 Prerequisites
 
 <div align="right">
     <b><a href="#2021-1st-wnc-programming-contest">⬆️ Back to Top</a></b>

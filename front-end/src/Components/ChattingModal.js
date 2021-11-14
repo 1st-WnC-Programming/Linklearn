@@ -1,53 +1,182 @@
-import React, { useEffect, useState } from 'react';
-import { collection, query, where, getDocs, getDoc, doc } from 'firebase/firestore';
-import { authService, db } from '../fbase';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import unknownPersonImg from '../Images/Unknown_person.jpeg';
-import ChattingModal from '../Components/ChattingModal';
+import { Close } from '@styled-icons/evaicons-solid';
+import { authService, db, rt_db } from '../fbase';
+import { doc, getDoc } from 'firebase/firestore';
+import { ref, set, child, push, get, serverTimestamp, onValue, query, orderByChild } from 'firebase/database';
 
-const SearchBox = styled.div`
-  margin-top: 10px;
-  height: 55px;
+const Background = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+`;
+
+const CloseIcon = styled(Close)`
+  position: absolute;
+  right: 40px;
+  top: 40px;
+  width: 2rem;
+  cursor: pointer;
+`;
+
+const ModalContainer = styled.div`
+  flex-direction: column;
+  width: 600px;
+  height: 800px;
+  background-color: white;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1002;
+  border-radius: 20px;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+  box-shadow: 1px 1px 15px -2px grey;
+`;
+
+const ChattingInput = styled.input`
+  font-size: 20px;
   padding: 10px;
+  margin: 15px;
+  width: 75%;
+  background-color: #e2e2e2;
+  border-radius: 5px;
+  border: none;
+`;
+
+const Button = styled.button`
+  font-size: 15px;
+  padding: 12px 50px;
+  color: black;
+  justify-content: center;
+  font-size: 18px;
+  margin: 8px 0;
+  width: 40%;
+  border: 2px solid black;
+  margin: 10px;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: ${({ color }) => color};
+    color: white;
+    transition: all ease-out 0.4s 0s;
+  }
+`;
+
+const SendButton = styled.button`
+  font-size: 15px;
+  padding: 10px 10px;
+  color: black;
+  justify-content: center;
+  font-size: 18px;
+  margin: 8px 0;
+  width: 20%;
+  border: 2px solid black;
+  margin: 10px;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: ${({ color }) => color};
+    color: white;
+    transition: all ease-out 0.4s 0s;
+  }
+`;
+
+const ChattingBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 40px;
+  margin-top: 30px;
+  width: 100%;
+  height: 100%;
+`;
+
+const TextSpace = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  width: 95%;
 `;
 
-const SearchSelect = styled.select`
-  background-color: #f9f9f9;
-  width: 150px;
-  height: 100%;
-  line-height: 30px;
-  margin-right: 10px;
-  text-align: center;
+const ChattingSpace = styled.div`
+  font-size: 20px;
+  padding: 30px;
+  margin-top: 50px;
+  height: 450px;
+  width: 90%;
+  border-radius: 3%;
+  border: 2px solid black;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: right;
+  align-items: right;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.4);
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+  }
 `;
 
-const SearchInput = styled.input`
-  text-align: center;
-  background-color: #f9f9f9;
-  width: 400px;
-  height: 100%;
-  margin-right: 10px;
-  border: 1px solid black;
+const Title = styled.div`
+  font-size: 30px;
+  position: absolute;
+  left: 40px;
+  top: 40px;
+  font-weight: 700;
 `;
 
-const TeacherList = () => {
+const MyChat = styled.div`
+  margin-bottom: 10px;
+  background-color: #e2e2e2;
+  max-width: 80%;
+  float: right;
+  height: auto;
+  overflow: word-break;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  padding: 10px 15px;
+`;
+
+const ChatContainer = styled.div``;
+
+const OpponentChat = styled.div`
+  margin-bottom: 10px;
+  background-color: #e2e2e2;
+  max-width: 80%;
+  float: left;
+  height: auto;
+  overflow: word-break;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  padding: 10px 15px;
+`;
+
+const ChattingModal = ({ handleModalClick, opponentObj }) => {
+  const [tempInput, setTempInput] = useState('');
+  const [chatList, setChatList] = useState([]);
+  const [chatCount, setChatCount] = useState(0);
   const user = authService.currentUser;
-  const [keyword, setKeyword] = useState('');
-  const selectList = { none: '<검색 필터>', name: '이름', field: '분야', career: '경력' };
-  const [searchSelected, setSearchSelected] = useState('none');
-  const sortList = {
-    none: '<정렬 조건>',
-    starPoint_Desc: '별점 높은 순',
-    starPoint_Asc: '별점 낮은 순',
-    student_Desc: '학생들이 많이 수강한 순',
-    student_Asc: '학생들이 적게 수강한 순',
-  };
-  const [sortSelected, setSortSelected] = useState('none');
-  const [card, setCard] = useState([]);
-  const [teacherList, setTeacherList] = useState([]);
-  const [chattingToggle, setChattingToggle] = useState(false);
-  const [clickedTeacher, setClickedTeacher] = useState('');
   const [currentUserRole, setCurrentUserRole] = useState(null);
 
   useEffect(() => {
@@ -66,155 +195,131 @@ const TeacherList = () => {
       });
   }, []);
 
-  const searchSpace = async (e) => {
-    let search = await e.target.value;
-    setKeyword(search);
+  const handleCancelButton = async (e) => {
+    handleModalClick(await e);
   };
 
-  const searchSelectHandler = (e) => {
+  const handleChattingInput = (e) => {
     e.preventDefault();
-    setSearchSelected(e.target.value);
+    setTempInput(e.target.value);
   };
 
-  const sortSelectHandler = (e) => {
+  const handleSendChat = (e, message) => {
     e.preventDefault();
-    setSortSelected(e.target.value);
+    const roomKey = currentUserRole === 'student' ? user.uid + opponentObj.id : opponentObj.id + user.uid;
+
+    // 메시지 디비 생성
+    const messageKey = push(child(ref(rt_db), 'messages')).key;
+    set(ref(rt_db, 'messages/' + roomKey + '/' + messageKey), {
+      message: message,
+      timestamp: serverTimestamp(),
+      uid: user.uid,
+      userName: user.displayName,
+    });
+
+    // 채팅방 유저 목록 디비 생성
+    const dbRef = ref(rt_db);
+    get(child(dbRef, 'roomUsers/' + roomKey))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log('ChattingRoom DB already exist.');
+        } else {
+          set(ref(rt_db, 'roomUsers/' + roomKey), {
+            uid1: user.uid,
+            uid2: opponentObj.id,
+          });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    // 유저의 채팅 목록 생성
+    set(ref(rt_db, 'userRooms/' + user.uid + '/' + roomKey), {
+      lastMessage: message,
+      timestamp: serverTimestamp(),
+      roomid: roomKey,
+      roomUserName: user.displayName + '@' + opponentObj.name,
+      roomuserList: user.uid + '@' + opponentObj.id,
+    });
+
+    set(ref(rt_db, 'userRooms/' + opponentObj.id + '/' + roomKey), {
+      lastMessage: message,
+      timestamp: serverTimestamp(),
+      roomid: roomKey,
+      roomUserName: opponentObj.name + '@' + user.displayName,
+      roomuserList: opponentObj.id + '@' + user.uid,
+    });
+
+    setChatList((chatList) => [
+      ...chatList,
+      <ChatContainer key={chatCount + 1}>
+        <MyChat>{message}</MyChat>
+      </ChatContainer>,
+    ]);
+    setChatCount((chatCount) => chatCount + 1);
+    setTempInput('');
   };
 
   useEffect(() => {
-    if (sortSelected === 'none') return;
-    const sort_condition = sortSelected.split('_');
-    setTeacherList(
-      sort_condition[1] === 'Asc'
-        ? sortAsc(teacherList, sort_condition[0])
-        : sortDesc(teacherList, sort_condition[0]),
-    );
-  }, [sortSelected]);
+    const roomKey = currentUserRole === 'student' ? user.uid + opponentObj.id : opponentObj.id + user.uid;
 
-  const sortAsc = (list, criteria) => {
-    console.log('asc');
-    return list.sort((user1, user2) => {
-      if (user1[criteria] > user2[criteria]) {
-        return 1;
-      }
-      if (user2[criteria] > user1[criteria]) {
-        return -1;
-      }
-      return 0;
+    console.log(roomKey);
+    const messageRef = ref(rt_db, 'messages/' + roomKey);
+    console.log(messageRef);
+    //채팅 개수만큼 카운트 ++
+
+    onValue(query(messageRef, orderByChild('timestamp')), (snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        console.log(childSnapshot.val());
+        const data = childSnapshot.val();
+        let cnt = 0;
+        if (data.uid === user.uid) {
+          setChatList((chatList) => [
+            ...chatList,
+            <ChatContainer>
+              <MyChat key={cnt++}>{data.message}</MyChat>
+            </ChatContainer>,
+          ]);
+        } else {
+          setChatList((chatList) => [
+            ...chatList,
+            <ChatContainer>
+              <OpponentChat key={cnt++}>{data.message}</OpponentChat>
+            </ChatContainer>,
+          ]);
+        }
+        setChatCount((chatCount) => chatCount + cnt);
+      });
     });
-  };
-
-  const sortDesc = (list, criteria) => {
-    console.log('desc');
-    return list.sort((user1, user2) => {
-      if (user1[criteria] > user2[criteria]) {
-        return -1;
-      }
-      if (user2[criteria] > user1[criteria]) {
-        return 1;
-      }
-      return 0;
-    });
-  };
-
-  const getTutor = async () => {
-    const q = query(collection(db, 'users'), where('role', '==', 'tutor'));
-    const querySnapshot = await getDocs(q);
-    const tutor = [];
-    querySnapshot.forEach((doc) => {
-      const temp = {
-        id: doc.data().id,
-        image: doc.data().photoURL,
-        name: doc.data().name,
-        field: doc.data().major,
-        starPoint: doc.data().rate,
-        career: doc.data().bio,
-      };
-      tutor.push(temp);
-    });
-    setTeacherList((teacherList) => [...teacherList, ...tutor]);
-  };
-
-  useEffect(() => {
-    getTutor();
   }, []);
 
-  useEffect(() => {
-    let count = 0;
-    const newData = teacherList.filter((item) => {
-      if (keyword === null || keyword === '' || searchSelected === 'none') return item;
-      else {
-        if (searchSelected === 'name' && item.name.toLowerCase().includes(keyword.toLowerCase())) {
-          return item;
-        } else if (searchSelected === 'field' && item.field.toLowerCase().includes(keyword.toLowerCase())) {
-          return item;
-        } else if (searchSelected === 'career' && item.career.toLowerCase().includes(keyword.toLowerCase())) {
-          return item;
-        }
-      }
-    });
-    setCard(
-      newData.map((value) => (
-        <div className='cardItem innerContainer' key={count++ + value.name + value.starPoint}>
-          <div className='innerItem'>
-            {value.image === null || value.image === '' ? (
-              <img src={unknownPersonImg} display='block' width='100%' height='100%' />
-            ) : (
-              <img src={value.image} display='block' width='100%' height='100%' />
-            )}
-          </div>
-          <div className='innerItem'>
-            <div>{value.name} 선생님</div>
-            <div>분야 : {value.field}</div>
-            <div>별점 : {value.starPoint}</div>
-            <div>경력 : {value.career}</div>
-          </div>
-          <div className='innerItem'>
-            <button onClick={(e) => handleModalClick(e, value)}>채팅하기</button>
-          </div>
-        </div>
-      )),
-    );
-  }, [teacherList, sortSelected]);
-
-  const handleModalClick = (e, value) => {
-    e.preventDefault();
-    if (currentUserRole === 'tutor') {
-      alert('Service for only students.');
-      return;
-    }
-    !chattingToggle ? setClickedTeacher(value) : setClickedTeacher('');
-    setChattingToggle((prev) => !prev);
-  };
-
   return (
-    <main>
-      <div className='boxDiv'>
-        <SearchBox>
-          <SearchSelect onChange={sortSelectHandler} value={sortSelected}>
-            {Object.entries(sortList).map((item) => (
-              <option value={item[0]} key={item[0]}>
-                {item[1]}
-              </option>
-            ))}
-          </SearchSelect>
-          <SearchSelect onChange={searchSelectHandler} value={searchSelected}>
-            {Object.entries(selectList).map((item) => (
-              <option value={item[0]} key={item[0]}>
-                {item[1]}
-              </option>
-            ))}
-          </SearchSelect>
-          <SearchInput type='text' placeholder='검색어를 입력하세요.' onChange={(e) => searchSpace(e)} />
-        </SearchBox>
-        <div className='cardContainer'>{card}</div>
-      </div>
-      {chattingToggle === true && currentUserRole === 'student' ? (
-        <ChattingModal handleModalClick={handleModalClick} teacherObj={clickedTeacher}></ChattingModal>
-      ) : (
-        ''
-      )}
-    </main>
+    <>
+      <Background onClick={handleCancelButton} />
+      <ModalContainer>
+        <ChattingBox>
+          <Title>{opponentObj.name}과(와)의 채팅</Title>
+          <CloseIcon onClick={handleCancelButton}></CloseIcon>
+          <ChattingSpace>{chatList}</ChattingSpace>
+          <TextSpace>
+            <ChattingInput
+              name='chattingInput'
+              placeholder=''
+              value={tempInput}
+              onChange={handleChattingInput}
+            />
+            <SendButton color='black' onClick={(e) => handleSendChat(e, tempInput)}>
+              전송
+            </SendButton>
+          </TextSpace>
+        </ChattingBox>
+        <Button color='black' onClick={handleCancelButton}>
+          나가기
+        </Button>
+      </ModalContainer>
+    </>
   );
 };
-export default TeacherList;
+
+export default ChattingModal;

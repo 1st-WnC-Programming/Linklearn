@@ -9,7 +9,7 @@ const App = () => {
   const [init, setInit] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userObj, setUserObj] = useState(null);
-  const [avataURL, setAvataURL] = useState(unknown);
+  const [avataURL, setAvataURL] = useState();
 
   const [info, setInfo] = useState([]);
   const [dataFile, setDataFile] = useState([]);
@@ -20,18 +20,15 @@ const App = () => {
       if (user) {
         setIsLoggedIn(true);
         setUserObj(user);
-
-        if (user.photoURL !== null) {
-          setAvataURL(user.photoURL);
-        }
+        setAvataURL(user.photoURL);
       } else {
-        setAvataURL(false);
         setIsLoggedIn(false);
       }
       setInit(true);
     });
     awaitGetData();
   }, []);
+
   useEffect(() => {
     awaitGetData();
   }, [reload]);
@@ -40,8 +37,8 @@ const App = () => {
     setDataFile(result);
     result = await getData('info', 1001);
     setInfo(result);
-    console.log(111);
   };
+
   return (
     <>
       {init ? (
@@ -55,7 +52,7 @@ const App = () => {
             dataFile={dataFile}
             setReload={setReload}
           />
-          <Footer />
+          {/* <Footer /> */}
         </>
       ) : (
         //TODO: 추후 로딩 애니메이션 넣어야함

@@ -1,58 +1,87 @@
 import { React, useState, useRef, useEffect } from 'react';
-import '@toast-ui/editor/dist/toastui-editor.css';
-import { Editor } from '@toast-ui/react-editor';
-import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
+import { Editor } from '@toast-ui/react-editor';
+import '@toast-ui/editor/dist/toastui-editor.css';
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 
 import { authService, db } from '../fbase';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 
 const TitleBox = styled.div`
-  width: 1000px;
+  width: 100%;
   margin: 30px auto;
 `;
+
 const Title = styled.input`
   width: 100%;
-  font-size: 30px;
+  font-size: 20px;
   padding-left: 10px;
+  border: 1px solid grey;
+  border-radius: 10px;
+  padding: 15px 25px;
 `;
+
 const ButtonBox = styled.div`
-  margin: 20px auto;
+  margin: 40px auto;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const PostButton = styled.button`
-  background-color: #3c78c0;
-  border-radius: 10px;
-  margin: 10px;
-  width: 200px;
+  padding: 2px 50px;
   height: 50px;
+  color: black;
+
   font-size: 18px;
-  float: right;
+  border: 2px solid black;
+  border-radius: 10px;
+
+  margin-left: 20px;
+
+  &:hover {
+    background-color: black;
+    color: white;
+    transition: all ease-out 0.3s 0s;
+  }
 `;
 const SortTitle = styled.select`
-  background-color: #f9f9f9;
-  width: 100px;
-  height: 100%;
-  line-height: 30px;
-  margin-right: 30px;
+  background-color: white;
+  border-radius: 10px;
+  border: 1px solid grey;
+  font-size: 18px;
+
+  padding: 10px;
+  width: 20%;
+  height: 45px;
 `;
+
 const selectList = {
   personal: '개인',
   group: '그룹',
 };
+
 const SortBox = styled.div`
-  height: 30px;
-  margin: 30px auto;
+  display: flex;
+  justify-content: space-between;
+  margin: 20px auto;
   align-items: center;
-  width: 1000px;
+  width: 60%;
 `;
+
 const InputBox = styled.input`
-  height: 100%;
-  font-size: 13px;
-  margin-right: 30px;
+  background-color: white;
+  border-radius: 10px;
+  border: 1px solid grey;
+  font-size: 18px;
+  padding: 10px;
+  width: 35%;
+  height: 45px;
+  display: flex;
+  text-align: center;
 `;
 const TextBox = styled.label`
   margin-right: 10px;
@@ -63,10 +92,9 @@ const CheckBox = styled.input`
 const PostList = ({ info, dataFile, setReload }) => {
   const [title, setTitle] = useState('');
   const [type, setType] = useState('personal');
-  const [numberOfPeople, setNumberOfPeople] = useState(0);
+  const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [time, setTime] = useState('0');
   const [isInfo, setIsInfo] = useState(false);
-
   const selectHandler = (e) => {
     e.preventDefault();
     setType(e.target.value);
@@ -118,6 +146,10 @@ const PostList = ({ info, dataFile, setReload }) => {
       alert('제목을 입력하세요.');
     } else if (getContent_md === '') {
       alert('내용을 입력하세요.');
+    } else if (time === '0') {
+      alert('과외 기간을 입력하세요.');
+    } else if (type === 'personal' && numberOfPeople != 1) {
+      alert('개인 과외는 한명만 가능합니다.');
     } else {
       let type2 = type === 'personal' ? '개인' : '그룹';
       let id2;
@@ -145,6 +177,11 @@ const PostList = ({ info, dataFile, setReload }) => {
         // setDataFile([...dataFile, curData]);
         await setDoc(doc(db, 'dataFile', `${id2}`), curData);
       }
+      if (!isInfo) {
+        await updateDoc(doc(db, 'users', user.uid), {
+          myLecture: [...userData.myLecture, id2],
+        });
+      }
       alert('게시되었습니다.');
       navigate('/Board');
       setReload(id2);
@@ -153,6 +190,35 @@ const PostList = ({ info, dataFile, setReload }) => {
   return (
     <div className='inner'>
       <main>
+        <SortBox>
+          {viewInfoBox()}
+          <SortTitle onChange={selectHandler} value={type}>
+            {Object.entries(selectList).map((item) => (
+              <option value={item[0]} key={item[0]}>
+                {item[1]}
+              </option>
+            ))}
+          </SortTitle>
+          <InputBox
+            type='number'
+            min='1'
+            placeholder='모집인원'
+            onChange={(e) => {
+              e.preventDefault();
+              setNumberOfPeople(e.target.value);
+            }}
+          />
+
+          <InputBox
+            type='date'
+            min='0'
+            placeholder='과외 기간'
+            onChange={(e) => {
+              e.preventDefault();
+              setTime(e.target.value);
+            }}
+          />
+        </SortBox>
         <TitleBox>
           <Title
             placeholder='제목을 입력하세요'
@@ -163,45 +229,16 @@ const PostList = ({ info, dataFile, setReload }) => {
             value={title}
           ></Title>
         </TitleBox>
-        <SortBox>
-          {viewInfoBox()}
-          <SortTitle onChange={selectHandler} value={type}>
-            {Object.entries(selectList).map((item) => (
-              <option value={item[0]} key={item[0]}>
-                {item[1]}
-              </option>
-            ))}
-          </SortTitle>
-          <TextBox>모집 인원: </TextBox>
-          <InputBox
-            type='number'
-            min='0'
-            onChange={(e) => {
-              e.preventDefault();
-              setNumberOfPeople(e.target.value);
-            }}
-            value={numberOfPeople}
-          />
-          <TextBox>과외 시간: </TextBox>
-          <InputBox
-            type='number'
-            min='0'
-            onChange={(e) => {
-              e.preventDefault();
-              setTime(e.target.value);
-            }}
-            value={time}
-          />
-        </SortBox>
 
         <Editor
           previewStyle='vertical'
-          height='400px'
+          height='700px'
           initialEditType='markdown'
           useCommandShortcut={true}
           initialValue='마크다운으로 내용을 입력하세요.'
           ref={editorRef}
         />
+
         <ButtonBox>
           <Link
             to={{

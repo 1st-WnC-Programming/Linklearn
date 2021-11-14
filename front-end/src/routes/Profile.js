@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import unknown from '../Images/Unknown_person.jpeg';
 import styled from 'styled-components';
 import { authService, db } from '../fbase';
-import { doc, getDoc, collection, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, deleteDoc, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import InfoModal from '../Components/InfoModal';
 import BlackListModal from '../Components/BlackListModal';
@@ -71,7 +71,6 @@ const Role = styled.div`
 `;
 
 const Button = styled.button`
-  font-size: 15px;
   padding: 12px 50px;
   color: black;
   justify-content: center;
@@ -102,6 +101,23 @@ const Buttons = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin: 20px;
+`;
+
+const ResignButton = styled.button`
+  padding: 12px 50px;
+  color: red;
+  font-size: 18px;
+  justify-content: center;
+  border: 2px solid white;
+  background-color: white;
+  margin: 10px;
+  width: 200px;
+
+  &:hover {
+    opacity: 60%;
+    transition: all ease-out 0.2s 0s;
+  }
 `;
 
 const Profile = ({ avataURL, userObj }) => {
@@ -110,7 +126,8 @@ const Profile = ({ avataURL, userObj }) => {
 
   const [avata, setAvataURL] = useState(avataURL);
   const [name, setName] = useState('');
-  const [starRate, setStarRate] = useState('5.0');
+  const [totalStarRate, setTotalStarRate] = useState();
+  const [evaluateNum, setEvaluateNum] = useState();
   const [field, setField] = useState('');
   const [career, setCareer] = useState('');
   const [role, setRole] = useState(null);
@@ -126,10 +143,10 @@ const Profile = ({ avataURL, userObj }) => {
   fetchUser()
     .then((user) => {
       setRole(user.role);
-      setStarRate(user.rate);
+      setTotalStarRate(user.rate);
+      setEvaluateNum(user.evaluateNumber);
       setField(user.major);
       setCareer(user.bio);
-
       setName(user.name);
 
       if (avata === null) {
@@ -216,6 +233,20 @@ const Profile = ({ avataURL, userObj }) => {
     setBlacklistToggle(false);
   };
 
+  const onTutorClick = async () => {
+    if (window.confirm('튜터로 전환합니다') === true) {
+      setRole('tutor');
+
+      await setDoc(
+        doc(db, 'users', user.uid),
+        {
+          role: 'tutor',
+        },
+        { merge: true },
+      );
+    }
+  };
+
   return (
     <main>
       <ProfileWrap>
@@ -232,18 +263,24 @@ const Profile = ({ avataURL, userObj }) => {
               <TeacherInfo>
                 <TeacherInfoTitle>튜터 정보</TeacherInfoTitle>
                 <Info>분야 : {field}</Info>
-                <Info>평점 : {starRate} </Info>
-                <Info>경력 : {career}</Info>
+                <Info>
+                  평점 : {evaluateNum > 0 ? Math.round((totalStarRate / evaluateNum) * 10) / 10 : 0}{' '}
+                </Info>
+                <Info>
+                  {career &&
+                    career.split('<br/>').map((line) => {
+                      return <div style={{ margin: 10 }}>{line}</div>;
+                    })}
+                </Info>
               </TeacherInfo>
             </Infos>
             <Buttons>
               <Button color='black' name='info' onClick={onModalClick}>
                 정보 수정
               </Button>
-              <Button color='black' onClick={onResignClick}>
-                회원 탈퇴
-              </Button>
             </Buttons>
+
+            <ResignButton onClick={onResignClick}>회원 탈퇴</ResignButton>
           </>
         ) : role === 'student' ? (
           <>
@@ -255,14 +292,15 @@ const Profile = ({ avataURL, userObj }) => {
             </Infos>
 
             <Buttons>
-              <Button color='black'>튜터 신청</Button>
+              <Button color='black' onClick={onTutorClick}>
+                튜터 신청
+              </Button>
               <Button color='black' name='info' onClick={onModalClick}>
                 정보 수정
               </Button>
-              <Button color='black' onClick={onResignClick}>
-                회원 탈퇴
-              </Button>
             </Buttons>
+
+            <ResignButton onClick={onResignClick}>회원 탈퇴</ResignButton>
           </>
         ) : (
           <>
@@ -280,10 +318,9 @@ const Profile = ({ avataURL, userObj }) => {
               <Button color='black' name='blacklist' onClick={onModalClick}>
                 회원 관리
               </Button>
-              <Button color='black' onClick={onResignClick}>
-                회원 탈퇴
-              </Button>
             </Buttons>
+
+            <ResignButton onClick={onResignClick}>회원 탈퇴</ResignButton>
           </>
         )}
         <BlackListModal showModal={blacklistToggle} close={closeBlackList} />

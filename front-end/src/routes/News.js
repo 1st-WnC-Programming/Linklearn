@@ -10,57 +10,90 @@ import { authService, db } from '../fbase';
 import { doc, setDoc, deleteDoc, getDoc, updateDoc } from 'firebase/firestore';
 import ReactMarkdown from 'react-markdown';
 const TitleBox = styled.div`
-  width: 1000px;
+  width: 100%;
   margin: 30px auto;
 `;
 const Title = styled.input`
   width: 100%;
-  font-size: 30px;
+  font-size: 20px;
   padding-left: 10px;
+  border: 1px solid grey;
+  border-radius: 10px;
+  padding: 15px 25px;
 `;
 const ButtonBox = styled.div`
-  margin: 20px auto;
+  margin: 40px auto;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
-
 const PostButton = styled.button`
-  background-color: #3c78c0;
-  border-radius: 10px;
-  margin: 10px;
-  width: 200px;
+  padding: 2px 50px;
   height: 50px;
+  color: black;
+
   font-size: 18px;
-  float: right;
+  border: 2px solid black;
+  border-radius: 10px;
+
+  margin-left: 20px;
+
+  &:hover {
+    background-color: black;
+    color: white;
+    transition: all ease-out 0.3s 0s;
+  }
 `;
 const Content = styled.section`
-  width: 1000px;
+  width: 100%;
   margin: 30px auto;
-  min-height: 500px;
-  border: 1px solid black;
+  min-height: 600px;
+
   padding: 20px;
   font-size: 1rem;
   line-height: 2.5rem;
 `;
 const SortBox = styled.div`
-  height: 30px;
-  margin: 30px auto;
+  display: flex;
+  justify-content: space-between;
+  margin: 20px auto;
   align-items: center;
-  width: 1000px;
+  width: 100%;
 `;
 const InputBox = styled.input`
-  height: 100%;
-  font-size: 13px;
-  margin-right: 30px;
+  background-color: white;
+  border-radius: 10px;
+  border: 1px solid grey;
+  font-size: 18px;
+  padding: 10px;
+  width: 25%;
+  height: 45px;
+  display: flex;
+  text-align: center;
 `;
 const TextBox = styled.label`
   margin-right: 10px;
 `;
 const SortTitle = styled.select`
-  background-color: #f9f9f9;
-  width: 100px;
-  height: 100%;
-  line-height: 30px;
-  margin-right: 30px;
+  background-color: white;
+  border-radius: 10px;
+  border: 1px solid grey;
+  font-size: 18px;
+
+  padding: 10px;
+  width: 20%;
+  height: 45px;
+`;
+const SortTitle2 = styled.div`
+  background-color: white;
+  border-radius: 10px;
+  border: 1px solid grey;
+  font-size: 18px;
+
+  padding: 10px;
+  width: 20%;
+  height: 45px;
 `;
 const selectList = {
   personal: '개인',
@@ -71,6 +104,7 @@ const Titlespan = styled.span`
   font-weight: 500px;
   margin-right: 20px;
 `;
+
 const News = ({ info, dataFile, setReload }) => {
   const { id } = useParams();
   const [edit, setEdit] = useState(false);
@@ -140,17 +174,11 @@ const News = ({ info, dataFile, setReload }) => {
           <Titlespan>{title}</Titlespan>
         </TitleBox>
         <SortBox>
-          <SortTitle value={type} disabled>
-            {Object.entries(selectList).map((item) => (
-              <option value={item[0]} key={item[0]}>
-                {item[1]}
-              </option>
-            ))}
-          </SortTitle>
+          <SortTitle2>{type === 'personal' || type === '개인' ? '개인' : '그룹'}</SortTitle2>
           <TextBox>모집 인원: </TextBox>
           <InputBox type='number' value={numberOfPeople} readonly />
-          <TextBox>과외 시간: </TextBox>
-          <InputBox type='number' readonly value={time} />
+          <TextBox>과외 기간: </TextBox>
+          <InputBox type='date' readonly value={time} />
         </SortBox>
 
         <Content>
@@ -167,7 +195,7 @@ const News = ({ info, dataFile, setReload }) => {
           </Link>
           <PostButton
             onClick={() => {
-              if (userData.id == curData.uid || userData.role !== 'admin') {
+              if (userData.id == curData.uid || userData.role === 'admin') {
                 setEdit(true);
               } else {
                 alert('관리자 혹은 작성자만 수정할 수 있습니다.');
@@ -176,14 +204,45 @@ const News = ({ info, dataFile, setReload }) => {
           >
             수정
           </PostButton>
-          <PostButton onClick={tapSubmitBtn}>신청하기</PostButton>
+          {isInfo ? '' : <PostButton onClick={tapSubmitBtn}>신청하기</PostButton>}
         </ButtonBox>
       </>
     );
   };
+  // {
+  //   type === '개인' || type === 'personal' ? '개인' : '그룹';
+  // }
   const editMode = () => {
     return (
       <>
+        <SortBox>
+          <SortTitle onChange={selectHandler} value={type}>
+            {Object.entries(selectList).map((item) => (
+              <option value={item[0]} key={item[0]}>
+                {item[1]}
+              </option>
+            ))}
+          </SortTitle>
+          <TextBox>모집 인원 </TextBox>
+          <InputBox
+            type='number'
+            min='1'
+            onChange={(e) => {
+              e.preventDefault();
+              setNumberOfPeople(e.target.value);
+            }}
+            value={numberOfPeople}
+          />
+          <TextBox>과외 기간 </TextBox>
+          <InputBox
+            type='date'
+            onChange={(e) => {
+              e.preventDefault();
+              setTime(e.target.value);
+            }}
+            value={time}
+          />
+        </SortBox>
         <TitleBox>
           <Title
             type='text'
@@ -193,35 +252,7 @@ const News = ({ info, dataFile, setReload }) => {
             }}
           />
         </TitleBox>
-        <SortBox>
-          <SortTitle onChange={selectHandler} value={type}>
-            {Object.entries(selectList).map((item) => (
-              <option value={item[0]} key={item[0]}>
-                {item[1]}
-              </option>
-            ))}
-          </SortTitle>
-          <TextBox>모집 인원: </TextBox>
-          <InputBox
-            type='number'
-            min='0'
-            onChange={(e) => {
-              e.preventDefault();
-              setNumberOfPeople(e.target.value);
-            }}
-            value={numberOfPeople}
-          />
-          <TextBox>과외 시간: </TextBox>
-          <InputBox
-            type='number'
-            min='0'
-            onChange={(e) => {
-              e.preventDefault();
-              setTime(e.target.value);
-            }}
-            value={time}
-          />
-        </SortBox>
+
         <Editor
           previewStyle='vertical'
           height='400px'
@@ -256,12 +287,19 @@ const News = ({ info, dataFile, setReload }) => {
     postData(getContent_md);
   };
   const postData = async (getContent_md) => {
+    console.log(type);
+    console.log(numberOfPeople);
     if (title === '') {
       alert('제목을 입력하세요.');
     } else if (getContent_md === '') {
       alert('내용을 입력하세요.');
+    } else if (time === '0') {
+      alert('과외 기간을 입력하세요.');
+    } else if ((type === 'personal' || type === '개인') && numberOfPeople > 1) {
+      alert('개인 과외는 한명만 가능합니다.');
     } else {
-      let type2 = type === 'personal' ? '개인' : '그룹';
+      let type2 = type === 'personal' ? '개인' : type;
+      type2 = type === 'group' ? '그룹' : type;
       let curData = {
         title: title,
         type: type2,
@@ -271,6 +309,8 @@ const News = ({ info, dataFile, setReload }) => {
         date: new Date().toISOString().slice(0, 10),
         content: getContent_md,
         id: id,
+        uid: user.uid,
+        studentId: [],
       };
       setCurData(curData);
       if (isInfo) {
@@ -309,6 +349,7 @@ const News = ({ info, dataFile, setReload }) => {
         } else {
           await updateDoc(doc(db, 'dataFile', `${id}`), { studentId: [...studentId, user.uid] });
         }
+        await updateDoc(doc(db, 'users', user.uid), { myLecture: [...userData.myLecture, Number(id)] });
         alert('신청 되었습니다.');
         if (studentId.length === numberOfPeople) {
           //신청 완료 알림
