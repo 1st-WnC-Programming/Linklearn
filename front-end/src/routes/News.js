@@ -167,7 +167,7 @@ const News = ({ info, dataFile, setReload }) => {
           </Link>
           <PostButton
             onClick={() => {
-              if (userData.id == curData.uid || userData.role !== 'admin') {
+              if (userData.id == curData.uid || userData.role === 'admin') {
                 setEdit(true);
               } else {
                 alert('관리자 혹은 작성자만 수정할 수 있습니다.');
