@@ -18,7 +18,7 @@ const Title = styled.input`
   width: 100%;
   font-size: 20px;
   padding-left: 10px;
-  border: 2px solid black;
+  border: 1px solid grey;
   border-radius: 10px;
   padding: 15px 25px;
 `;
@@ -51,7 +51,7 @@ const PostButton = styled.button`
 const SortTitle = styled.select`
   background-color: white;
   border-radius: 10px;
-  border: 2px solid black;
+  border: 1px solid grey;
   font-size: 18px;
 
   padding: 10px;
@@ -67,7 +67,7 @@ const selectList = {
 const SortBox = styled.div`
   display: flex;
   justify-content: space-between;
-  margin: 70px auto;
+  margin: 20px auto;
   align-items: center;
   width: 40%;
 `;
@@ -75,7 +75,7 @@ const SortBox = styled.div`
 const InputBox = styled.input`
   background-color: white;
   border-radius: 10px;
-  border: 2px solid black;
+  border: 1px solid grey;
   font-size: 18px;
   padding: 10px;
   width: 35%;

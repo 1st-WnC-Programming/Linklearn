@@ -21,29 +21,29 @@ const SortTitle = styled.select`
   background-color: white;
   font-size: 15px;
   width: 150px;
-  height: 40px;
+  height: 45px;
   line-height: 30px;
   margin-right: 10px;
   text-align: center;
   border-radius: 10px;
-  border: 2px solid black;
+  border: 1px solid grey;
 `;
 const SeacrchInput = styled.input`
   padding: 15px;
   font-size: 15px;
   width: 500px;
-  height: 40px;
+  height: 45px;
   margin-right: 10px;
-  border: 2px solid black;
+  border: 1px solid grey;
   border-radius: 10px;
 `;
 const SearchButton = styled.button`
   padding: 2px 20px;
-  height: 40px;
+  height: 45px;
   color: black;
   justify-content: center;
   font-size: 15px;
-  border: 2px solid black;
+  border: 1px solid black;
   border-radius: 10px;
 
   &:hover {
