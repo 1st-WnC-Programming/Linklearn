@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../fbase';
+import { collection, query, where, getDocs, getDoc, doc } from 'firebase/firestore';
+import { authService, db } from '../fbase';
 import styled from 'styled-components';
 import unknownPersonImg from '../Images/Unknown_person.jpeg';
 import ChattingModal from '../Components/ChattingModal';
@@ -32,6 +32,7 @@ const SearchInput = styled.input`
 `;
 
 const TeacherList = () => {
+  const user = authService.currentUser;
   const [keyword, setKeyword] = useState('');
   const selectList = { none: '<검색 필터>', name: '이름', field: '분야', career: '경력' };
   const [searchSelected, setSearchSelected] = useState('none');
@@ -47,6 +48,21 @@ const TeacherList = () => {
   const [teacherList, setTeacherList] = useState([]);
   const [chattingToggle, setChattingToggle] = useState(false);
   const [clickedTeacher, setClickedTeacher] = useState('');
+  const [currentUserRole, setCurrentUserRole] = useState(null);
+
+  const fetchUser = async () => {
+    const docRef = doc(db, 'users', user.uid);
+    const docSnap = await getDoc(docRef);
+    return docSnap.data();
+  };
+
+  fetchUser()
+    .then((user) => {
+      setCurrentUserRole(user.role);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
   const searchSpace = async (e) => {
     let search = await e.target.value;
@@ -161,6 +177,10 @@ const TeacherList = () => {
 
   const handleModalClick = (e, value) => {
     e.preventDefault();
+    if (currentUserRole === 'tutor') {
+      alert('Service for only students.');
+      return;
+    }
     !chattingToggle ? setClickedTeacher(value) : setClickedTeacher('');
     setChattingToggle((prev) => !prev);
   };
@@ -187,7 +207,7 @@ const TeacherList = () => {
         </SearchBox>
         <div className='cardContainer'>{card}</div>
       </div>
-      {chattingToggle === true ? (
+      {chattingToggle === true && currentUserRole === 'student' ? (
         <ChattingModal handleModalClick={handleModalClick} teacherObj={clickedTeacher}></ChattingModal>
       ) : (
         ''
