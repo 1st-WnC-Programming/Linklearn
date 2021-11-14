@@ -3,8 +3,6 @@
 ## 📝 Index
 > <b><a href="#development-stack">Development Stack</a></b></br>
 > <b><a href="#function">Function</a></b></br>
-> <b><a href="#frontend">Frontend</a></b></br>
-> <b><a href="#backend">Backend</a></b></br>
 > <b><a href="#contributors">Contributors</a></b></br>
 > <b><a href="#prerequisites">Prerequisites</a></b></br>
 
@@ -35,27 +33,6 @@
 
 <br>
 
-## 🖼 Frontend
-### 🎨 Design
-  > [Design Document]   
-  
-### 🏠 Structure  
-  > [Structure]
- 
-<div align="right">
-    <b><a href="#2021-1st-wnc-programming-contest">⬆️ Back to Top</a></b>
-</div>
-
-<br>
-
-## ✨ Backend
-### 🏠 Structure
-  > [backend]   
-<div align="right">
-    <b><a href="#2021-1st-WnC-Programming-Contest">⬆️ Back to Top</a></b>
-</div>
-
-<br>
 
 ## 👨‍👨‍👦‍👦 Contributors
 | Name | Country | Where to find us | Role |
