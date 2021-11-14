@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../fbase';
+import { collection, query, where, getDocs, getDoc, doc } from 'firebase/firestore';
+import { authService, db } from '../fbase';
 import styled from 'styled-components';
 import unknownPersonImg from '../Images/Unknown_person.jpeg';
+import ChattingModal from '../Components/ChattingModal';
 
 const SearchBox = styled.div`
   margin-top: 10px;
@@ -31,6 +32,7 @@ const SearchInput = styled.input`
 `;
 
 const TeacherList = () => {
+  const user = authService.currentUser;
   const [keyword, setKeyword] = useState('');
   const selectList = { none: '<검색 필터>', name: '이름', field: '분야', career: '경력' };
   const [searchSelected, setSearchSelected] = useState('none');
@@ -43,8 +45,26 @@ const TeacherList = () => {
   };
   const [sortSelected, setSortSelected] = useState('none');
   const [card, setCard] = useState([]);
-
   const [teacherList, setTeacherList] = useState([]);
+  const [chattingToggle, setChattingToggle] = useState(false);
+  const [clickedTeacher, setClickedTeacher] = useState('');
+  const [currentUserRole, setCurrentUserRole] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const docRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(docRef);
+      return docSnap.data();
+    };
+
+    fetchUser()
+      .then((user) => {
+        setCurrentUserRole(user.role);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const searchSpace = async (e) => {
     let search = await e.target.value;
@@ -103,6 +123,7 @@ const TeacherList = () => {
     const tutor = [];
     querySnapshot.forEach((doc) => {
       const temp = {
+        id: doc.data().id,
         image: doc.data().photoURL,
         name: doc.data().name,
         field: doc.data().major,
@@ -112,7 +133,6 @@ const TeacherList = () => {
       tutor.push(temp);
     });
     setTeacherList((teacherList) => [...teacherList, ...tutor]);
-    console.log(teacherList);
   };
 
   useEffect(() => {
@@ -149,10 +169,23 @@ const TeacherList = () => {
             <div>별점 : {value.starPoint}</div>
             <div>경력 : {value.career}</div>
           </div>
+          <div className='innerItem'>
+            <button onClick={(e) => handleModalClick(e, value)}>채팅하기</button>
+          </div>
         </div>
       )),
     );
   }, [teacherList, sortSelected]);
+
+  const handleModalClick = (e, value) => {
+    e.preventDefault();
+    if (currentUserRole === 'tutor') {
+      alert('Service for only students.');
+      return;
+    }
+    !chattingToggle ? setClickedTeacher(value) : setClickedTeacher('');
+    setChattingToggle((prev) => !prev);
+  };
 
   return (
     <main>
@@ -176,6 +209,11 @@ const TeacherList = () => {
         </SearchBox>
         <div className='cardContainer'>{card}</div>
       </div>
+      {chattingToggle === true && currentUserRole === 'student' ? (
+        <ChattingModal handleModalClick={handleModalClick} teacherObj={clickedTeacher}></ChattingModal>
+      ) : (
+        ''
+      )}
     </main>
   );
 };

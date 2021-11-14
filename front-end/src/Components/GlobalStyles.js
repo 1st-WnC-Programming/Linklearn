@@ -99,16 +99,22 @@ const GlobalStyles = createGlobalStyle`
     }
 
     .innerItem{
-        flex: 1 1 70%;
+        flex: 1 1 0;
         border: 1px solid black;
     }
 
     .innerItem:nth-child(1){
-        flex-basis: 130px;
+        flex: 2 1 100px;
     }
 
     .innerItem:nth-child(2){
         /* flex-basis: 75%; */
+        flex: 4 1 30%;
+    }
+
+    .innerItem:nth-child(3){
+        /* flex-basis: 75%; */
+        flex: 1 1 35px;
     }
 `;
 
