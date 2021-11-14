@@ -116,7 +116,7 @@ const MyLecture = () => {
     myLecture.map((curData) => {
       result.push(
         <Row className='dataList'>
-          <td>{curData.numberOfPeople == curData.studentId.length ? `완료` : `미완료`}</td>
+          <td>{Number(curData.numberOfPeople) <= curData.studentId.length ? `완료` : `미완료`}</td>
           <td id='title'>
             <Link
               to={{
@@ -183,11 +183,13 @@ const MyLecture = () => {
       return docSnap.data();
     };
     let result = [];
-    ids.map(async (id) => {
+    ids.forEach((id) => {
       fetch(id)
         .then((data) => {
           result.push(data);
-          setMyLecture(result);
+          if (result.length === ids.length) {
+            setMyLecture(result);
+          }
         })
         .catch((error) => {
           console.log(error);
