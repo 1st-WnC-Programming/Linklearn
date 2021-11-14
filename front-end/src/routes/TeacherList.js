@@ -11,27 +11,28 @@ const SearchBox = styled.div`
   padding: 10px;
   display: flex;
   justify-content: center;
+  margin-bottom: 40px;
 `;
 
 const SearchSelect = styled.select`
   background-color: white;
   font-size: 15px;
   width: 150px;
-  height: 40px;
+  height: 45px;
   line-height: 30px;
   margin-right: 10px;
   text-align: center;
   border-radius: 10px;
-  border: 2px solid black;
+  border: 1px solid grey;
 `;
 
 const SearchInput = styled.input`
   padding: 15px;
   font-size: 15px;
   width: 500px;
-  height: 40px;
+  height: 45px;
   margin-right: 10px;
-  border: 2px solid black;
+  border: 1px solid grey;
   border-radius: 10px;
 `;
 
