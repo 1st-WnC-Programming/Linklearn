@@ -10,57 +10,80 @@ import { authService, db } from '../fbase';
 import { doc, setDoc, deleteDoc, getDoc, updateDoc } from 'firebase/firestore';
 import ReactMarkdown from 'react-markdown';
 const TitleBox = styled.div`
-  width: 1000px;
+  width: 100%;
   margin: 30px auto;
 `;
 const Title = styled.input`
   width: 100%;
-  font-size: 30px;
+  font-size: 20px;
   padding-left: 10px;
+  border: 1px solid grey;
+  border-radius: 10px;
+  padding: 15px 25px;
 `;
 const ButtonBox = styled.div`
-  margin: 20px auto;
+  margin: 40px auto;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
-
 const PostButton = styled.button`
-  background-color: #3c78c0;
-  border-radius: 10px;
-  margin: 10px;
-  width: 200px;
+  padding: 2px 50px;
   height: 50px;
+  color: black;
+
   font-size: 18px;
-  float: right;
+  border: 2px solid black;
+  border-radius: 10px;
+
+  margin-left: 20px;
+
+  &:hover {
+    background-color: black;
+    color: white;
+    transition: all ease-out 0.3s 0s;
+  }
 `;
 const Content = styled.section`
-  width: 1000px;
+  width: 100%;
   margin: 30px auto;
-  min-height: 500px;
-  border: 1px solid black;
+  min-height: 600px;
+
   padding: 20px;
   font-size: 1rem;
   line-height: 2.5rem;
 `;
 const SortBox = styled.div`
-  height: 30px;
-  margin: 30px auto;
+  display: flex;
+  justify-content: space-between;
+  margin: 20px auto;
   align-items: center;
-  width: 1000px;
+  width: 100%;
 `;
 const InputBox = styled.input`
-  height: 100%;
-  font-size: 13px;
-  margin-right: 30px;
+  background-color: white;
+  border-radius: 10px;
+  border: 1px solid grey;
+  font-size: 18px;
+  padding: 10px;
+  width: 25%;
+  height: 45px;
+  display: flex;
+  text-align: center;
 `;
 const TextBox = styled.label`
   margin-right: 10px;
 `;
 const SortTitle = styled.select`
-  background-color: #f9f9f9;
-  width: 100px;
-  height: 100%;
-  line-height: 30px;
-  margin-right: 30px;
+  background-color: white;
+  border-radius: 10px;
+  border: 1px solid grey;
+  font-size: 18px;
+
+  padding: 10px;
+  width: 20%;
+  height: 45px;
 `;
 const selectList = {
   personal: '개인',
@@ -71,6 +94,7 @@ const Titlespan = styled.span`
   font-weight: 500px;
   margin-right: 20px;
 `;
+
 const News = ({ info, dataFile, setReload }) => {
   const { id } = useParams();
   const [edit, setEdit] = useState(false);
@@ -184,15 +208,6 @@ const News = ({ info, dataFile, setReload }) => {
   const editMode = () => {
     return (
       <>
-        <TitleBox>
-          <Title
-            type='text'
-            value={title}
-            onChange={(e) => {
-              setTitle(e.target.value);
-            }}
-          />
-        </TitleBox>
         <SortBox>
           <SortTitle onChange={selectHandler} value={type}>
             {Object.entries(selectList).map((item) => (
@@ -201,7 +216,7 @@ const News = ({ info, dataFile, setReload }) => {
               </option>
             ))}
           </SortTitle>
-          <TextBox>모집 인원: </TextBox>
+          <TextBox>모집 인원 </TextBox>
           <InputBox
             type='number'
             min='0'
@@ -211,7 +226,7 @@ const News = ({ info, dataFile, setReload }) => {
             }}
             value={numberOfPeople}
           />
-          <TextBox>과외 시간: </TextBox>
+          <TextBox>과외 시간 </TextBox>
           <InputBox
             type='number'
             min='0'
@@ -222,6 +237,16 @@ const News = ({ info, dataFile, setReload }) => {
             value={time}
           />
         </SortBox>
+        <TitleBox>
+          <Title
+            type='text'
+            value={title}
+            onChange={(e) => {
+              setTitle(e.target.value);
+            }}
+          />
+        </TitleBox>
+
         <Editor
           previewStyle='vertical'
           height='400px'
