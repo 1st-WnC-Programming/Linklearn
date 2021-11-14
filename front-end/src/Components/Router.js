@@ -8,9 +8,9 @@ import Header from './Header';
 import PostList from '../routes/PostList';
 import News from '../routes/News';
 import Profile from '../routes/Profile';
+import ChattingList from '../routes/ChattingList';
 
 const AppRouter = ({ isLoggedIn, avataURL, info, dataFile, setReload, userObj }) => {
-
   return (
     <Router>
       <Header isLoggedIn={isLoggedIn} avataURL={avataURL} />
@@ -31,6 +31,7 @@ const AppRouter = ({ isLoggedIn, avataURL, info, dataFile, setReload, userObj })
             exact
           />
           <Route path='/Profile' element={<Profile avataURL={avataURL} userObj={userObj} />} />
+          <Route path='/ChattingList' element={<ChattingList userObj={userObj} />} />
         </Routes>
       </main>
     </Router>
