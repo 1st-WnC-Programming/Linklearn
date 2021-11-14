@@ -9,7 +9,7 @@ import PostList from '../routes/PostList';
 import News from '../routes/News';
 import Profile from '../routes/Profile';
 import ChattingList from '../routes/ChattingList';
-
+import MyLecture from '../routes/MyLecture';
 const AppRouter = ({ isLoggedIn, avataURL, info, dataFile, setReload, userObj }) => {
   return (
     <Router>
@@ -32,6 +32,7 @@ const AppRouter = ({ isLoggedIn, avataURL, info, dataFile, setReload, userObj })
           />
           <Route path='/Profile' element={<Profile avataURL={avataURL} userObj={userObj} />} />
           <Route path='/ChattingList' element={<ChattingList userObj={userObj} />} />
+          <Route path='/MyLecture' element={<MyLecture userObj={userObj} />} />
         </Routes>
       </main>
     </Router>

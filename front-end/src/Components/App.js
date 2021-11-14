@@ -40,7 +40,6 @@ const App = () => {
     setDataFile(result);
     result = await getData('info', 1001);
     setInfo(result);
-    console.log(111);
   };
   return (
     <>

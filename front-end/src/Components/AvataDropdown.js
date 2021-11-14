@@ -52,7 +52,7 @@ const AvataDropdown = ({ avataURL }) => {
   const dropdownItems = [
     { id: 1, name: '프로필', path: '/Profile', pathName: 'profile' },
     { id: 2, name: '채팅 목록', path: '/ChattingList', pathName: 'chattingList' },
-    { id: 3, name: 'My 강좌', path: '/MyLacture', pathName: 'myLacture' },
+    { id: 3, name: 'My 강좌', path: '/MyLecture', pathName: 'myLecture' },
   ];
   const [isActive, setIsActive] = useState(false);
   const [item, setItem] = useState(null);
