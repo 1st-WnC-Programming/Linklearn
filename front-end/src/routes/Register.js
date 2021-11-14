@@ -124,6 +124,7 @@ const Register = () => {
           major: null,
           photoURL: fileURL,
           rate: 0,
+          evaluateNumber: 0,
           bio: null,
           myLecture: [],
           numberOfReport: 0,
