@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { authService, db } from '../fbase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { CellularData1 } from 'styled-icons/fluentui-system-filled';
 const Container = styled.div`
   display: flex;
   flex: 1;
@@ -37,12 +38,42 @@ const Row = styled.tr`
     }
   }
 `;
-const RateBtn = styled.button``;
-const ReportBtn = styled.button``;
+const RateBtn = styled.button`
+  padding: 5px 10px;
+  text-align: center;
+  font-size: 15px;
+
+  color: black;
+  border: 1px solid black;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: ${({ color }) => color};
+    color: white;
+    transition: all ease-out 0.3s 0s;
+  }
+`;
+const ReportBtn = styled.button`
+  padding: 5px 10px;
+  text-align: center;
+  font-size: 15px;
+
+  color: #e0557d;
+  border: 1px solid #e0557d;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: ${({ color }) => color};
+    color: white;
+    transition: all ease-out 0.3s 0s;
+  }
+`;
 const MyLecture = () => {
   const user = authService.currentUser;
   let [userData, setUserData] = useState();
   let [myLecture, setMyLecture] = useState([]);
+  let [tutorReport, setTutorReport] = useState([]);
+  let [tutorRate, setTutorRate] = useState([]);
   const fetchUser = async () => {
     const docRef = doc(db, 'users', user.uid);
     const docSnap = await getDoc(docRef);
@@ -63,6 +94,13 @@ const MyLecture = () => {
       getData(userData.myLecture);
     }
   }, [userData]);
+
+  useEffect(() => {
+    if (tutorReport.length !== 0) {
+      setNumOfReport(tutorReport);
+    }
+  }, [tutorReport]);
+
   const viewContent = () => {
     const result = [];
     myLecture.map((curData) => {
@@ -83,6 +121,7 @@ const MyLecture = () => {
           <td>{curData.teacher}</td>
           <td>
             <RateBtn
+              color='black'
               onClick={() => {
                 if (user.uid === curData.uid) {
                   alert('자기자신은 평가할 수 없습니다.');
@@ -96,10 +135,29 @@ const MyLecture = () => {
                   }
                 }
               }}
-            ></RateBtn>
+            >
+              평가
+            </RateBtn>
           </td>
           <td>
-            <ReportBtn></ReportBtn>
+            <ReportBtn
+              color='#e0557d'
+              onClick={() => {
+                if (user.uid === curData.uid) {
+                  alert('자기자신은 신고할 수 없습니다.');
+                } else {
+                  if (window.confirm('신고하시겠습니까?')) {
+                    //console.log(curData);
+                    getTutorReport(curData.uid);
+                    alert('신고 되었습니다.');
+                  } else {
+                    return;
+                  }
+                }
+              }}
+            >
+              신고
+            </ReportBtn>
           </td>
         </Row>,
       );
@@ -126,8 +184,41 @@ const MyLecture = () => {
         });
     });
   };
-  const setRate = async (rate, uid) => {
+  const getTutorReport = (id) => {
+    const fetch = async (uid) => {
+      const docRef = doc(db, 'users', `${uid}`);
+      const docSnap = await getDoc(docRef);
+      return docSnap.data();
+    };
+    fetch(id)
+      .then((data) => {
+        console.log(data);
+        setTutorReport(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const getTutorRate = (id) => {
+    const fetch = async (uid) => {
+      const docRef = doc(db, 'users', `${uid}`);
+      const docSnap = await getDoc(docRef);
+      return docSnap.data();
+    };
+    fetch(id)
+      .then((data) => {
+        console.log(data.rate);
+        setTutorRate(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const setRate = async (uid, rate) => {
     await updateDoc(doc(db, 'users', uid), { rate: rate });
+  };
+  const setNumOfReport = async (data) => {
+    await updateDoc(doc(db, 'users', data.id), { numberOfReport: data.numberOfReport + 1 });
   };
 
   return (
