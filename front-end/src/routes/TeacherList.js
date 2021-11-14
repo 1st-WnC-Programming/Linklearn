@@ -252,7 +252,12 @@ const TeacherList = () => {
             <Name>{value.name}</Name>
             <Field>{value.field}</Field>
             <Rate>{value.starPoint}</Rate>
-            <Career>{value.career}</Career>
+            <Career>
+              {value.career &&
+                value.career.split('<br/>').map((line) => {
+                  return <div>{line}</div>;
+                })}
+            </Career>
           </Infos>
 
           <Button color={'black'} onClick={(e) => handleModalClick(e, value)}>
