@@ -42,7 +42,7 @@ const SearchButton = styled.button`
   justify-content: center;
   font-size: 15px;
   border: 2px solid black;
-  border-radius: 5px;
+  border-radius: 10px;
 
   &:hover {
     background-color: black;

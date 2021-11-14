@@ -14,7 +14,7 @@ const SearchBox = styled.div`
 `;
 
 const SearchSelect = styled.select`
-  background-color: #f9f9f9;
+  background-color: white;
   font-size: 15px;
   width: 150px;
   height: 40px;
@@ -22,6 +22,7 @@ const SearchSelect = styled.select`
   margin-right: 10px;
   text-align: center;
   border-radius: 10px;
+  border: 2px solid black;
 `;
 
 const SearchInput = styled.input`
@@ -53,7 +54,7 @@ const CardContainer = styled.div`
   justify-content: space-between;
   border-radius: 20px;
   border: none;
-  box-shadow: 1px 1px 10px -2px grey;
+  box-shadow: 5px 10px 20px -2px #e2e2e2;
   margin: 20px;
 `;
 
