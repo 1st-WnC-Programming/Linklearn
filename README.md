@@ -4,7 +4,7 @@
 > <b><a href="#development-stack">Development Stack</a></b></br>
 > <b><a href="#function">Function</a></b></br>
 > <b><a href="#contributors">Contributors</a></b></br>
-> <b><a href="#prerequisites">Prerequisites</a></b></br>
+> <b><a href="#link">Link</a></b></br>
 
 ## 🛠 Development Stack
 <p align="center">
